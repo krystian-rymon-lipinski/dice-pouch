@@ -14,5 +14,8 @@ jobs:
       - name: Checkout project sources
         uses: actions/checkout@v3
 
+      - name: Add permissions for Gradle
+        run: chmod +x gradlew
+
       - name: Assemble
         run: ./gradlew assembleDebug
