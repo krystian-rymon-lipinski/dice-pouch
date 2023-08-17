@@ -29,26 +29,29 @@ jobs:
         run: chmod +x gradlew
 
       - name: Assemble
+        id: 'assemble'
         run: ./gradlew assembleDebug
 
       - name: Unit Tests
+        if: steps.assemble.outcome == 'success'
         run: ./gradlew testDebugUnitTest
 
       - name: Instrumented Tests
+        if: steps.assemble.outcome == 'success'
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 26
           script: ./gradlew connectedDebugAndroidTest
 
       - name: Test Results Upload
+        if: steps.assemble.outcome == 'success'
         uses: actions/upload-artifact@v3
-        if: always()
         with:
           name: test-results
           path: app/build/**/TEST-*.xml
 
       - name: Test Results Presentation
+        if: steps.assemble.outcome == 'success'
         uses: EnricoMi/publish-unit-test-result-action/composite@v2
-        if: always()
         with:
           files: app/build/**/TEST-*.xml
