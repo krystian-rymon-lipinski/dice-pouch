@@ -48,11 +48,7 @@ jobs:
           path: app/build/**/TEST-*.xml
 
       - name: Test Results Presentation
-        uses: dorny/test-reporter@v1
+        uses: EnricoMi/publish-unit-test-result-action/composite@v2
+        if: always()
         with:
-          artifact: test-results
-          name: Test Results
-          path: 'TEST-*.xml'
-          reporter: java-junit
-
-
+          files: app/build/**/TEST-*.xml
