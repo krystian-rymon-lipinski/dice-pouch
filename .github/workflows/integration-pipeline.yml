@@ -9,6 +9,8 @@ on:
 jobs:
   integrate:
     runs-on: macos-latest
+    permissions:
+      checks: write
 
     steps:
       - name: Checkout project sources
