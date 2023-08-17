@@ -8,7 +8,7 @@ on:
 
 jobs:
   integrate:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     steps:
       - name: Checkout project sources
@@ -30,9 +30,7 @@ jobs:
         run: ./gradlew testDebugUnitTest
 
       - name: Instrumented Tests
-        timeout-minutes: 30
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 26
-          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
           script: ./gradlew connectedDebugAndroidTest
