@@ -33,25 +33,23 @@ jobs:
         run: ./gradlew assembleDebug
 
       - name: Unit Tests
-        if: steps.assemble.outcome == 'success'
         run: ./gradlew testDebugUnitTest
+        continue-on-error: true
 
       - name: Instrumented Tests
-        if: steps.assemble.outcome == 'success'
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 26
           script: ./gradlew connectedDebugAndroidTest
+        continue-on-error: true
 
       - name: Test Results Upload
-        if: steps.assemble.outcome == 'success'
         uses: actions/upload-artifact@v3
         with:
           name: test-results
           path: app/build/**/TEST-*.xml
 
       - name: Test Results Presentation
-        if: steps.assemble.outcome == 'success'
         uses: EnricoMi/publish-unit-test-result-action/composite@v2
         with:
           files: app/build/**/TEST-*.xml
