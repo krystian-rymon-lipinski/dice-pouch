@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Dice Pouch</string>
+
+
+    <string name="roll_setting_dice_number">dice</string>
+    <string name="roll_setting_modifier">mod</string>
+    <string name="roll_setting_advantage">Adv</string>
+    <string name="roll_setting_normal">-</string>
+    <string name="roll_setting_disadvantage">Disadv</string>
 </resources>
