@@ -73,13 +73,13 @@ fun DieCell(die: Die) {
 private val basicDndSetName = "Basic D&D Set"
 
 private val basicDndDiceSet = listOf(
-    Die(4, Color.White, Color.Black),
+    Die(4),
     Die(6, Color.Green, Color.Red),
-    Die(8, Color.White, Color.Black),
-    Die(10, Color.White, Color.Black),
-    Die(10, Color.White, Color.Black),
-    Die(12, Color.White, Color.Black),
-    Die(20, Color.White, Color.Black)
+    Die(8),
+    Die(10),
+    Die(10),
+    Die(12),
+    Die(20)
 )
 
 
