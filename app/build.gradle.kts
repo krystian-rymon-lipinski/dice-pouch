@@ -96,4 +96,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs> {
 
 kapt {
     correctErrorTypes = true
+    arguments {
+        arg("resourcePackageName", android.defaultConfig.applicationId ?: "com.krystianrymonlipinski.dicepouch")
+    }
 }
