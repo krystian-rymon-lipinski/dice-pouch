@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -13,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.krystianrymonlipinski.dicepouch.model.Die
@@ -36,6 +38,14 @@ fun DiceGrid(diceSet: List<Die>) {
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        item(span = { GridItemSpan(maxCurrentLineSpan) }) {
+            Text(
+                text = basicDndSetName,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1,
+                style = MaterialTheme.typography.titleMedium
+            )
+        }
         items(
             count = diceSet.size,
         ) {
@@ -60,6 +70,8 @@ fun DieCell(die: Die) {
     }
 }
 
+private val basicDndSetName = "Basic D&D Set"
+
 private val basicDndDiceSet = listOf(
     Die(4, Color.White, Color.Black),
     Die(6, Color.Green, Color.Red),
@@ -73,7 +85,7 @@ private val basicDndDiceSet = listOf(
 
 @Preview(showBackground = true, widthDp = 320, heightDp = 640)
 @Composable
-fun GreetingPreview() {
+fun RollScreenPreview() {
     DicePouchTheme {
         RollScreen()
     }
