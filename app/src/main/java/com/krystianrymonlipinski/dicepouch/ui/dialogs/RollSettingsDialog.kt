@@ -1,6 +1,5 @@
 package com.krystianrymonlipinski.dicepouch.ui.dialogs
 
-import android.os.Parcelable
 import android.view.View
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
@@ -30,15 +29,14 @@ import androidx.compose.ui.window.DialogProperties
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.krystianrymonlipinski.dicepouch.R
 import com.krystianrymonlipinski.dicepouch.model.Die
+import com.krystianrymonlipinski.dicepouch.model.RollSetting
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
-import kotlinx.parcelize.Parcelize
-import kotlin.math.abs
 
 @Composable
 fun RollSettingsDialog(
     stateHolder: RollSettingsStateHolder = RollSettingsStateHolder(Die(6)),
     onDismissRequest: () -> Unit = {},
-    onRollButtonClicked: (RollSettingsState) -> Unit = {}
+    onRollButtonClicked: (RollSetting) -> Unit = {}
 ) {
     val savedState = rememberSaveable { stateHolder.state }
 
@@ -50,13 +48,13 @@ fun RollSettingsDialog(
                 onRollButtonClicked(savedState.value) }
             )
         },
-        text = { DialogContent(
+        text = { RollSettingsDialogContent(
             savedState.value,
             onDiceNumberChanged = { stateHolder.changeDiceNumber(it) },
             onModifierChanged = { stateHolder.changeModifier(it) },
-            onAdvantageSettingChanged = {
-                stateHolder.changeAdvantageSettings(it)
-                if (it != AdvantageSetting.NORMAL) {
+            onMechanicSettingChanged = {
+                stateHolder.changeMechanic(it)
+                if (it != RollSetting.Mechanic.NORMAL) {
                     stateHolder.resetDiceNumber()
                 }
             }
@@ -66,11 +64,11 @@ fun RollSettingsDialog(
 }
 
 @Composable
-fun DialogContent(
-    state: RollSettingsState,
+fun RollSettingsDialogContent(
+    state: RollSetting,
     onDiceNumberChanged: (Int) -> Unit,
     onModifierChanged: (Int) -> Unit,
-    onAdvantageSettingChanged: (AdvantageSetting) -> Unit,
+    onMechanicSettingChanged: (RollSetting.Mechanic) -> Unit,
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         RollDescription(
@@ -82,7 +80,7 @@ fun DialogContent(
         Row(horizontalArrangement = Arrangement.SpaceBetween) {
             RollSetting(
                 settingName = stringResource(id = R.string.roll_setting_dice_number),
-                shouldDisableControls = state.advantageSetting != AdvantageSetting.NORMAL,
+                shouldDisableControls = state.mechanic != RollSetting.Mechanic.NORMAL,
                 onIncrementClicked = { onDiceNumberChanged(1) },
                 onDecrementClicked = { onDiceNumberChanged(-1) }
             )
@@ -93,32 +91,20 @@ fun DialogContent(
                 onDecrementClicked = { onModifierChanged(-1) }
             )
         }
-        AdvantagesSettings(onAdvantageSettingChanged)
+        MechanicSetting(onMechanicSettingChanged)
     }
 }
 
 @Composable
 fun RollDescription(
     modifier: Modifier,
-    state: RollSettingsState
+    state: RollSetting
 ) {
     Text(
-        text = buildRollDescription(state),
+        text = state.rollDescription,
         modifier = modifier.animateContentSize(),
         style = MaterialTheme.typography.headlineLarge
     )
-}
-
-private fun buildRollDescription(state: RollSettingsState) : String {
-    return StringBuilder().apply {
-        append(state.diceNumber)
-        append('d')
-        append(state.die.sides)
-        when {
-            state.modifier < 0 -> append(" - ${abs(state.modifier)}")
-            state.modifier > 0 -> append(" + ${state.modifier}")
-        }
-    }.toString()
 }
 
 @Composable
@@ -140,19 +126,19 @@ fun RollSetting(
 }
 
 @Composable
-fun AdvantagesSettings(onAdvantageSettingChanged: (AdvantageSetting) -> Unit) {
+fun MechanicSetting(onMechanicSettingChanged: (RollSetting.Mechanic) -> Unit) {
     AndroidView(
         factory = { View.inflate(it, R.layout.advantages_button, null) },
         update = {
             it.findViewById<MaterialButtonToggleGroup>(R.id.adv_setting_button).apply {
                 addOnButtonCheckedListener { group, _, _ ->
-                    val currentSetting = when (group.checkedButtonId) {
-                        R.id.button_adv -> AdvantageSetting.ADVANTAGE
-                        R.id.button_disadv -> AdvantageSetting.DISADVANTAGE
-                        R.id.button_normal -> AdvantageSetting.NORMAL
-                        else -> AdvantageSetting.NORMAL
+                    val newSetting = when (group.checkedButtonId) {
+                        R.id.button_adv -> RollSetting.Mechanic.ADVANTAGE
+                        R.id.button_disadv -> RollSetting.Mechanic.DISADVANTAGE
+                        R.id.button_normal -> RollSetting.Mechanic.NORMAL
+                        else -> RollSetting.Mechanic.NORMAL
                     }
-                    onAdvantageSettingChanged(currentSetting)
+                    onMechanicSettingChanged(newSetting)
                 }
             }
         }
@@ -172,7 +158,6 @@ fun RollButton(onRollButtonClicked: () -> Unit) {
             )
         }
     }
-
 }
 
 
@@ -187,7 +172,7 @@ fun RollSettingsDialogPreview() {
 
 class RollSettingsStateHolder(die: Die) {
 
-    val state = mutableStateOf(RollSettingsState(die))
+    val state = mutableStateOf(RollSetting(die))
 
     fun changeDiceNumber(change: Int) {
         state.value = state.value.copy(diceNumber = state.value.diceNumber + change)
@@ -207,8 +192,8 @@ class RollSettingsStateHolder(die: Die) {
         }
     }
 
-    fun changeAdvantageSettings(newValue: AdvantageSetting) {
-        state.value = state.value.copy(advantageSetting = newValue)
+    fun changeMechanic(newValue: RollSetting.Mechanic) {
+        state.value = state.value.copy(mechanic = newValue)
     }
 
     fun resetDiceNumber() {
@@ -216,19 +201,6 @@ class RollSettingsStateHolder(die: Die) {
     }
 }
 
-@Parcelize
-data class RollSettingsState(
-    val die: Die,
-    val diceNumber: Int = 1,
-    val modifier: Int = 0,
-    val advantageSetting: AdvantageSetting = AdvantageSetting.NORMAL
-) : Parcelable
-
-
-@Parcelize
-enum class AdvantageSetting : Parcelable {
-    ADVANTAGE, NORMAL, DISADVANTAGE;
-}
 
 private const val MIN_DICE = 1
 private const val MAX_DICE = 30
