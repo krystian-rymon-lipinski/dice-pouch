@@ -1,7 +1,7 @@
 package com.krystianrymonlipinski.dicepouch.ui.dialogs
 
+import RollDescription
 import android.view.View
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -93,18 +93,6 @@ fun RollSettingsDialogContent(
         }
         MechanicSetting(onMechanicSettingChanged)
     }
-}
-
-@Composable
-fun RollDescription(
-    modifier: Modifier,
-    state: RollSetting
-) {
-    Text(
-        text = state.rollDescription,
-        modifier = modifier.animateContentSize(),
-        style = MaterialTheme.typography.headlineLarge
-    )
 }
 
 @Composable
