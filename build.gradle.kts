@@ -11,6 +11,7 @@ plugins {
 
     id("com.android.application") version agpVersion apply false
     id("org.jetbrains.kotlin.android") version kotlinVersion apply false
+    id("org.jetbrains.kotlin.plugin.parcelize") version kotlinVersion apply false
     id("org.jetbrains.kotlin.kapt") version kotlinVersion apply false
     id("com.google.dagger.hilt.android") version "2.46" apply false
 }
