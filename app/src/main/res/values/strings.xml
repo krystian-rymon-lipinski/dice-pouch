@@ -7,4 +7,5 @@
     <string name="roll_setting_advantage">Adv</string>
     <string name="roll_setting_normal">-</string>
     <string name="roll_setting_disadvantage">Disadv</string>
+    <string name="btn_roll">Roll</string>
 </resources>

@@ -26,10 +26,11 @@ import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollSettingsDialog
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollSettingsStateHolder
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
+import timber.log.Timber
 
 @Composable
 fun RollScreen() {
-    var rollDialog by rememberSaveable { mutableStateOf<Die?>(null) }
+    var showRollDialog by rememberSaveable { mutableStateOf<Die?>(null) }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -37,12 +38,16 @@ fun RollScreen() {
     ) {
         DiceGrid(
             diceSet = basicDndDiceSet,
-            onDieClicked = { die -> rollDialog = die }
+            onDieClicked = { die -> showRollDialog = die }
         )
-        rollDialog?.let {
+        showRollDialog?.let {
             RollSettingsDialog(
                 stateHolder = RollSettingsStateHolder(it),
-                onDismissRequest = { rollDialog = null }
+                onDismissRequest = { showRollDialog = null },
+                onRollButtonClicked = { rollSettings ->
+                    Timber.d("Roll settings = $rollSettings")
+                    //TODO: utilize roll settings
+                }
             )
         }
     }

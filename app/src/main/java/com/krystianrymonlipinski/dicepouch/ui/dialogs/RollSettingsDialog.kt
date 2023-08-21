@@ -6,6 +6,8 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Remove
@@ -14,6 +16,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -21,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.DialogProperties
 import com.google.android.material.button.MaterialButtonToggleGroup
@@ -33,13 +37,19 @@ import kotlin.math.abs
 @Composable
 fun RollSettingsDialog(
     stateHolder: RollSettingsStateHolder = RollSettingsStateHolder(Die(6)),
-    onDismissRequest: () -> Unit = {}
+    onDismissRequest: () -> Unit = {},
+    onRollButtonClicked: (RollSettingsState) -> Unit = {}
 ) {
     val savedState = rememberSaveable { stateHolder.state }
 
     AlertDialog(
         onDismissRequest = { onDismissRequest() },
-        confirmButton = {},
+        confirmButton = {
+            RollButton(onRollButtonClicked = {
+                onDismissRequest()
+                onRollButtonClicked(savedState.value) }
+            )
+        },
         text = { DialogContent(
             savedState.value,
             onDiceNumberChanged = { stateHolder.changeDiceNumber(it) },
@@ -60,12 +70,14 @@ fun DialogContent(
     state: RollSettingsState,
     onDiceNumberChanged: (Int) -> Unit,
     onModifierChanged: (Int) -> Unit,
-    onAdvantageSettingChanged: (AdvantageSetting) -> Unit
+    onAdvantageSettingChanged: (AdvantageSetting) -> Unit,
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         RollDescription(
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            state
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(bottom = 8.dp),
+            state = state
         )
         Row(horizontalArrangement = Arrangement.SpaceBetween) {
             RollSetting(
@@ -106,9 +118,6 @@ private fun buildRollDescription(state: RollSettingsState) : String {
             state.modifier < 0 -> append(" - ${abs(state.modifier)}")
             state.modifier > 0 -> append(" + ${state.modifier}")
         }
-
-
-        "${state.diceNumber}d${state.die.sides} + ${state.modifier}"
     }.toString()
 }
 
@@ -131,9 +140,7 @@ fun RollSetting(
 }
 
 @Composable
-fun AdvantagesSettings(
-    onAdvantageSettingChanged: (AdvantageSetting) -> Unit
-) {
+fun AdvantagesSettings(onAdvantageSettingChanged: (AdvantageSetting) -> Unit) {
     AndroidView(
         factory = { View.inflate(it, R.layout.advantages_button, null) },
         update = {
@@ -150,6 +157,22 @@ fun AdvantagesSettings(
             }
         }
     )
+}
+
+@Composable
+fun RollButton(onRollButtonClicked: () -> Unit) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        TextButton(onClick = { onRollButtonClicked() }) {
+            Text(
+                text = stringResource(id = R.string.btn_roll),
+                style = MaterialTheme.typography.headlineSmall
+            )
+        }
+    }
+
 }
 
 
