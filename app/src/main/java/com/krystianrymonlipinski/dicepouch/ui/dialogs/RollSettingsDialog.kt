@@ -168,10 +168,20 @@ class RollSettingsStateHolder(die: Die) {
 
     fun changeDiceNumber(change: Int) {
         state.value = state.value.copy(diceNumber = state.value.diceNumber + change)
+        if (state.value.diceNumber < MIN_DICE) {
+            state.value = state.value.copy(diceNumber = MAX_DICE)
+        } else if (state.value.diceNumber > MAX_DICE) {
+            state.value = state.value.copy(diceNumber = MIN_DICE)
+        }
     }
 
     fun changeModifier(change: Int) {
         state.value = state.value.copy(modifier = state.value.modifier + change)
+        if (state.value.modifier < MIN_MOD) {
+            state.value = state.value.copy(modifier = MAX_MOD)
+        } else if (state.value.modifier > MAX_MOD) {
+            state.value = state.value.copy(modifier = MIN_MOD)
+        }
     }
 
     fun changeAdvantageSettings(newValue: AdvantageSetting) {
@@ -196,3 +206,8 @@ data class RollSettingsState(
 enum class AdvantageSetting : Parcelable {
     ADVANTAGE, NORMAL, DISADVANTAGE;
 }
+
+private const val MIN_DICE = 1
+private const val MAX_DICE = 30
+private const val MIN_MOD = -30
+private const val MAX_MOD = 30
