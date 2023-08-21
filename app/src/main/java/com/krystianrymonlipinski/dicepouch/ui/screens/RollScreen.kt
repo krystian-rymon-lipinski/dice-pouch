@@ -23,14 +23,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.krystianrymonlipinski.dicepouch.model.Die
+import com.krystianrymonlipinski.dicepouch.model.RollSetting
+import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollDialog
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollSettingsDialog
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollSettingsStateHolder
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
-import timber.log.Timber
 
 @Composable
 fun RollScreen() {
-    var showRollDialog by rememberSaveable { mutableStateOf<Die?>(null) }
+    var showRollSettingsDialog by rememberSaveable { mutableStateOf<Die?>(null) }
+    var showRollDialog by rememberSaveable { mutableStateOf<RollSetting?>(null) }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -38,16 +40,21 @@ fun RollScreen() {
     ) {
         DiceGrid(
             diceSet = basicDndDiceSet,
-            onDieClicked = { die -> showRollDialog = die }
+            onDieClicked = { die -> showRollSettingsDialog = die }
         )
-        showRollDialog?.let {
+        showRollSettingsDialog?.let {
             RollSettingsDialog(
                 stateHolder = RollSettingsStateHolder(it),
-                onDismissRequest = { showRollDialog = null },
+                onDismissRequest = { showRollSettingsDialog = null },
                 onRollButtonClicked = { rollSettings ->
-                    Timber.d("Roll settings = $rollSettings")
-                    //TODO: utilize roll settings
+                    showRollDialog = rollSettings
                 }
+            )
+        }
+        showRollDialog?.let {
+            RollDialog(
+                setting = it,
+                onConfirmButtonClicked = { showRollDialog = null }
             )
         }
     }
