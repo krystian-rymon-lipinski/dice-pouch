@@ -2,6 +2,7 @@ package com.krystianrymonlipinski.dicepouch.ui.dialogs
 
 import android.os.Parcelable
 import android.view.View
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,6 +28,7 @@ import com.krystianrymonlipinski.dicepouch.R
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
 import kotlinx.parcelize.Parcelize
+import kotlin.math.abs
 
 @Composable
 fun RollSettingsDialog(
@@ -55,7 +57,7 @@ fun RollSettingsDialog(
 
 @Composable
 fun DialogContent(
-    settingsState: RollSettingsState,
+    state: RollSettingsState,
     onDiceNumberChanged: (Int) -> Unit,
     onModifierChanged: (Int) -> Unit,
     onAdvantageSettingChanged: (AdvantageSetting) -> Unit
@@ -63,12 +65,12 @@ fun DialogContent(
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         RollDescription(
             modifier = Modifier.align(Alignment.CenterHorizontally),
-            settingsState
+            state
         )
         Row(horizontalArrangement = Arrangement.SpaceBetween) {
             RollSetting(
                 settingName = stringResource(id = R.string.roll_setting_dice_number),
-                shouldDisableControls = settingsState.advantageSetting != AdvantageSetting.NORMAL,
+                shouldDisableControls = state.advantageSetting != AdvantageSetting.NORMAL,
                 onIncrementClicked = { onDiceNumberChanged(1) },
                 onDecrementClicked = { onDiceNumberChanged(-1) }
             )
@@ -86,13 +88,28 @@ fun DialogContent(
 @Composable
 fun RollDescription(
     modifier: Modifier,
-    settingsState: RollSettingsState
+    state: RollSettingsState
 ) {
     Text(
-        text = "${settingsState.diceNumber}d${settingsState.die.sides} + ${settingsState.modifier}",
-        modifier = modifier,
+        text = buildRollDescription(state),
+        modifier = modifier.animateContentSize(),
         style = MaterialTheme.typography.headlineLarge
     )
+}
+
+private fun buildRollDescription(state: RollSettingsState) : String {
+    return StringBuilder().apply {
+        append(state.diceNumber)
+        append('d')
+        append(state.die.sides)
+        when {
+            state.modifier < 0 -> append(" - ${abs(state.modifier)}")
+            state.modifier > 0 -> append(" + ${state.modifier}")
+        }
+
+
+        "${state.diceNumber}d${state.die.sides} + ${state.modifier}"
+    }.toString()
 }
 
 @Composable
@@ -121,8 +138,8 @@ fun AdvantagesSettings(
         factory = { View.inflate(it, R.layout.advantages_button, null) },
         update = {
             it.findViewById<MaterialButtonToggleGroup>(R.id.adv_setting_button).apply {
-                addOnButtonCheckedListener { _, checkedId, _ ->
-                    val currentSetting = when (checkedId) {
+                addOnButtonCheckedListener { group, _, _ ->
+                    val currentSetting = when (group.checkedButtonId) {
                         R.id.button_adv -> AdvantageSetting.ADVANTAGE
                         R.id.button_disadv -> AdvantageSetting.DISADVANTAGE
                         R.id.button_normal -> AdvantageSetting.NORMAL
