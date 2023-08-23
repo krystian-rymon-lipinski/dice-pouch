@@ -5,10 +5,9 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -45,7 +44,7 @@ fun RollDialog(
     onConfirmButtonClicked: () -> Unit = {},
 ) {
 
-    val rollState by rememberSaveable {
+    val rollState = rememberSaveable {
         stateHolder.rollState
     }
     var randomizerState by remember {
@@ -56,9 +55,11 @@ fun RollDialog(
         setting = stateHolder.rollSetting,
         onNewRandomValue = { newValue -> randomizerState = newValue },
         onSingleThrowFinished = {
+            stateHolder.addThrowResult(randomizerState)
             stateHolder.markNextThrow()
             randomizerState = 0
         },
+        onTryFinished = { stateHolder.markNextTry() },
         onRollingFinished = {  }
     )
 
@@ -91,7 +92,10 @@ fun RollDialogContent(
             textStyle = MaterialTheme.typography.titleSmall
         )
         CurrentThrow(randomizerState)
-        RollOutcome(setting)
+        RollOutcome(
+            setting = setting,
+            outcomes = rollState.outcomes
+        )
     }
 }
 
@@ -111,28 +115,39 @@ fun CurrentThrow(randomizerState: Int) {
 }
 
 @Composable
-fun RollOutcome(setting: RollSetting) {
-    Column(modifier = Modifier.border(
-        width = 2.dp,
-        color = MaterialTheme.colorScheme.primary,
-        shape = MaterialTheme.shapes.extraSmall
-    )) {
-        ThrowOutcomes(setting)
-        if (setting.mechanic != RollSetting.Mechanic.NORMAL) {
-            Spacer(modifier = Modifier.height(4.dp))
-            ThrowOutcomes(setting)
+fun RollOutcome(
+    setting: RollSetting,
+    outcomes: List<MutableList<Int>>
+) {
+    LazyColumn(
+        modifier = Modifier.border(
+            width = 2.dp,
+            color = MaterialTheme.colorScheme.primary,
+            shape = MaterialTheme.shapes.extraSmall
+        ),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        items(setting.numberOfTries) { tryNumber ->
+            ThrowOutcomes(setting = setting, outcomes = outcomes[tryNumber])
         }
     }
 }
 
 @Composable
-fun ThrowOutcomes(setting: RollSetting) {
+fun ThrowOutcomes(
+    setting: RollSetting,
+    outcomes: List<Int>
+) {
     Row(
         modifier = Modifier.padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         for (i in 1.. setting.diceNumber) {
-            DieCell(die = setting.die, onDieClicked = {}, valueShown = " ")
+            DieCell(
+                die = setting.die,
+                onDieClicked = {},
+                valueShown = outcomes[i-1].toString()
+            )
             if (i < setting.diceNumber) {
                 Text(text = "+", modifier = Modifier.padding(horizontal = 2.dp))
             }
@@ -163,24 +178,41 @@ fun LaunchedRollProcess(
     setting: RollSetting,
     onNewRandomValue: (Int) -> Unit,
     onSingleThrowFinished: () -> Unit,
+    onTryFinished: () -> Unit,
     onRollingFinished: () -> Unit
 ) {
     LaunchedEffect(key1 = Unit) {
-        launch {
-            delay(INITIAL_ROLL_DELAY)
-            for (i in 1.. setting.diceNumber) {
-                val throwJob = getSingleDieThrowJob(
-                    die = setting.die,
+        delay(INITIAL_ROLL_DELAY)
+        launch { repeat(setting.numberOfTries) {
+                val tryJob = getSingleTryJob(
                     scope = this,
-                    onNewRandomValue = onNewRandomValue
+                    setting = setting,
+                    onNewRandomValue = onNewRandomValue,
+                    onSingleThrowFinished = onSingleThrowFinished
                 )
-                throwJob.join() /* Wait for the random to end before starting next throw */
-                onSingleThrowFinished()
-                delay(DELAY_BETWEEN_THROWS)
-            }
-            onRollingFinished()
-        }
+                tryJob.join()
+            onTryFinished()
+        } }
+        onRollingFinished()
     }
+}
+
+private suspend fun getSingleTryJob(
+    scope: CoroutineScope,
+    setting: RollSetting,
+    onNewRandomValue: (Int) -> Unit,
+    onSingleThrowFinished: () -> Unit
+) : Job {
+    return scope.launch { repeat(setting.diceNumber) {
+            val throwJob = getSingleDieThrowJob(
+                die = setting.die,
+                scope = scope,
+                onNewRandomValue = onNewRandomValue
+            )
+            throwJob.join() /* Wait for the random to end before starting next throw */
+            onSingleThrowFinished()
+            delay(DELAY_BETWEEN_THROWS)
+    } }
 }
 
 private suspend fun getSingleDieThrowJob(
@@ -211,20 +243,31 @@ fun RollDialogPreview() {
 class RollDialogStateHolder(
     val rollSetting: RollSetting,
 ) {
-    val rollState = mutableStateOf(RollState())
+    var rollState by mutableStateOf(RollState())
     val randomizerState = mutableStateOf(0)
 
+    init {
+        for (i in 0 until rollSetting.diceNumber) {
+            rollState.outcomes[0].add(0)
+            rollState.outcomes[1].add(0)
+        }
+    }
+
+    fun addThrowResult(result: Int) {
+        rollState.outcomes[rollState.tryNumber - 1].add(rollState.throwNumber - 1, result)
+    }
+
     fun changeRollProgress(newState: RollState.Progress) {
-        rollState.value = rollState.value.copy(progress = newState)
+        rollState = rollState.copy(progress = newState)
     }
 
     fun markNextThrow() {
-        rollState.value = rollState.value.copy(throwNumber = rollState.value.throwNumber.inc())
+        rollState = rollState.copy(throwNumber = rollState.throwNumber.inc())
     }
 
     fun markNextTry() {
-        rollState.value = rollState.value.copy(
-            tryNumber = rollState.value.tryNumber.inc(),
+        rollState = rollState.copy(
+            tryNumber = rollState.tryNumber.inc(),
             throwNumber = 1
         )
     }

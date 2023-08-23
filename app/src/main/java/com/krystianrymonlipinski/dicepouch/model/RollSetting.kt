@@ -14,6 +14,8 @@ data class RollSetting(
 ) : Parcelable {
 
     @IgnoredOnParcel
+    val numberOfTries = if (mechanic == Mechanic.NORMAL) 1 else 2
+    @IgnoredOnParcel
     val rollDescription = buildRollDescription()
 
     fun generateModifierText() : String? {
