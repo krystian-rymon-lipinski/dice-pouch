@@ -14,7 +14,8 @@ import com.krystianrymonlipinski.dicepouch.model.Die
 @Composable
 fun DieCell(
     die: Die,
-    onDieClicked: (Die) -> Unit
+    onDieClicked: (Die) -> Unit,
+    currentValue: Int = die.sides
 ) {
     Surface(
         modifier = Modifier.clickable { onDieClicked(die) },
@@ -23,7 +24,7 @@ fun DieCell(
         shadowElevation = 4.dp
     ) {
         Text(
-            text = die.sides.toString(),
+            text = currentValue.toString(),
             color = die.numberColor,
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.headlineLarge

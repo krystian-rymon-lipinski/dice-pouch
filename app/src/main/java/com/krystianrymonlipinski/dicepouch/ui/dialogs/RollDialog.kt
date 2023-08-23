@@ -1,10 +1,13 @@
 package com.krystianrymonlipinski.dicepouch.ui.dialogs
 
 import RollDescription
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
@@ -24,11 +27,12 @@ import com.krystianrymonlipinski.dicepouch.R
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
 import com.krystianrymonlipinski.dicepouch.model.RollState
+import com.krystianrymonlipinski.dicepouch.ui.components.DieCell
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
 
 @Composable
 fun RollDialog(
-    stateHolder: RollDialogStateHolder = RollDialogStateHolder(rollSetting = RollSetting(Die(6))),
+    stateHolder: RollDialogStateHolder = RollDialogStateHolder(rollSetting = RollSetting(Die(6), 4, 2)),
     onConfirmButtonClicked: () -> Unit = {},
 ) {
 
@@ -62,13 +66,15 @@ fun RollDialogContent(
                 description = setting.rollDescription,
                 textStyle = MaterialTheme.typography.titleSmall
             )
-            RollResult()
-            ResultParts()
+            CurrentThrow()
+            if(setting.diceNumber > 1 || setting.mechanic != RollSetting.Mechanic.NORMAL) {
+                RollOutcome(setting)
+            }
         }
 }
 
 @Composable
-fun RollResult() {
+fun CurrentThrow() {
     Text(
         text = "11",
         modifier = Modifier.padding(top = 8.dp, bottom = 16.dp),
@@ -77,8 +83,34 @@ fun RollResult() {
 }
 
 @Composable
-fun ResultParts() {
-    Text(text = "4 + 4 + 3")
+fun RollOutcome(setting: RollSetting) {
+    Column(modifier = Modifier.border(
+        width = 2.dp,
+        color = MaterialTheme.colorScheme.primary,
+        shape = MaterialTheme.shapes.extraSmall
+    )) {
+        ThrowOutcomes(setting)
+        if (setting.mechanic != RollSetting.Mechanic.NORMAL) {
+            Spacer(modifier = Modifier.height(4.dp))
+            ThrowOutcomes(setting)
+        }
+    }
+}
+
+@Composable
+fun ThrowOutcomes(setting: RollSetting) {
+    Row(
+        modifier = Modifier.padding(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        for (i in 1.. setting.diceNumber) {
+            DieCell(die = setting.die, onDieClicked = {})
+            if (i < setting.diceNumber) {
+                Text(text = "+", modifier = Modifier.padding(horizontal = 2.dp))
+            }
+        }
+        setting.generateModifierText()?.let { Text(text = it) }
+    }
 }
 
 @Composable

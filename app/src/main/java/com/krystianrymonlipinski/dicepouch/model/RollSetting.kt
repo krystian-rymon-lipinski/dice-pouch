@@ -16,15 +16,21 @@ data class RollSetting(
     @IgnoredOnParcel
     val rollDescription = buildRollDescription()
 
+    fun generateModifierText() : String? {
+        return when {
+            modifier < 0 -> " - ${abs(modifier)}"
+            modifier > 0 -> " + $modifier"
+            else -> null
+        }
+    }
+
     private fun buildRollDescription() : String {
         return StringBuilder().apply {
             append(diceNumber)
             append('d')
             append(die.sides)
-            when {
-                modifier < 0 -> append(" - ${abs(modifier)}")
-                modifier > 0 -> append(" + $modifier")
-            }
+            generateModifierText()?.let { append(it) }
+
         }.toString()
     }
 
