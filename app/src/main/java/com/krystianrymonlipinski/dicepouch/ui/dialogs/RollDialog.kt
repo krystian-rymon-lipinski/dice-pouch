@@ -104,7 +104,7 @@ fun ThrowOutcomes(setting: RollSetting) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         for (i in 1.. setting.diceNumber) {
-            DieCell(die = setting.die, onDieClicked = {})
+            DieCell(die = setting.die, onDieClicked = {}, valueShown = " ")
             if (i < setting.diceNumber) {
                 Text(text = "+", modifier = Modifier.padding(horizontal = 2.dp))
             }
