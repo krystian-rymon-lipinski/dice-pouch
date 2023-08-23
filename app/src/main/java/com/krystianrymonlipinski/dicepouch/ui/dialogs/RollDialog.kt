@@ -11,6 +11,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -20,26 +23,37 @@ import androidx.compose.ui.window.DialogProperties
 import com.krystianrymonlipinski.dicepouch.R
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
+import com.krystianrymonlipinski.dicepouch.model.RollState
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
 
 @Composable
 fun RollDialog(
-    setting: RollSetting = RollSetting(Die(6)),
+    stateHolder: RollDialogStateHolder = RollDialogStateHolder(rollSetting = RollSetting(Die(6))),
     onConfirmButtonClicked: () -> Unit = {},
 ) {
+
+    val rollState by rememberSaveable {
+        stateHolder.rollState
+    }
 
     AlertDialog(
         onDismissRequest = { /* Current properties do not allow this */ },
         confirmButton = { ConfirmButton(
             onConfirmButtonClicked = onConfirmButtonClicked
         ) },
-        text = { RollDialogContent(setting) },
+        text = { RollDialogContent(
+            setting = stateHolder.rollSetting,
+            state = rollState
+        ) },
         properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
     )
 }
 
 @Composable
-fun RollDialogContent(setting: RollSetting) {
+fun RollDialogContent(
+    setting: RollSetting,
+    state: RollState
+) {
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -83,11 +97,31 @@ fun ConfirmButton(onConfirmButtonClicked: () -> Unit) {
 }
 
 
-
 @Composable
 @Preview
 fun RollDialogPreview() {
     DicePouchTheme {
         RollDialog()
+    }
+}
+
+class RollDialogStateHolder(
+    val rollSetting: RollSetting,
+) {
+    val rollState = mutableStateOf(RollState())
+
+    fun changeRollProgress(newState: RollState.Progress) {
+        rollState.value = rollState.value.copy(progress = newState)
+    }
+
+    fun markNextThrow() {
+        rollState.value = rollState.value.copy(throwNumber = rollState.value.throwNumber.inc())
+    }
+
+    fun markNextTry() {
+        rollState.value = rollState.value.copy(
+            tryNumber = rollState.value.tryNumber.inc(),
+            throwNumber = 1
+        )
     }
 }

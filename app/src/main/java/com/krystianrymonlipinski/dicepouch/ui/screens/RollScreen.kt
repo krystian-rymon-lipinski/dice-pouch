@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollDialog
+import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollDialogStateHolder
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollSettingsDialog
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollSettingsStateHolder
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
@@ -53,7 +54,7 @@ fun RollScreen() {
         }
         showRollDialog?.let {
             RollDialog(
-                setting = it,
+                stateHolder = RollDialogStateHolder(it),
                 onConfirmButtonClicked = { showRollDialog = null }
             )
         }
