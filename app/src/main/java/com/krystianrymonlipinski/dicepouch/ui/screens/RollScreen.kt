@@ -1,6 +1,5 @@
 package com.krystianrymonlipinski.dicepouch.ui.screens
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -17,13 +16,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
+import com.krystianrymonlipinski.dicepouch.ui.components.DieCell
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollDialog
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollDialogStateHolder
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollSettingsDialog
@@ -89,25 +87,6 @@ fun DiceGrid(
     }
 }
 
-@Composable
-fun DieCell(
-    die: Die,
-    onDieClicked: (Die) -> Unit
-) {
-    Surface(
-        modifier = Modifier.clickable { onDieClicked(die) },
-        shape = RectangleShape,
-        color = die.sideColor,
-        shadowElevation = 4.dp
-    ) {
-        Text(
-            text = die.sides.toString(),
-            color = die.numberColor,
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.headlineLarge
-        )
-    }
-}
 
 private const val BASIC_DND_SET_NAME = "Basic D&D Set"
 
