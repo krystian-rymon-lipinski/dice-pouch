@@ -11,12 +11,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -29,6 +33,11 @@ import com.krystianrymonlipinski.dicepouch.model.RollSetting
 import com.krystianrymonlipinski.dicepouch.model.RollState
 import com.krystianrymonlipinski.dicepouch.ui.components.DieCell
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlin.system.measureTimeMillis
 
 @Composable
 fun RollDialog(
@@ -39,6 +48,19 @@ fun RollDialog(
     val rollState by rememberSaveable {
         stateHolder.rollState
     }
+    var randomizerState by remember {
+        stateHolder.randomizerState
+    }
+
+    LaunchedRollProcess(
+        setting = stateHolder.rollSetting,
+        onNewRandomValue = { newValue -> randomizerState = newValue },
+        onSingleThrowFinished = {
+            stateHolder.markNextThrow()
+            randomizerState = 0
+        },
+        onRollingFinished = {  }
+    )
 
     AlertDialog(
         onDismissRequest = { /* Current properties do not allow this */ },
@@ -47,7 +69,8 @@ fun RollDialog(
         ) },
         text = { RollDialogContent(
             setting = stateHolder.rollSetting,
-            state = rollState
+            rollState = rollState,
+            randomizerState = randomizerState
         ) },
         properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
     )
@@ -56,30 +79,35 @@ fun RollDialog(
 @Composable
 fun RollDialogContent(
     setting: RollSetting,
-    state: RollState
+    rollState: RollState,
+    randomizerState: Int
 ) {
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            RollDescription(
-                description = setting.rollDescription,
-                textStyle = MaterialTheme.typography.titleSmall
-            )
-            CurrentThrow()
-            if(setting.diceNumber > 1 || setting.mechanic != RollSetting.Mechanic.NORMAL) {
-                RollOutcome(setting)
-            }
-        }
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        RollDescription(
+            description = setting.rollDescription,
+            textStyle = MaterialTheme.typography.titleSmall
+        )
+        CurrentThrow(randomizerState)
+        RollOutcome(setting)
+    }
 }
 
 @Composable
-fun CurrentThrow() {
-    Text(
-        text = "11",
-        modifier = Modifier.padding(top = 8.dp, bottom = 16.dp),
-        style = MaterialTheme.typography.displayLarge
-    )
+fun CurrentThrow(randomizerState: Int) {
+    Surface(
+        shape = MaterialTheme.shapes.small,
+        color = MaterialTheme.colorScheme.secondaryContainer
+    ) {
+        Text(
+            text = if (randomizerState != 0) randomizerState.toString() else "",
+            modifier = Modifier.padding(top = 8.dp, bottom = 16.dp),
+            style = MaterialTheme.typography.displayLarge
+        )
+    }
+
 }
 
 @Composable
@@ -128,6 +156,49 @@ fun ConfirmButton(onConfirmButtonClicked: () -> Unit) {
     }
 }
 
+/* --------- */
+
+@Composable
+fun LaunchedRollProcess(
+    setting: RollSetting,
+    onNewRandomValue: (Int) -> Unit,
+    onSingleThrowFinished: () -> Unit,
+    onRollingFinished: () -> Unit
+) {
+    LaunchedEffect(key1 = Unit) {
+        launch {
+            delay(INITIAL_ROLL_DELAY)
+            for (i in 1.. setting.diceNumber) {
+                val throwJob = getSingleDieThrowJob(
+                    die = setting.die,
+                    scope = this,
+                    onNewRandomValue = onNewRandomValue
+                )
+                throwJob.join() /* Wait for the random to end before starting next throw */
+                onSingleThrowFinished()
+                delay(DELAY_BETWEEN_THROWS)
+            }
+            onRollingFinished()
+        }
+    }
+}
+
+private suspend fun getSingleDieThrowJob(
+    die: Die,
+    scope: CoroutineScope,
+    onNewRandomValue: (Int) -> Unit,
+) : Job {
+    return scope.launch {
+        var elapsedTime = 0L
+        while (elapsedTime < RANDOMIZING_TIME) {
+            elapsedTime += measureTimeMillis {
+                onNewRandomValue(die.roll())
+                delay(DELAY_BETWEEN_RANDOMS)
+            }
+        }
+    }
+}
+
 
 @Composable
 @Preview
@@ -141,6 +212,7 @@ class RollDialogStateHolder(
     val rollSetting: RollSetting,
 ) {
     val rollState = mutableStateOf(RollState())
+    val randomizerState = mutableStateOf(0)
 
     fun changeRollProgress(newState: RollState.Progress) {
         rollState.value = rollState.value.copy(progress = newState)
@@ -157,3 +229,8 @@ class RollDialogStateHolder(
         )
     }
 }
+
+private const val INITIAL_ROLL_DELAY = 800L
+private const val DELAY_BETWEEN_THROWS = 500L
+private const val RANDOMIZING_TIME = 1000L
+private const val DELAY_BETWEEN_RANDOMS = 10L
