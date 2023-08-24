@@ -7,9 +7,9 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class RollState(
     val progress: Progress = Progress.NOT_STARTED,
-    val tryNumber: Int = 1, /* 1 try can have multiple throws. (Dis)advantage rolls have 2 tries. */
-    val throwNumber: Int = 1,
-    val outcomes: List<MutableList<Int>> = listOf(mutableListOf(), mutableListOf())
+    val currentTry: Int = 1, /* 1 try can have multiple throws. (Dis)advantage rolls have 2 tries. */
+    val currentThrow: Int = 1,
+    val throwResults: List<MutableList<Int?>> = listOf(mutableListOf(), mutableListOf())
 ) : Parcelable {
 
     @Parcelize
