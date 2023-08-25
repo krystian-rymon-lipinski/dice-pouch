@@ -1,6 +1,7 @@
 package com.krystianrymonlipinski.dicepouch.ui.dialogs
 
 import RollDescription
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -41,7 +42,7 @@ import kotlin.system.measureTimeMillis
 
 @Composable
 fun RollDialog(
-    stateHolder: RollDialogStateHolder = RollDialogStateHolder(rollSetting = RollSetting(Die(6), 4, 2)),
+    stateHolder: RollDialogStateHolder = RollDialogStateHolder(rollSetting = RollSetting(Die(6), 2, 2)),
     onConfirmButtonClicked: () -> Unit = {},
 ) {
 
@@ -124,13 +125,16 @@ fun RollResult(
     setting: RollSetting,
     rollState: RollState
 ) {
-    LazyColumn(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+    LazyColumn(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+        horizontalAlignment = Alignment.Start
+    ) {
         items(setting.numberOfTries) { tryNumber ->
             TryResult(
                 setting = setting,
                 outcomes = rollState.throwResults[tryNumber],
-                isCurrentTry = rollState.currentTry == tryNumber + 1,
-                currentThrow = rollState.currentThrow
+                tryNumber = rollState.currentTry
             )
         }
     }
@@ -140,14 +144,27 @@ fun RollResult(
 fun TryResult(
     setting: RollSetting,
     outcomes: List<Int?>,
-    isCurrentTry: Boolean,
-    currentThrow: Int
+    tryNumber: Int
 ) {
     Row(
         modifier = Modifier.padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        if (setting.numberOfTries > 1) {
+            Text(text = "$tryNumber: ", style = MaterialTheme.typography.headlineSmall)
+        }
+        Text(
+            text = "",
+            modifier = Modifier
+                .width(40.dp)
+                .border(2.dp, MaterialTheme.colorScheme.primary, MaterialTheme.shapes.extraSmall),
+            style = MaterialTheme.typography.headlineSmall
+        )
+        Text(text = " = ")
+        setting.generateModifierText()?.let { Text(text = it) }
+
         for (i in 1.. setting.diceNumber) {
+            Text(text = "+", modifier = Modifier.padding(horizontal = 2.dp))
             DieCell(
                 die = setting.die,
                 valueShown = outcomes[i-1]?.toString() ?: "",
@@ -155,11 +172,7 @@ fun TryResult(
                     .width(40.dp)
 
             )
-            if (i < setting.diceNumber) {
-                Text(text = "+", modifier = Modifier.padding(horizontal = 2.dp))
-            }
         }
-        setting.generateModifierText()?.let { Text(text = it) }
     }
 }
 

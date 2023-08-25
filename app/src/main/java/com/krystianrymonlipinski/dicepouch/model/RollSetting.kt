@@ -19,6 +19,11 @@ data class RollSetting(
     val rollDescription = buildRollDescription()
 
     fun generateModifierText() : String? {
+        return if (modifier != 0) modifier.toString()
+        else null
+    }
+
+    private fun generateModifierDescription() : String? {
         return when {
             modifier < 0 -> " - ${abs(modifier)}"
             modifier > 0 -> " + $modifier"
@@ -31,7 +36,7 @@ data class RollSetting(
             append(diceNumber)
             append('d')
             append(die.sides)
-            generateModifierText()?.let { append(it) }
+            generateModifierDescription()?.let { append(it) }
 
         }.toString()
     }
