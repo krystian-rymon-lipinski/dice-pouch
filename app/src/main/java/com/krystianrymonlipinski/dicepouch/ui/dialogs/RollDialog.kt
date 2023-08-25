@@ -164,7 +164,9 @@ fun TryResult(
         setting.generateModifierText()?.let { Text(text = it) }
 
         for (i in 1.. setting.diceNumber) {
-            Text(text = "+", modifier = Modifier.padding(horizontal = 2.dp))
+            if (setting.modifier != 0 || i != 1) {
+                Text(text = "+", modifier = Modifier.padding(horizontal = 2.dp))
+            }
             DieCell(
                 die = setting.die,
                 valueShown = outcomes[i-1]?.toString() ?: "",
@@ -230,6 +232,7 @@ private suspend fun getSingleTryJob(
                 onNewRandomValue = onNewRandomValue
             )
             throwJob.join() /* Wait for the random to end before starting next throw */
+            delay(RANDOMIZER_FREEZE)
             onSingleThrowFinished()
             delay(DELAY_BETWEEN_THROWS)
     } }
@@ -298,6 +301,7 @@ class RollDialogStateHolder(
 }
 
 private const val INITIAL_ROLL_DELAY = 800L
+private const val RANDOMIZER_FREEZE = 500L
 private const val DELAY_BETWEEN_THROWS = 500L
 private const val RANDOMIZING_TIME = 1000L
 private const val DELAY_BETWEEN_RANDOMS = 10L
