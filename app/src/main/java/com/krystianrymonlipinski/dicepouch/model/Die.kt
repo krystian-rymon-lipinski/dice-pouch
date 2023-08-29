@@ -6,6 +6,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import kotlinx.parcelize.Parceler
 import kotlinx.parcelize.Parcelize
+import kotlin.random.Random
 
 @Parcelize
 data class Die (
@@ -13,6 +14,10 @@ data class Die (
     val sideColor: Color = Color.White,
     val numberColor: Color = Color.Black
 ) : Parcelable {
+
+    fun roll() = Random.nextInt(from = 1, until = sides + 1)
+
+
     private companion object : Parceler<Die> {
         override fun create(parcel: Parcel): Die {
             return Die(

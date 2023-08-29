@@ -1,5 +1,6 @@
 package com.krystianrymonlipinski.dicepouch.ui.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -46,6 +47,7 @@ fun RollScreen() {
                 stateHolder = RollSettingsStateHolder(it),
                 onDismissRequest = { showRollSettingsDialog = null },
                 onRollButtonClicked = { rollSettings ->
+                    showRollSettingsDialog = null
                     showRollDialog = rollSettings
                 }
             )
@@ -78,10 +80,10 @@ fun DiceGrid(
                 style = MaterialTheme.typography.titleMedium
             )
         }
-        items(count = diceSet.size) {
+        items(count = diceSet.size) { die ->
             DieCell(
-                die = diceSet[it],
-                onDieClicked = onDieClicked
+                die = diceSet[die],
+                modifier = Modifier.clickable { onDieClicked(diceSet[die]) },
             )
         }
     }

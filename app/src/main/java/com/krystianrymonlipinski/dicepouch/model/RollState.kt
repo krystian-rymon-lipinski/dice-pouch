@@ -6,15 +6,32 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class RollState(
-    val progress: Progress = Progress.NOT_STARTED,
-    val tryNumber: Int = 1, /* 1 try can have multiple throws. (Dis)advantage rolls have 2 tries. */
-    val throwNumber: Int = 1
+    val setting: RollSetting,
+    val isFinished: Boolean = false,
+    val currentTry: Int = 1, /* A try can have multiple throws. (Dis)advantage rolls have 2 tries. */
+    val currentThrow: Int = 1,
+    val tries: List<TryState> = listOf( /* TODO: don't initialize 2 tries if mechanic is normal */
+        TryState(MutableList(setting.diceNumber) { null }, setting.modifier),
+        TryState(MutableList(setting.diceNumber) { null }, setting.modifier)
+    )
 ) : Parcelable {
 
-    @Parcelize
-    enum class Progress : Parcelable {
-        NOT_STARTED, IN_PROGRESS, FINISHED
+    fun addThrow(value: Int) {
+        tries[currentTry - 1].addThrow(currentThrow - 1, value)
     }
+
+    fun calculateTryResult() {
+        tries[currentTry - 1].calculateResult()
+    }
+
+    fun markChosenTry() {
+        when (setting.mechanic) {
+            RollSetting.Mechanic.NORMAL -> tries.first()
+            RollSetting.Mechanic.ADVANTAGE -> tries.sortedBy { it.result }.last() /* Sorted numbers are ascending */
+            RollSetting.Mechanic.DISADVANTAGE -> tries.sortedBy { it.result }.first()
+        }.markAsChosen()
+    }
+
 }
 
 
