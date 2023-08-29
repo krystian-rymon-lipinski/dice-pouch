@@ -23,12 +23,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
-import com.krystianrymonlipinski.dicepouch.R
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
 import com.krystianrymonlipinski.dicepouch.model.RollState
@@ -47,12 +45,8 @@ fun RollDialog(
     onConfirmButtonClicked: () -> Unit = {},
 ) {
 
-    val rollState = rememberSaveable {
-        stateHolder.rollState
-    }
-    val randomizerState by remember {
-        stateHolder.randomizerState
-    }
+    val rollState = rememberSaveable { stateHolder.rollState }
+    val randomizerState by remember { stateHolder.randomizerState }
 
     LaunchedRollProcess(
         setting = stateHolder.rollState.setting,
@@ -66,19 +60,24 @@ fun RollDialog(
             stateHolder.calculateTryResult()
             stateHolder.markNextTry()
         },
-        onRollingFinished = {  }
+        onRollingFinished = {
+            //TODO: Add choosing try in adv/disadv mechanics
+            stateHolder.markRollFinished()
+        }
     )
 
     AlertDialog(
+        properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false),
         onDismissRequest = { /* Current properties do not allow this */ },
-        confirmButton = { ConfirmButton(
-            onConfirmButtonClicked = onConfirmButtonClicked
-        ) },
+        confirmButton = { ConfirmButton( /* TODO: Show button only when rolling finished */
+                onConfirmButtonClicked = onConfirmButtonClicked,
+                rollResult = rollState.tries[0].result
+            )
+        },
         text = { RollDialogContent(
             rollState = rollState,
-            randomizerState = randomizerState
-        ) },
-        properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
+            randomizerState = randomizerState,
+        ) }
     )
 }
 
@@ -87,16 +86,14 @@ fun RollDialogContent(
     rollState: RollState,
     randomizerState: Int?
 ) {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
         RollDescription(
             description = rollState.setting.rollDescription,
             textStyle = MaterialTheme.typography.titleSmall
         )
-        CurrentThrow(randomizerState)
+        CurrentThrow(randomizerState) //TODO: Hide randomizer after the roll
         RollResult(rollState = rollState)
+
     }
 }
 
@@ -175,14 +172,17 @@ fun TryResult(
 }
 
 @Composable
-fun ConfirmButton(onConfirmButtonClicked: () -> Unit) {
+fun ConfirmButton(
+    rollResult: Int?,
+    onConfirmButtonClicked: () -> Unit
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
     ) {
         TextButton(onClick = { onConfirmButtonClicked() }) {
             Text(
-                text = stringResource(id = R.string.btn_ok),
+                text = rollResult?.toString() ?: "",
                 style = MaterialTheme.typography.headlineSmall
             )
         }
@@ -201,7 +201,7 @@ fun LaunchedRollProcess(
 ) {
     LaunchedEffect(key1 = Unit) {
         delay(INITIAL_ROLL_DELAY)
-        launch { repeat(setting.numberOfTries) {
+        val rollJob = launch { repeat(setting.numberOfTries) {
                 val tryJob = getSingleTryJob(
                     scope = this,
                     setting = setting,
@@ -213,6 +213,7 @@ fun LaunchedRollProcess(
                 onTryFinished()
                 delay(DELAY_BETWEEN_THROWS)
         } }
+        rollJob.join()
         onRollingFinished()
     }
 }
@@ -284,6 +285,10 @@ class RollDialogStateHolder(
             currentTry = rollState.currentTry.inc(),
             currentThrow = 1
         )
+    }
+
+    fun markRollFinished() {
+        rollState = rollState.copy(isFinished = true)
     }
 
     fun updateRandomizer(newValue: Int) {
