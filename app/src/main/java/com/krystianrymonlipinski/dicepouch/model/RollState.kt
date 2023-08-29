@@ -24,6 +24,14 @@ data class RollState(
         tries[currentTry - 1].calculateResult()
     }
 
+    fun markChosenTry() {
+        when (setting.mechanic) {
+            RollSetting.Mechanic.NORMAL -> tries.first()
+            RollSetting.Mechanic.ADVANTAGE -> tries.sortedBy { it.result }.last() /* Sorted numbers are ascending */
+            RollSetting.Mechanic.DISADVANTAGE -> tries.sortedBy { it.result }.first()
+        }.markAsChosen()
+    }
+
 }
 
 

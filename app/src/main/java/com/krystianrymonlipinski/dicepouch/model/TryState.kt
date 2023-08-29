@@ -7,7 +7,8 @@ import kotlinx.parcelize.Parcelize
 data class TryState(
     val throws: MutableList<Int?>,
     val modifier: Int,
-    var result: Int? = null
+    var result: Int? = null,
+    var isChosen: Boolean = false
 ) : Parcelable {
 
     fun addThrow(index: Int, value: Int) {
@@ -18,6 +19,10 @@ data class TryState(
         result =
             if (isTryFinished()) throws.filterNotNull().sumOf { it } + modifier
             else null
+    }
+
+    fun markAsChosen() {
+        isChosen = true
     }
 
     private fun isTryFinished() = !throws.contains(null)
