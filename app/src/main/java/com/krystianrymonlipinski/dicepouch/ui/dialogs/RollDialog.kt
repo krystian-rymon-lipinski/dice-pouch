@@ -32,6 +32,7 @@ import com.krystianrymonlipinski.dicepouch.R
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
 import com.krystianrymonlipinski.dicepouch.model.RollState
+import com.krystianrymonlipinski.dicepouch.model.TryState
 import com.krystianrymonlipinski.dicepouch.ui.components.DieCell
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
 import kotlinx.coroutines.CoroutineScope
@@ -42,7 +43,7 @@ import kotlin.system.measureTimeMillis
 
 @Composable
 fun RollDialog(
-    stateHolder: RollDialogStateHolder = RollDialogStateHolder(rollSetting = RollSetting(Die(6), 2, 2)),
+    stateHolder: RollDialogStateHolder = RollDialogStateHolder(setting = RollSetting(Die(6), 2, 2)),
     onConfirmButtonClicked: () -> Unit = {},
 ) {
 
@@ -54,14 +55,17 @@ fun RollDialog(
     }
 
     LaunchedRollProcess(
-        setting = stateHolder.rollSetting,
+        setting = stateHolder.rollState.setting,
         onNewRandomValue = { newValue -> stateHolder.updateRandomizer(newValue) },
         onSingleThrowFinished = {
             stateHolder.addThrowResult()
-            stateHolder.markNextThrow()
             stateHolder.clearRandomizer()
+            stateHolder.markNextThrow()
         },
-        onTryFinished = { stateHolder.markNextTry() },
+        onTryFinished = {
+            stateHolder.calculateTryResult()
+            stateHolder.markNextTry()
+        },
         onRollingFinished = {  }
     )
 
@@ -71,7 +75,6 @@ fun RollDialog(
             onConfirmButtonClicked = onConfirmButtonClicked
         ) },
         text = { RollDialogContent(
-            setting = stateHolder.rollSetting,
             rollState = rollState,
             randomizerState = randomizerState
         ) },
@@ -81,7 +84,6 @@ fun RollDialog(
 
 @Composable
 fun RollDialogContent(
-    setting: RollSetting,
     rollState: RollState,
     randomizerState: Int?
 ) {
@@ -90,14 +92,11 @@ fun RollDialogContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         RollDescription(
-            description = setting.rollDescription,
+            description = rollState.setting.rollDescription,
             textStyle = MaterialTheme.typography.titleSmall
         )
         CurrentThrow(randomizerState)
-        RollResult(
-            setting = setting,
-            rollState = rollState
-        )
+        RollResult(rollState = rollState)
     }
 }
 
@@ -121,20 +120,17 @@ fun CurrentThrow(randomizerState: Int?) {
 }
 
 @Composable
-fun RollResult(
-    setting: RollSetting,
-    rollState: RollState
-) {
+fun RollResult(rollState: RollState) {
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(4.dp),
         horizontalAlignment = Alignment.Start
     ) {
-        items(setting.numberOfTries) { tryNumber ->
+        items(rollState.setting.numberOfTries) { itemNumber ->
             TryResult(
-                setting = setting,
-                outcomes = rollState.throwResults[tryNumber],
-                tryNumber = rollState.currentTry
+                setting = rollState.setting,
+                rowNumber = itemNumber,
+                tryState = rollState.tries[itemNumber]
             )
         }
     }
@@ -143,36 +139,36 @@ fun RollResult(
 @Composable
 fun TryResult(
     setting: RollSetting,
-    outcomes: List<Int?>,
-    tryNumber: Int
+    rowNumber: Int,
+    tryState: TryState,
 ) {
     Row(
         modifier = Modifier.padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (setting.numberOfTries > 1) {
-            Text(text = "$tryNumber: ", style = MaterialTheme.typography.headlineSmall)
+            Text(text = "${rowNumber + 1}: ", style = MaterialTheme.typography.headlineSmall)
         }
         Text(
-            text = "",
+            text = tryState.result?.toString() ?: "",
             modifier = Modifier
                 .width(40.dp)
                 .border(2.dp, MaterialTheme.colorScheme.primary, MaterialTheme.shapes.extraSmall),
+            textAlign = TextAlign.Center,
             style = MaterialTheme.typography.headlineSmall
         )
         Text(text = " = ")
         setting.generateModifierText()?.let { Text(text = it) }
 
-        for (i in 1.. setting.diceNumber) {
-            if (setting.modifier != 0 || i != 1) {
+        for (i in 0 until setting.diceNumber) {
+            if (setting.modifier != 0 || i != 0) {
                 Text(text = "+", modifier = Modifier.padding(horizontal = 2.dp))
             }
             DieCell(
                 die = setting.die,
-                valueShown = outcomes[i-1]?.toString() ?: "",
+                valueShown = tryState.throws[i]?.toString() ?: "",
                 modifier = Modifier
                     .width(40.dp)
-
             )
         }
     }
@@ -213,7 +209,9 @@ fun LaunchedRollProcess(
                     onSingleThrowFinished = onSingleThrowFinished
                 )
                 tryJob.join()
+                delay(DELAY_BEFORE_SHOWING_RESULT)
                 onTryFinished()
+                delay(DELAY_BETWEEN_THROWS)
         } }
         onRollingFinished()
     }
@@ -232,7 +230,7 @@ private suspend fun getSingleTryJob(
                 onNewRandomValue = onNewRandomValue
             )
             throwJob.join() /* Wait for the random to end before starting next throw */
-            delay(RANDOMIZER_FREEZE)
+            delay(DELAY_BEFORE_SHOWING_RESULT)
             onSingleThrowFinished()
             delay(DELAY_BETWEEN_THROWS)
     } }
@@ -264,24 +262,21 @@ fun RollDialogPreview() {
 }
 
 class RollDialogStateHolder(
-    val rollSetting: RollSetting,
+    setting: RollSetting,
 ) {
-    var rollState by mutableStateOf(RollState())
+    var rollState by mutableStateOf(RollState(setting))
     var randomizerState = mutableStateOf<Int?>(null)
 
-    init {
-        for (i in 0 until rollSetting.diceNumber) {
-            rollState.throwResults[0].add(null)
-            rollState.throwResults[1].add(null)
-        }
-    }
-
     fun addThrowResult() {
-        rollState.throwResults[rollState.currentTry - 1][rollState.currentThrow - 1] = randomizerState.value ?: 0
+        rollState.addThrow(randomizerState.value ?: 0)
     }
 
     fun markNextThrow() {
         rollState = rollState.copy(currentThrow = rollState.currentThrow.inc())
+    }
+
+    fun calculateTryResult() {
+        rollState.calculateTryResult()
     }
 
     fun markNextTry() {
@@ -301,7 +296,7 @@ class RollDialogStateHolder(
 }
 
 private const val INITIAL_ROLL_DELAY = 800L
-private const val RANDOMIZER_FREEZE = 500L
+private const val DELAY_BEFORE_SHOWING_RESULT = 500L
 private const val DELAY_BETWEEN_THROWS = 500L
 private const val RANDOMIZING_TIME = 1000L
 private const val DELAY_BETWEEN_RANDOMS = 10L
