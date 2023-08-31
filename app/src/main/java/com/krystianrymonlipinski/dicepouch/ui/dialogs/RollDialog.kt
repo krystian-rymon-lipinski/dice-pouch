@@ -128,7 +128,8 @@ fun RollResult(rollState: RollState) {
         items(rollState.setting.numberOfTries) { itemNumber ->
             TryResult(
                 setting = rollState.setting,
-                tryState = rollState.tries[itemNumber]
+                tryState = rollState.tries[itemNumber],
+                currentThrow = rollState.currentThrow
             )
         }
     }
@@ -138,6 +139,7 @@ fun RollResult(rollState: RollState) {
 fun TryResult(
     setting: RollSetting,
     tryState: TryState,
+    currentThrow: Int
 ) {
     Row(
         modifier = Modifier.padding(4.dp),
@@ -173,7 +175,15 @@ fun TryResult(
             DieCell(
                 die = setting.die,
                 valueShown = tryState.throws[i]?.toString() ?: "",
-                modifier = Modifier.width(40.dp)
+                modifier = Modifier
+                    .width(40.dp)
+                    .conditionalBorder(currentThrow - 1 == i) {
+                        this.border(
+                            width = 2.dp,
+                            color = MaterialTheme.colorScheme.primary,
+                            shape = MaterialTheme.shapes.extraSmall
+                        )
+                    }
                 //TODO: add conditional border for the cell currently being rolled for
             )
         }
