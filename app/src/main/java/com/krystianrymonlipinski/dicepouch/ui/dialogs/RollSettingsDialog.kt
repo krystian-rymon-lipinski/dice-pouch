@@ -1,7 +1,6 @@
 package com.krystianrymonlipinski.dicepouch.ui.dialogs
 
 import RollDescription
-import android.view.View
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,12 +24,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.DialogProperties
-import com.google.android.material.button.MaterialButtonToggleGroup
 import com.krystianrymonlipinski.dicepouch.R
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
+import com.krystianrymonlipinski.dicepouch.ui.components.MechanicSegmentedButton
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
 
 @Composable
@@ -93,7 +91,10 @@ fun RollSettingsDialogContent(
                 onDecrementClicked = { onModifierChanged(-1) }
             )
         }
-        MechanicSetting(onMechanicSettingChanged)
+        MechanicSegmentedButton(
+            die = state.die,
+            onSelectedButtonChanged = { newMechanic -> onMechanicSettingChanged(newMechanic) }
+        )
     }
 }
 
@@ -113,26 +114,6 @@ fun RollSetting(
             Icon(imageVector = Icons.Filled.Add, contentDescription = "plus")
         }
     }
-}
-
-@Composable
-fun MechanicSetting(onMechanicSettingChanged: (RollSetting.Mechanic) -> Unit) {
-    AndroidView(
-        factory = { View.inflate(it, R.layout.advantages_button, null) },
-        update = {
-            it.findViewById<MaterialButtonToggleGroup>(R.id.adv_setting_button).apply {
-                addOnButtonCheckedListener { group, _, _ ->
-                    val newSetting = when (group.checkedButtonId) {
-                        R.id.button_adv -> RollSetting.Mechanic.ADVANTAGE
-                        R.id.button_disadv -> RollSetting.Mechanic.DISADVANTAGE
-                        R.id.button_normal -> RollSetting.Mechanic.NORMAL
-                        else -> RollSetting.Mechanic.NORMAL
-                    }
-                    onMechanicSettingChanged(newSetting)
-                }
-            }
-        }
-    )
 }
 
 @Composable
