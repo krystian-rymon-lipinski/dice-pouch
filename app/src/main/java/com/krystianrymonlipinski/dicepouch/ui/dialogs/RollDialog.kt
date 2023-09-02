@@ -3,11 +3,13 @@ package com.krystianrymonlipinski.dicepouch.ui.dialogs
 import RollDescription
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
@@ -33,7 +35,7 @@ import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
 import com.krystianrymonlipinski.dicepouch.model.RollState
 import com.krystianrymonlipinski.dicepouch.model.TryState
-import com.krystianrymonlipinski.dicepouch.ui.components.DieCell
+import com.krystianrymonlipinski.dicepouch.ui.components.DieImage
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -91,26 +93,29 @@ fun RollDialogContent(
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         RollDescription(
             description = rollState.setting.rollDescription,
-            textStyle = MaterialTheme.typography.titleSmall
+            textStyle = MaterialTheme.typography.titleMedium
         )
-        CurrentThrow(randomizerState) //TODO: Hide randomizer after the roll
+        CurrentThrow(randomizerState = randomizerState)
         RollResult(rollState = rollState)
 
     }
 }
 
 @Composable
-fun CurrentThrow(randomizerState: Int?) {
+fun CurrentThrow(
+    modifier: Modifier = Modifier,
+    randomizerState: Int?
+) {
     Surface(
-        modifier = Modifier
-            .width(120.dp)
-            .padding(vertical = 8.dp),
+        modifier = modifier
+            .fillMaxWidth(0.5f)
+            .padding(vertical = 24.dp),
         shape = MaterialTheme.shapes.small,
         color = MaterialTheme.colorScheme.secondaryContainer
     ) {
         Text(
             text = randomizerState?.toString() ?: "",
-            modifier = Modifier.padding(vertical = 8.dp),
+            modifier = Modifier.padding(vertical = 4.dp),
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.displayLarge
         )
@@ -147,7 +152,8 @@ fun TryResult(
     ) {
         Surface(
             modifier = Modifier
-                .width(40.dp) //TODO: change fixed value for a percentage of a dialog width
+                .fillMaxWidth(0.15f)
+                .height(48.dp)
                 .conditionalBorder(tryState.isChosen) {
                     this.border(
                         width = 2.dp,
@@ -159,32 +165,41 @@ fun TryResult(
             color = MaterialTheme.colorScheme.secondaryContainer
 
         ) {
-            Text(
-                text = tryState.result?.toString() ?: "",
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.headlineSmall
-            )
+            Box(contentAlignment = Alignment.Center) {
+                Text(
+                    text = tryState.result?.toString() ?: "",
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.headlineSmall
+                )
+            }
         }
-        Text(text = " = ")
-        setting.generateModifierText()?.let { Text(text = it) }
+        Text(text = " = ", style = MaterialTheme.typography.headlineSmall)
+        setting.generateModifierText()?.let {
+            Text(text = it, style = MaterialTheme.typography.headlineSmall)
+        }
 
         for (i in 0 until setting.diceNumber) {
             if (setting.modifier != 0 || i != 0) {
-                Text(text = "+", modifier = Modifier.padding(horizontal = 2.dp))
+                Text(
+                    text = "+",
+                    modifier = Modifier.padding(horizontal = 2.dp),
+                    style = MaterialTheme.typography.headlineSmall
+                )
             }
-            DieCell(
+            DieImage(
                 die = setting.die,
                 valueShown = tryState.throws[i]?.toString() ?: "",
                 modifier = Modifier
-                    .width(40.dp)
+                    .size(48.dp)
                     .conditionalBorder(currentThrow - 1 == i) {
+                    //TODO: fix border for the cell currently being rolled for
                         this.border(
                             width = 2.dp,
                             color = MaterialTheme.colorScheme.primary,
                             shape = MaterialTheme.shapes.extraSmall
                         )
-                    }
-                //TODO: add conditional border for the cell currently being rolled for
+                    },
+                textStyle = MaterialTheme.typography.bodyMedium
             )
         }
     }

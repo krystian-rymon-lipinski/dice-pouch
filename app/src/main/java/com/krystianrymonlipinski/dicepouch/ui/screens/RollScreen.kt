@@ -21,7 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
-import com.krystianrymonlipinski.dicepouch.ui.components.DieCell
+import com.krystianrymonlipinski.dicepouch.ui.components.DieImage
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollDialog
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollDialogStateHolder
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollSettingsDialog
@@ -79,10 +79,17 @@ fun DiceGrid(
             )
         }
         items(count = diceSet.size) { die ->
-            DieCell(
-                die = diceSet[die],
+            Surface(
                 modifier = Modifier.clickable { onDieClicked(diceSet[die]) },
-            )
+                shape = MaterialTheme.shapes.small,
+                color = MaterialTheme.colorScheme.tertiaryContainer,
+                shadowElevation = 4.dp
+            ) {
+                DieImage(
+                    die = diceSet[die],
+                    textStyle = MaterialTheme.typography.headlineMedium
+                )
+            }
         }
     }
 }
