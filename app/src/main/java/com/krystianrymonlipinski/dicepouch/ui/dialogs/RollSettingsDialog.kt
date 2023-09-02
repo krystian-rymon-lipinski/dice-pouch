@@ -1,10 +1,13 @@
 package com.krystianrymonlipinski.dicepouch.ui.dialogs
 
 import RollDescription
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -20,6 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -51,12 +55,7 @@ fun RollSettingsDialog(
             savedState.value,
             onDiceNumberChanged = { stateHolder.changeDiceNumber(it) },
             onModifierChanged = { stateHolder.changeModifier(it) },
-            onMechanicSettingChanged = {
-                stateHolder.changeMechanic(it)
-                if (it != RollSetting.Mechanic.NORMAL) {
-                    stateHolder.resetDiceNumber()
-                }
-            }
+            onMechanicSettingChanged = { stateHolder.changeMechanic(it) }
         ) },
         properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true)
     )
@@ -72,25 +71,29 @@ fun RollSettingsDialogContent(
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         RollDescription(
             description = state.rollDescription,
-            modifier = Modifier.padding(bottom = 8.dp),
+            modifier = Modifier.padding(bottom = 24.dp),
             textStyle = MaterialTheme.typography.headlineLarge.copy(
                 fontWeight = FontWeight.Bold
             )
         )
-        Row(horizontalArrangement = Arrangement.SpaceBetween) {
-            RollSetting(
-                settingName = stringResource(id = R.string.roll_setting_dice_number),
-                shouldDisableControls = state.mechanic != RollSetting.Mechanic.NORMAL,
-                onIncrementClicked = { onDiceNumberChanged(1) },
-                onDecrementClicked = { onDiceNumberChanged(-1) }
-            )
-            RollSetting(
-                settingName = stringResource(id = R.string.roll_setting_modifier),
-                shouldDisableControls = false,
-                onIncrementClicked = { onModifierChanged(1) },
-                onDecrementClicked = { onModifierChanged(-1) }
-            )
-        }
+        RollSetting(
+            settingName = stringResource(id = R.string.roll_setting_dice_number),
+            onIncrementClicked = { onDiceNumberChanged(1) },
+            onDecrementClicked = { onDiceNumberChanged(-1) }
+        )
+        Spacer(modifier = Modifier
+            .fillMaxWidth()
+            .height(8.dp)
+        )
+        RollSetting(
+            settingName = stringResource(id = R.string.roll_setting_modifier),
+            onIncrementClicked = { onModifierChanged(1) },
+            onDecrementClicked = { onModifierChanged(-1) }
+        )
+        Spacer(modifier = Modifier
+            .fillMaxWidth()
+            .height(16.dp)
+        )
         MechanicSegmentedButton(
             die = state.die,
             onSelectedButtonChanged = { newMechanic -> onMechanicSettingChanged(newMechanic) }
@@ -101,19 +104,38 @@ fun RollSettingsDialogContent(
 @Composable
 fun RollSetting(
     settingName: String,
-    shouldDisableControls: Boolean,
     onIncrementClicked: () -> Unit,
     onDecrementClicked: () -> Unit
 ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        IconButton(onClick = { onDecrementClicked() }, enabled = !shouldDisableControls) {
-            Icon(imageVector = Icons.Filled.Remove, contentDescription = "minus")
-        }
-        Text(text = settingName)
-        IconButton(onClick = { onIncrementClicked() }, enabled = !shouldDisableControls) {
-            Icon(imageVector = Icons.Filled.Add, contentDescription = "plus")
-        }
+        ControlIcon(
+            imageVector = Icons.Filled.Remove,
+            contentDescription = "minus",
+            onIconClicked = { onDecrementClicked() }
+        )
+        Text(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            text = settingName
+        )
+        ControlIcon(
+            imageVector = Icons.Filled.Add,
+            contentDescription = "plus",
+            onIconClicked = { onIncrementClicked() }
+        )
     }
+}
+
+@Composable
+fun ControlIcon(
+    imageVector: ImageVector,
+    contentDescription: String,
+    onIconClicked: () -> Unit,
+) {
+    IconButton(
+        onClick = { onIconClicked() },
+        modifier = Modifier
+            .background(color = MaterialTheme.colorScheme.secondaryContainer, shape = MaterialTheme.shapes.small)
+    ) { Icon(imageVector = imageVector, contentDescription = contentDescription) }
 }
 
 @Composable
@@ -165,10 +187,6 @@ class RollSettingsStateHolder(die: Die) {
 
     fun changeMechanic(newValue: RollSetting.Mechanic) {
         state.value = state.value.copy(mechanic = newValue)
-    }
-
-    fun resetDiceNumber() {
-        state.value = state.value.copy(diceNumber = 1)
     }
 }
 
