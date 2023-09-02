@@ -33,10 +33,13 @@ data class RollSetting(
 
     private fun buildRollDescription() : String {
         return StringBuilder().apply {
-            append(diceNumber)
-            append('d')
-            append(die.sides)
+            append("${diceNumber}d${die.sides}")
             generateModifierDescription()?.let { append(it) }
+            when (mechanic) {
+                Mechanic.ADVANTAGE -> append(" (A)")
+                Mechanic.DISADVANTAGE -> append(" (D)")
+                else -> { }
+            }
 
         }.toString()
     }
