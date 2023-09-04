@@ -138,7 +138,7 @@ fun RollResult(rollState: RollState) {
         horizontalAlignment = Alignment.Start
     ) {
         items(rollState.setting.numberOfTries) { itemNumber ->
-            TryResult(
+            TryCalculation(
                 setting = rollState.setting,
                 tryState = rollState.tries[itemNumber],
                 currentThrow = rollState.currentThrow
@@ -148,45 +148,54 @@ fun RollResult(rollState: RollState) {
 }
 
 @Composable
-fun TryResult(
-    setting: RollSetting,
-    tryState: TryState,
-    currentThrow: Int
-) {
+fun TryCalculation(setting: RollSetting, tryState: TryState, currentThrow: Int) {
     Row(
         modifier = Modifier.padding(4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Surface(
-            modifier = Modifier
-                .fillMaxWidth(0.15f)
-                .height(48.dp)
-                .conditionalBorder(tryState.isChosen) {
-                    this.border(
-                        width = 2.dp,
-                        color = MaterialTheme.colorScheme.primary,
-                        shape = MaterialTheme.shapes.extraSmall
-                    )
-                },
-            shape = MaterialTheme.shapes.extraSmall,
-            color = MaterialTheme.colorScheme.secondaryContainer
+        TryResult(result = tryState.result, isChosen = tryState.isChosen)
+        Text(text = " = ", style = MaterialTheme.typography.headlineSmall)
+        DiceSum(setting = setting, throws = tryState.throws, currentThrow = currentThrow)
+    }
+}
 
-        ) {
-            Box(contentAlignment = Alignment.Center) {
-                Text(
-                    text = tryState.result?.toString() ?: "",
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.headlineSmall
+@Composable
+fun TryResult(result: Int?, isChosen: Boolean) {
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth(0.15f)
+            .height(48.dp)
+            .conditionalBorder(isChosen) {
+                this.border(
+                    width = 2.dp,
+                    color = MaterialTheme.colorScheme.primary,
+                    shape = MaterialTheme.shapes.extraSmall
                 )
+            },
+        shape = MaterialTheme.shapes.extraSmall,
+        color = MaterialTheme.colorScheme.secondaryContainer
+
+    ) {
+        Box(contentAlignment = Alignment.Center) {
+            Text(
+                text = result?.toString() ?: "",
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.headlineSmall
+            )
+        }
+    }
+}
+
+@Composable
+fun DiceSum(setting: RollSetting, throws: List<Int?>, currentThrow: Int) {
+    LazyRow(verticalAlignment = Alignment.CenterVertically) {
+        item {
+            setting.generateModifierText()?.let {
+                Text(text = it, style = MaterialTheme.typography.headlineSmall)
             }
         }
-        Text(text = " = ", style = MaterialTheme.typography.headlineSmall)
-        setting.generateModifierText()?.let {
-            Text(text = it, style = MaterialTheme.typography.headlineSmall)
-        }
-
-        for (i in 0 until setting.diceNumber) {
-            if (setting.modifier != 0 || i != 0) {
+        items(setting.diceNumber) { throwNumber ->
+            if (setting.modifier != 0 || throwNumber != 0) {
                 Text(
                     text = "+",
                     modifier = Modifier.padding(horizontal = 2.dp),
@@ -195,11 +204,11 @@ fun TryResult(
             }
             DieImage(
                 die = setting.die,
-                valueShown = tryState.throws[i]?.toString() ?: "",
+                valueShown = throws[throwNumber]?.toString() ?: "",
                 modifier = Modifier
                     .size(48.dp)
-                    .conditionalBorder(currentThrow - 1 == i) {
-                    //TODO: fix border for the cell currently being rolled for
+                    .conditionalBorder(currentThrow - 1 == throwNumber) {
+                        //TODO: fix border for the cell currently being rolled for
                         this.border(
                             width = 2.dp,
                             color = MaterialTheme.colorScheme.primary,
