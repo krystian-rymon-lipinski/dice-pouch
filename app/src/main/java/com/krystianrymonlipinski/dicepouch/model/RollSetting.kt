@@ -18,10 +18,6 @@ data class RollSetting(
     @IgnoredOnParcel
     val rollDescription = buildRollDescription()
 
-    fun generateModifierText() : String? {
-        return if (modifier != 0) modifier.toString()
-        else null
-    }
 
     private fun generateModifierDescription() : String? {
         return when {

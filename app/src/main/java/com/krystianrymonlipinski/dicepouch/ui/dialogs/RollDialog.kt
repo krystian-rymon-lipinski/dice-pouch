@@ -141,6 +141,7 @@ fun RollResult(rollState: RollState) {
             TryCalculation(
                 setting = rollState.setting,
                 tryState = rollState.tries[itemNumber],
+                isCurrentTry = rollState.currentTry - 1 == itemNumber,
                 currentThrow = rollState.currentThrow
             )
         }
@@ -148,14 +149,14 @@ fun RollResult(rollState: RollState) {
 }
 
 @Composable
-fun TryCalculation(setting: RollSetting, tryState: TryState, currentThrow: Int) {
+fun TryCalculation(setting: RollSetting, tryState: TryState, isCurrentTry: Boolean, currentThrow: Int) {
     Row(
         modifier = Modifier.padding(4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         TryResult(result = tryState.result, isChosen = tryState.isChosen)
         Text(text = " = ", style = MaterialTheme.typography.headlineSmall)
-        DiceSum(setting = setting, throws = tryState.throws, currentThrow = currentThrow)
+        DiceSum(setting = setting, throws = tryState.throws, isCurrentTry = isCurrentTry, currentThrow = currentThrow)
     }
 }
 
@@ -187,14 +188,12 @@ fun TryResult(result: Int?, isChosen: Boolean) {
 }
 
 @Composable
-fun DiceSum(setting: RollSetting, throws: List<Int?>, currentThrow: Int) {
+fun DiceSum(setting: RollSetting, throws: List<Int?>, isCurrentTry: Boolean, currentThrow: Int) {
     LazyRow(verticalAlignment = Alignment.CenterVertically) {
-        item {
-            setting.generateModifierText()?.let {
-                Text(text = it, style = MaterialTheme.typography.headlineSmall)
-            }
+        if (setting.modifier != 0) {
+            item { Text(text = setting.modifier.toString(), style = MaterialTheme.typography.headlineSmall) }
         }
-        items(setting.diceNumber) { throwNumber ->
+        items(throws.size) { throwNumber ->
             if (setting.modifier != 0 || throwNumber != 0) {
                 Text(
                     text = "+",
@@ -207,8 +206,8 @@ fun DiceSum(setting: RollSetting, throws: List<Int?>, currentThrow: Int) {
                 valueShown = throws[throwNumber]?.toString() ?: "",
                 modifier = Modifier
                     .size(48.dp)
-                    .conditionalBorder(currentThrow - 1 == throwNumber) {
-                        //TODO: fix border for the cell currently being rolled for
+                    .conditionalBorder(isCurrentTry && currentThrow - 1 == throwNumber) {
+                        //TODO: animate border hopping from die to die
                         this.border(
                             width = 2.dp,
                             color = MaterialTheme.colorScheme.primary,
