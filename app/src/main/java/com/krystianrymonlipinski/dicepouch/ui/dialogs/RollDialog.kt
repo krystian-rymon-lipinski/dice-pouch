@@ -50,23 +50,23 @@ fun RollDialog(
     setting: RollSetting = RollSetting(Die(6), 2, 2),
     onConfirmButtonClicked: () -> Unit = {},
 ) {
-    val stateHolder = rememberRollStateHolder(setting)
+    val dialogStateHolder = rememberRollDialogStateHolder(setting)
 
     LaunchedRollProcess(
-        setting = stateHolder.rollState.setting,
-        onNewRandomValue = { newValue -> stateHolder.updateRandomizer(newValue) },
+        setting = dialogStateHolder.rollState.setting,
+        onNewRandomValue = { newValue -> dialogStateHolder.updateRandomizer(newValue) },
         onSingleThrowFinished = {
-            stateHolder.addThrowResult()
-            stateHolder.clearRandomizer()
-            stateHolder.markNextThrow()
+            dialogStateHolder.addThrowResult()
+            dialogStateHolder.clearRandomizer()
+            dialogStateHolder.markNextThrow()
         },
         onTryFinished = {
-            stateHolder.calculateTryResult()
-            stateHolder.markNextTry()
+            dialogStateHolder.calculateTryResult()
+            dialogStateHolder.markNextTry()
         },
         onRollingFinished = {
-            stateHolder.markChosenTry()
-            stateHolder.markRollFinished()
+            dialogStateHolder.markChosenTry()
+            dialogStateHolder.markRollFinished()
         }
     )
 
@@ -75,18 +75,18 @@ fun RollDialog(
         onDismissRequest = { /* Current properties do not allow this */ },
         confirmButton = { ConfirmButton( /* TODO: Show button only when rolling finished */
                 onConfirmButtonClicked = onConfirmButtonClicked,
-                rollResult = stateHolder.rollState.tries.find { it.isChosen }?.result
+                rollResult = dialogStateHolder.rollState.tries.find { it.isChosen }?.result
             )
         },
         text = { RollDialogContent(
-            rollState = stateHolder.rollState,
-            randomizerState = stateHolder.randomizerState,
+            rollState = dialogStateHolder.rollState,
+            randomizerState = dialogStateHolder.randomizerState,
         ) }
     )
 }
 
 @Composable
-fun rememberRollStateHolder(setting: RollSetting) : RollDialogStateHolder {
+fun rememberRollDialogStateHolder(setting: RollSetting) : RollDialogStateHolder {
     return rememberSaveable(saver = RollDialogStateHolder.Saver) {
         RollDialogStateHolder(rollState = RollState(setting))
     }

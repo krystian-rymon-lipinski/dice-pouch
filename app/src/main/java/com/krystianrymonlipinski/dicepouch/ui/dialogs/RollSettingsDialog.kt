@@ -45,30 +45,30 @@ fun RollSettingsDialog(
     onDismissRequest: () -> Unit = {},
     onRollButtonClicked: (RollSetting) -> Unit = {}
 ) {
-    val settingStateHolder = rememberSettingStateHolder(die = die)
+    val dialogStateHolder = rememberSettingsDialogStateHolder(die = die)
 
     AlertDialog(
         onDismissRequest = { onDismissRequest() },
         confirmButton = {
             RollButton(onRollButtonClicked = {
                 onDismissRequest()
-                onRollButtonClicked(settingStateHolder.state) }
+                onRollButtonClicked(dialogStateHolder.state) }
             )
         },
         text = { RollSettingsDialogContent(
-            settingStateHolder.state,
-            onDiceNumberChanged = { settingStateHolder.changeDiceNumber(it) },
-            onModifierChanged = { settingStateHolder.changeModifier(it) },
-            onMechanicSettingChanged = { settingStateHolder.changeMechanic(it) }
+            dialogStateHolder.state,
+            onDiceNumberChanged = { dialogStateHolder.changeDiceNumber(it) },
+            onModifierChanged = { dialogStateHolder.changeModifier(it) },
+            onMechanicSettingChanged = { dialogStateHolder.changeMechanic(it) }
         ) },
         properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true)
     )
 }
 
 @Composable
-fun rememberSettingStateHolder(die: Die) : RollSettingsStateHolder {
-    return rememberSaveable(saver = RollSettingsStateHolder.Saver) {
-        RollSettingsStateHolder(rollSetting = RollSetting(die))
+fun rememberSettingsDialogStateHolder(die: Die) : RollSettingsDialogStateHolder {
+    return rememberSaveable(saver = RollSettingsDialogStateHolder.Saver) {
+        RollSettingsDialogStateHolder(rollSetting = RollSetting(die))
     }
 }
 
@@ -174,7 +174,7 @@ fun RollSettingsDialogPreview() {
 }
 
 
-class RollSettingsStateHolder(rollSetting: RollSetting) {
+class RollSettingsDialogStateHolder(rollSetting: RollSetting) {
 
     var state by mutableStateOf(rollSetting)
 
@@ -201,9 +201,9 @@ class RollSettingsStateHolder(rollSetting: RollSetting) {
     }
 
     companion object {
-        val Saver: Saver<RollSettingsStateHolder, *> = listSaver(
+        val Saver: Saver<RollSettingsDialogStateHolder, *> = listSaver(
             save = { listOf(it.state) },
-            restore = { RollSettingsStateHolder(rollSetting = it[0]) }
+            restore = { RollSettingsDialogStateHolder(rollSetting = it[0]) }
         )
     }
 }
