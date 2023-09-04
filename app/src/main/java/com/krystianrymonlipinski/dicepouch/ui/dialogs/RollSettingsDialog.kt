@@ -19,8 +19,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -37,28 +41,35 @@ import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
 
 @Composable
 fun RollSettingsDialog(
-    stateHolder: RollSettingsStateHolder = RollSettingsStateHolder(Die(6)),
+    die: Die = Die(6),
     onDismissRequest: () -> Unit = {},
     onRollButtonClicked: (RollSetting) -> Unit = {}
 ) {
-    val savedState = rememberSaveable { stateHolder.state }
+    val settingStateHolder = rememberSettingStateHolder(die = die)
 
     AlertDialog(
         onDismissRequest = { onDismissRequest() },
         confirmButton = {
             RollButton(onRollButtonClicked = {
                 onDismissRequest()
-                onRollButtonClicked(savedState.value) }
+                onRollButtonClicked(settingStateHolder.state) }
             )
         },
         text = { RollSettingsDialogContent(
-            savedState.value,
-            onDiceNumberChanged = { stateHolder.changeDiceNumber(it) },
-            onModifierChanged = { stateHolder.changeModifier(it) },
-            onMechanicSettingChanged = { stateHolder.changeMechanic(it) }
+            settingStateHolder.state,
+            onDiceNumberChanged = { settingStateHolder.changeDiceNumber(it) },
+            onModifierChanged = { settingStateHolder.changeModifier(it) },
+            onMechanicSettingChanged = { settingStateHolder.changeMechanic(it) }
         ) },
         properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true)
     )
+}
+
+@Composable
+fun rememberSettingStateHolder(die: Die) : RollSettingsStateHolder {
+    return rememberSaveable(saver = RollSettingsStateHolder.Saver) {
+        RollSettingsStateHolder(rollSetting = RollSetting(die))
+    }
 }
 
 @Composable
@@ -163,30 +174,37 @@ fun RollSettingsDialogPreview() {
 }
 
 
-class RollSettingsStateHolder(die: Die) {
+class RollSettingsStateHolder(rollSetting: RollSetting) {
 
-    val state = mutableStateOf(RollSetting(die))
+    var state by mutableStateOf(rollSetting)
 
     fun changeDiceNumber(change: Int) {
-        state.value = state.value.copy(diceNumber = state.value.diceNumber + change)
-        if (state.value.diceNumber < MIN_DICE) {
-            state.value = state.value.copy(diceNumber = MAX_DICE)
-        } else if (state.value.diceNumber > MAX_DICE) {
-            state.value = state.value.copy(diceNumber = MIN_DICE)
+        state = state.copy(diceNumber = state.diceNumber + change)
+        if (state.diceNumber < MIN_DICE) {
+            state = state.copy(diceNumber = MAX_DICE)
+        } else if (state.diceNumber > MAX_DICE) {
+            state = state.copy(diceNumber = MIN_DICE)
         }
     }
 
     fun changeModifier(change: Int) {
-        state.value = state.value.copy(modifier = state.value.modifier + change)
-        if (state.value.modifier < MIN_MOD) {
-            state.value = state.value.copy(modifier = MAX_MOD)
-        } else if (state.value.modifier > MAX_MOD) {
-            state.value = state.value.copy(modifier = MIN_MOD)
+        state = state.copy(modifier = state.modifier + change)
+        if (state.modifier < MIN_MOD) {
+            state = state.copy(modifier = MAX_MOD)
+        } else if (state.modifier > MAX_MOD) {
+            state = state.copy(modifier = MIN_MOD)
         }
     }
 
     fun changeMechanic(newValue: RollSetting.Mechanic) {
-        state.value = state.value.copy(mechanic = newValue)
+        state = state.copy(mechanic = newValue).copy()
+    }
+
+    companion object {
+        val Saver: Saver<RollSettingsStateHolder, *> = listSaver(
+            save = { listOf(it.state) },
+            restore = { RollSettingsStateHolder(rollSetting = it[0]) }
+        )
     }
 }
 

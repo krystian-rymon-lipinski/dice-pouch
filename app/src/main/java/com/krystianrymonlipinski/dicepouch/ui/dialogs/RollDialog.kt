@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -20,7 +21,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -45,12 +47,10 @@ import kotlin.system.measureTimeMillis
 
 @Composable
 fun RollDialog(
-    stateHolder: RollDialogStateHolder = RollDialogStateHolder(setting = RollSetting(Die(6), 2, 2)),
+    setting: RollSetting = RollSetting(Die(6), 2, 2),
     onConfirmButtonClicked: () -> Unit = {},
 ) {
-
-    val rollState = rememberSaveable { stateHolder.rollState }
-    val randomizerState by remember { stateHolder.randomizerState }
+    val stateHolder = rememberRollStateHolder(setting)
 
     LaunchedRollProcess(
         setting = stateHolder.rollState.setting,
@@ -75,14 +75,21 @@ fun RollDialog(
         onDismissRequest = { /* Current properties do not allow this */ },
         confirmButton = { ConfirmButton( /* TODO: Show button only when rolling finished */
                 onConfirmButtonClicked = onConfirmButtonClicked,
-                rollResult = rollState.tries.find { it.isChosen }?.result
+                rollResult = stateHolder.rollState.tries.find { it.isChosen }?.result
             )
         },
         text = { RollDialogContent(
-            rollState = rollState,
-            randomizerState = randomizerState,
+            rollState = stateHolder.rollState,
+            randomizerState = stateHolder.randomizerState,
         ) }
     )
+}
+
+@Composable
+fun rememberRollStateHolder(setting: RollSetting) : RollDialogStateHolder {
+    return rememberSaveable(saver = RollDialogStateHolder.Saver) {
+        RollDialogStateHolder(rollState = RollState(setting))
+    }
 }
 
 @Composable
@@ -312,13 +319,14 @@ fun RollDialogPreview() {
 }
 
 class RollDialogStateHolder(
-    setting: RollSetting,
+    rollState: RollState,
+    randomizerState: Int? = null
 ) {
-    var rollState by mutableStateOf(RollState(setting))
-    var randomizerState = mutableStateOf<Int?>(null)
+    var rollState by mutableStateOf(rollState)
+    var randomizerState by mutableStateOf(randomizerState)
 
     fun addThrowResult() {
-        rollState.addThrow(randomizerState.value ?: 0)
+        rollState.addThrow(randomizerState ?: 0)
     }
 
     fun markNextThrow() {
@@ -345,11 +353,21 @@ class RollDialogStateHolder(
     }
 
     fun updateRandomizer(newValue: Int) {
-        randomizerState.value = newValue
+        randomizerState = newValue
     }
 
     fun clearRandomizer() {
-        randomizerState.value = null
+        randomizerState = null
+    }
+
+    companion object {
+        val Saver: Saver<RollDialogStateHolder, *> = listSaver(
+            save = { listOf(it.rollState, it.randomizerState) },
+            restore = { RollDialogStateHolder(
+                rollState = it[0] as RollState,
+                randomizerState = it[1] as Int?
+            ) }
+        )
     }
 }
 

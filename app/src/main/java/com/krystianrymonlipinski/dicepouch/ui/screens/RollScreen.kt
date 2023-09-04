@@ -23,9 +23,7 @@ import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
 import com.krystianrymonlipinski.dicepouch.ui.components.DieImage
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollDialog
-import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollDialogStateHolder
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollSettingsDialog
-import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollSettingsStateHolder
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
 
 @Composable
@@ -42,7 +40,7 @@ fun RollScreen() {
         )
         showRollSettingsDialog?.let {
             RollSettingsDialog(
-                stateHolder = RollSettingsStateHolder(it),
+                it,
                 onDismissRequest = { showRollSettingsDialog = null },
                 onRollButtonClicked = { rollSettings ->
                     showRollSettingsDialog = null
@@ -52,7 +50,7 @@ fun RollScreen() {
         }
         showRollDialog?.let {
             RollDialog(
-                stateHolder = RollDialogStateHolder(it),
+                setting = it,
                 onConfirmButtonClicked = { showRollDialog = null }
             )
         }
