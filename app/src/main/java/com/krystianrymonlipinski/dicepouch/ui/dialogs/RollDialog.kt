@@ -72,7 +72,7 @@ fun RollDialog(
     AlertDialog(
         properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false),
         onDismissRequest = { /* Current properties do not allow this */ },
-        confirmButton = { ConfirmButton( /* TODO: Show button only when rolling finished */
+        confirmButton = { ConfirmButton(
                 onConfirmButtonClicked = onConfirmButtonClicked,
                 rollResult = dialogStateHolder.rollState.tries.find { it.isChosen }?.result
             )
@@ -228,11 +228,11 @@ fun ConfirmButton(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
     ) {
-        TextButton(onClick = { onConfirmButtonClicked() }, enabled = rollResult != null) {
+        TextButton(onClick = { onConfirmButtonClicked() }) {
             Text(
                 text = rollResult?.let {
                     stringResource(id = R.string.btn_roll_confirm_with_result, it)
-                } ?: stringResource(id = R.string.btn_roll_confirm_empty),
+                } ?: stringResource(id = R.string.btn_roll_cancel),
                 style = MaterialTheme.typography.headlineSmall
             )
         }
@@ -249,6 +249,7 @@ fun LaunchedRollProcess(
     onTryFinished: () -> Unit,
     onRollingFinished: () -> Unit
 ) {
+    //TODO: Fix handling coroutines when changing orientation
     LaunchedEffect(key1 = Unit) {
         delay(INITIAL_ROLL_DELAY)
         val rollJob = launch { repeat(setting.numberOfTries) { tryNumber ->
