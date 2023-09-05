@@ -66,7 +66,6 @@ fun RollDialog(
         },
         onRollingFinished = {
             dialogStateHolder.markChosenTry()
-            dialogStateHolder.markRollFinished()
         }
     )
 
@@ -334,39 +333,27 @@ class RollDialogStateHolder(
     var randomizerState by mutableStateOf(randomizerState)
 
     fun addThrowResult() {
-        rollState.addThrow(randomizerState ?: 0)
+        rollState = rollState.updateTryWithNewThrow(randomizerState ?: 0)
     }
 
     fun markNextThrow() {
-        rollState = rollState.copy(currentThrow = rollState.currentThrow.inc())
+        rollState = rollState.markNextThrow()
     }
 
     fun calculateTryResult() {
-        rollState.calculateTryResult()
+        rollState = rollState.updateTryWithResult()
     }
 
     fun markNextTry() {
-        rollState = rollState.copy(
-            currentTry = rollState.currentTry.inc(),
-            currentThrow = 1
-        )
-    }
-
-    fun markRollFinished() {
-        rollState = rollState.copy(isFinished = true)
+        rollState = rollState.markNextTry()
     }
 
     fun markChosenTry() {
-        rollState.markChosenTry()
+        rollState = rollState.updateTriesWithChosenOne()
     }
 
-    fun updateRandomizer(newValue: Int) {
-        randomizerState = newValue
-    }
-
-    fun clearRandomizer() {
-        randomizerState = null
-    }
+    fun updateRandomizer(newValue: Int) { randomizerState = newValue }
+    fun clearRandomizer() { randomizerState = null }
 
     companion object {
         val Saver: Saver<RollDialogStateHolder, *> = listSaver(
