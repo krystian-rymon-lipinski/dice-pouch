@@ -11,15 +11,15 @@ data class TryState(
 ) : Parcelable {
 
     fun updateWithNewThrow(index: Int, value: Int) : TryState {
-        val updatedThrows = throws.toMutableList()
-        updatedThrows[index] = value
+        val updatedThrows = throws.toMutableList().apply {
+            this[index] = value
+        }
         return copy(throws = updatedThrows)
     }
 
     fun updateResult(modifier: Int): TryState {
         return copy(result = calculateThrowsSum()?.plus(modifier))
     }
-
 
     fun updateAsChosen() : TryState {
         return copy(isChosen = true)
