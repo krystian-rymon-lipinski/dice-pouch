@@ -16,7 +16,6 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -38,6 +37,7 @@ import com.krystianrymonlipinski.dicepouch.model.RollSetting
 import com.krystianrymonlipinski.dicepouch.model.RollState
 import com.krystianrymonlipinski.dicepouch.model.TryState
 import com.krystianrymonlipinski.dicepouch.ui.components.DieImage
+import com.krystianrymonlipinski.dicepouch.ui.components.CenteredDialogConfirmButton
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -72,9 +72,13 @@ fun RollDialog(
     AlertDialog(
         properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false),
         onDismissRequest = { /* Current properties do not allow this */ },
-        confirmButton = { ConfirmButton(
-                onConfirmButtonClicked = onConfirmButtonClicked,
-                rollResult = dialogStateHolder.rollState.tries.find { it.isChosen }?.result
+        confirmButton = {
+            val rollResult = dialogStateHolder.rollState.tries.find { it.isChosen }?.result
+            CenteredDialogConfirmButton(
+                text = rollResult?.let {
+                    stringResource(id = R.string.btn_roll_confirm_with_result, it)
+                } ?: stringResource(id = R.string.btn_roll_cancel),
+                onClick = onConfirmButtonClicked
             )
         },
         text = { RollDialogContent(
@@ -214,26 +218,6 @@ fun DiceSum(setting: RollSetting, throws: List<Int?>, isCurrentTry: Boolean, cur
                         )
                     },
                 textStyle = MaterialTheme.typography.bodyMedium
-            )
-        }
-    }
-}
-
-@Composable
-fun ConfirmButton(
-    rollResult: Int?,
-    onConfirmButtonClicked: () -> Unit
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center
-    ) {
-        TextButton(onClick = { onConfirmButtonClicked() }) {
-            Text(
-                text = rollResult?.let {
-                    stringResource(id = R.string.btn_roll_confirm_with_result, it)
-                } ?: stringResource(id = R.string.btn_roll_cancel),
-                style = MaterialTheme.typography.headlineSmall
             )
         }
     }

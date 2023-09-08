@@ -2,7 +2,6 @@ package com.krystianrymonlipinski.dicepouch.ui.dialogs
 
 import RollDescription
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,7 +16,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,24 +34,24 @@ import androidx.compose.ui.window.DialogProperties
 import com.krystianrymonlipinski.dicepouch.R
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
+import com.krystianrymonlipinski.dicepouch.ui.components.CenteredDialogConfirmButton
 import com.krystianrymonlipinski.dicepouch.ui.components.MechanicSegmentedButton
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
 
 @Composable
 fun RollSettingsDialog(
     die: Die = Die(6),
-    onDismissRequest: () -> Unit = {},
+    onDismissDialog: () -> Unit = {},
     onRollButtonClicked: (RollSetting) -> Unit = {}
 ) {
     val dialogStateHolder = rememberSettingsDialogStateHolder(die = die)
 
     AlertDialog(
-        onDismissRequest = { onDismissRequest() },
+        onDismissRequest = { onDismissDialog() },
         confirmButton = {
-            RollButton(onRollButtonClicked = {
-                onDismissRequest()
-                onRollButtonClicked(dialogStateHolder.state) }
-            )
+            CenteredDialogConfirmButton(
+                text = stringResource(id = R.string.btn_roll),
+                onClick = { onRollButtonClicked(dialogStateHolder.state) })
         },
         text = { RollSettingsDialogContent(
             dialogStateHolder.state,
@@ -147,21 +145,6 @@ fun ControlIcon(
         modifier = Modifier
             .background(color = MaterialTheme.colorScheme.secondaryContainer, shape = MaterialTheme.shapes.small)
     ) { Icon(imageVector = imageVector, contentDescription = contentDescription) }
-}
-
-@Composable
-fun RollButton(onRollButtonClicked: () -> Unit) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center
-    ) {
-        TextButton(onClick = { onRollButtonClicked() }) {
-            Text(
-                text = stringResource(id = R.string.btn_roll),
-                style = MaterialTheme.typography.headlineSmall
-            )
-        }
-    }
 }
 
 
