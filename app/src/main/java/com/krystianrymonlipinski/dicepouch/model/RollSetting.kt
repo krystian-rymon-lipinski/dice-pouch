@@ -18,10 +18,6 @@ data class RollSetting(
     @IgnoredOnParcel
     val rollDescription = buildRollDescription()
 
-    fun generateModifierText() : String? {
-        return if (modifier != 0) modifier.toString()
-        else null
-    }
 
     private fun generateModifierDescription() : String? {
         return when {
@@ -33,10 +29,13 @@ data class RollSetting(
 
     private fun buildRollDescription() : String {
         return StringBuilder().apply {
-            append(diceNumber)
-            append('d')
-            append(die.sides)
+            append("${diceNumber}d${die.sides}")
             generateModifierDescription()?.let { append(it) }
+            when (mechanic) {
+                Mechanic.ADVANTAGE -> append(" (A)")
+                Mechanic.DISADVANTAGE -> append(" (D)")
+                else -> { }
+            }
 
         }.toString()
     }

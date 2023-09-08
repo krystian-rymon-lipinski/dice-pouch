@@ -17,16 +17,15 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
-import com.krystianrymonlipinski.dicepouch.ui.components.DieCell
+import com.krystianrymonlipinski.dicepouch.ui.components.DieImage
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollDialog
-import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollDialogStateHolder
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollSettingsDialog
-import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollSettingsStateHolder
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
 
 @Composable
@@ -44,8 +43,8 @@ fun RollScreen() {
         )
         showRollSettingsDialog?.let {
             RollSettingsDialog(
-                stateHolder = RollSettingsStateHolder(it),
-                onDismissRequest = { showRollSettingsDialog = null },
+                it,
+                onDismissDialog = { showRollSettingsDialog = null },
                 onRollButtonClicked = { rollSettings ->
                     showRollSettingsDialog = null
                     showRollDialog = rollSettings
@@ -54,7 +53,7 @@ fun RollScreen() {
         }
         showRollDialog?.let {
             RollDialog(
-                stateHolder = RollDialogStateHolder(it),
+                setting = it,
                 onConfirmButtonClicked = { showRollDialog = null }
             )
         }
@@ -67,7 +66,7 @@ fun DiceGrid(
     onDieClicked: (Die) -> Unit
 ) {
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(80.dp),
+        columns = GridCells.Adaptive(120.dp),
         modifier = Modifier.padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -77,14 +76,24 @@ fun DiceGrid(
                 text = BASIC_DND_SET_NAME,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
-                style = MaterialTheme.typography.titleMedium
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.Bold
+                )
             )
         }
         items(count = diceSet.size) { die ->
-            DieCell(
-                die = diceSet[die],
+            Surface(
                 modifier = Modifier.clickable { onDieClicked(diceSet[die]) },
-            )
+                shape = MaterialTheme.shapes.small,
+                color = MaterialTheme.colorScheme.secondaryContainer,
+                shadowElevation = 4.dp
+            ) {
+                DieImage(
+                    die = diceSet[die],
+                    textStyle = MaterialTheme.typography.headlineMedium
+                )
+            }
         }
     }
 }
