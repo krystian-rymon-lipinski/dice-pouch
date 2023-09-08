@@ -32,9 +32,9 @@ import androidx.compose.ui.unit.dp
 import com.krystianrymonlipinski.dicepouch.R
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
-import com.krystianrymonlipinski.dicepouch.ui.theme.AdvantageGreen
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
-import com.krystianrymonlipinski.dicepouch.ui.theme.DisadvantageRed
+import com.krystianrymonlipinski.dicepouch.ui.theme.dieDisadvantage
+import com.krystianrymonlipinski.dicepouch.ui.theme.dieAdvantage
 
 @Composable
 fun MechanicSegmentedButton(
@@ -140,11 +140,12 @@ private fun getDieImage(numberOfDice: Int) : Int {
     }
 }
 
+@Composable
 private fun getDieTintColor(mechanic: RollSetting.Mechanic) : Color {
     return when (mechanic) {
-        RollSetting.Mechanic.ADVANTAGE -> AdvantageGreen
+        RollSetting.Mechanic.ADVANTAGE -> MaterialTheme.colorScheme.dieAdvantage
         RollSetting.Mechanic.NORMAL -> Color.White
-        RollSetting.Mechanic.DISADVANTAGE -> DisadvantageRed
+        RollSetting.Mechanic.DISADVANTAGE -> MaterialTheme.colorScheme.dieDisadvantage
     }
 }
 

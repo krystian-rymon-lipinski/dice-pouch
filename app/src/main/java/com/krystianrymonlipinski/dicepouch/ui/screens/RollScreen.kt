@@ -17,6 +17,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -75,14 +76,17 @@ fun DiceGrid(
                 text = BASIC_DND_SET_NAME,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
-                style = MaterialTheme.typography.titleMedium
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.Bold
+                )
             )
         }
         items(count = diceSet.size) { die ->
             Surface(
                 modifier = Modifier.clickable { onDieClicked(diceSet[die]) },
                 shape = MaterialTheme.shapes.small,
-                color = MaterialTheme.colorScheme.tertiaryContainer,
+                color = MaterialTheme.colorScheme.secondaryContainer,
                 shadowElevation = 4.dp
             ) {
                 DieImage(
