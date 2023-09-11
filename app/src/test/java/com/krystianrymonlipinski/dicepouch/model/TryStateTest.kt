@@ -25,7 +25,7 @@ class TryStateTest {
     @Test
     fun updateWithNewThrow() {
         testObj = testObj.updateWithNewThrow(2, 10)
-        assertEquals(10, testObj.throws[2])
+        assertEquals(listOf(3, 2, 10), testObj.throws)
     }
 
     @Test
