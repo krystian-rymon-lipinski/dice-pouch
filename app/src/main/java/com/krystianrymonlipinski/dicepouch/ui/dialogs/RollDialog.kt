@@ -27,6 +27,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -192,7 +194,10 @@ fun TryResult(result: Int?, isChosen: Boolean) {
 
 @Composable
 fun DiceSum(setting: RollSetting, throws: List<Int?>, isCurrentTry: Boolean, currentThrow: Int) {
-    LazyRow(verticalAlignment = Alignment.CenterVertically) {
+    LazyRow(
+        modifier = Modifier.semantics { contentDescription = "dice_sum_scrollable_row" },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         if (setting.modifier != 0) {
             item { Text(text = setting.modifier.toString(), style = MaterialTheme.typography.headlineSmall) }
         }

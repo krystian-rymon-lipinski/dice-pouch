@@ -27,6 +27,8 @@ import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.krystianrymonlipinski.dicepouch.R
@@ -101,7 +103,8 @@ fun SingleOption(
                 this.background(MaterialTheme.colorScheme.secondaryContainer)
             }
             .clickable { onOptionSelected() }
-            .padding(horizontal = 24.dp),
+            .padding(horizontal = 24.dp)
+            .semantics { contentDescription = "mechanics_option" },
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
