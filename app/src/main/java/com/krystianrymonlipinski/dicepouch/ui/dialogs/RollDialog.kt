@@ -41,10 +41,7 @@ import com.krystianrymonlipinski.dicepouch.model.TryState
 import com.krystianrymonlipinski.dicepouch.ui.components.DieImage
 import com.krystianrymonlipinski.dicepouch.ui.components.CenteredDialogConfirmButton
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlin.system.measureTimeMillis
 
 @Composable
@@ -241,23 +238,21 @@ fun LaunchedRollProcess(
     //TODO: Fix handling coroutines when changing orientation
     LaunchedEffect(key1 = Unit) {
         delay(INITIAL_ROLL_DELAY)
-        val rollJob = launch { repeat(setting.numberOfTries) { tryNumber ->
-                val tryJob = getSingleTryJob(
-                    scope = this,
-                    setting = setting,
-                    onNewRandomValue = onNewRandomValue,
-                    onSingleThrowFinished = onSingleThrowFinished
-                )
-                tryJob.join()
-                if (setting.modifier != 0 || setting.diceNumber > 1) {
-                    delay(SHOW_TRY_RESULT_DELAY)
-                }
-                onTryFinished()
-                if (tryNumber < setting.numberOfTries - 1) {
-                    delay(DELAY_BETWEEN_THROWS)
-                }
-        } }
-        rollJob.join()
+        for (tryNumber in 1 until setting.numberOfTries + 1) {
+            performTry(
+                setting = setting,
+                onNewRandomValue = onNewRandomValue,
+                onSingleThrowFinished = onSingleThrowFinished
+            )
+            if (setting.modifier != 0 || setting.diceNumber > 1) {
+                delay(SHOW_TRY_RESULT_DELAY)
+            }
+            onTryFinished()
+            if (tryNumber < setting.numberOfTries) {
+                delay(DELAY_BETWEEN_THROWS)
+            }
+        }
+
         if (setting.numberOfTries > 1) {
             delay(SHOW_ROLL_RESULT_DELAY)
         }
@@ -265,39 +260,33 @@ fun LaunchedRollProcess(
     }
 }
 
-private suspend fun getSingleTryJob(
-    scope: CoroutineScope,
+private suspend fun performTry(
     setting: RollSetting,
     onNewRandomValue: (Int) -> Unit,
     onSingleThrowFinished: () -> Unit
-) : Job {
-    return scope.launch { repeat(setting.diceNumber) { throwNumber ->
-            val throwJob = getSingleDieThrowJob(
-                die = setting.die,
-                scope = scope,
-                onNewRandomValue = onNewRandomValue
-            )
-            throwJob.join() /* Wait for the random to end before starting next throw */
-            delay(SHOW_THROW_RESULT_DELAY)
-            onSingleThrowFinished()
-            if (throwNumber < setting.diceNumber - 1) {
-                delay(DELAY_BETWEEN_THROWS)
-            }
-    } }
+) {
+    for (throwNumber in 1 until setting.diceNumber + 1) {
+        performThrow(
+            die = setting.die,
+            onNewRandomValue = onNewRandomValue
+        )
+        delay(SHOW_THROW_RESULT_DELAY)
+        onSingleThrowFinished()
+        if (throwNumber < setting.diceNumber) {
+            delay(DELAY_BETWEEN_THROWS)
+        }
+    }
 }
 
-private suspend fun getSingleDieThrowJob(
+private suspend fun performThrow(
     die: Die,
-    scope: CoroutineScope,
     onNewRandomValue: (Int) -> Unit,
-) : Job {
-    return scope.launch {
-        var elapsedTime = 0L
-        while (elapsedTime < RANDOMIZING_TIME) {
-            elapsedTime += measureTimeMillis {
-                onNewRandomValue(die.roll())
-                delay(DELAY_BETWEEN_RANDOMS)
-            }
+) {
+    var elapsedTime = 0L
+    while (elapsedTime < RANDOMIZING_TIME) {
+        elapsedTime += measureTimeMillis {
+            onNewRandomValue(die.roll())
+            delay(DELAY_BETWEEN_RANDOMS)
         }
     }
 }
