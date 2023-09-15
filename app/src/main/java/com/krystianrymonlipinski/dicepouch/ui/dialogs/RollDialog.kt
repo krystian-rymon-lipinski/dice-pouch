@@ -54,7 +54,7 @@ fun RollDialog(
     if (!dialogStateHolder.rollState.isFinished) {
         LaunchedEffect(key1 = dialogStateHolder.rollState.setting) { //TODO: fix LaunchedEffect key for changing orientation
             performRoll(
-                setting = dialogStateHolder.rollState.setting,
+                currentState = dialogStateHolder.rollState,
                 onNewRandomValue = { newValue -> dialogStateHolder.updateRandomizer(newValue) },
                 onSingleThrowFinished = {
                     dialogStateHolder.addThrowResult()
@@ -232,16 +232,18 @@ fun DiceSum(setting: RollSetting, throws: List<Int?>, isCurrentTry: Boolean, cur
 /* --------- */
 
 private suspend fun performRoll(
-    setting: RollSetting,
+    currentState: RollState,
     onNewRandomValue: (Int) -> Unit,
     onSingleThrowFinished: () -> Unit,
     onTryFinished: () -> Unit,
     onRollFinished: () -> Unit
 ) {
+    val setting = currentState.setting
+
     delay(INITIAL_ROLL_DELAY)
-    for (tryNumber in 1 until setting.numberOfTries + 1) {
+    for (tryNumber in currentState.currentTry until setting.numberOfTries + 1) {
         performTry(
-            setting = setting,
+            currentState = currentState,
             onNewRandomValue = onNewRandomValue,
             onSingleThrowFinished = onSingleThrowFinished
         )
@@ -261,11 +263,13 @@ private suspend fun performRoll(
 }
 
 private suspend fun performTry(
-    setting: RollSetting,
+    currentState: RollState,
     onNewRandomValue: (Int) -> Unit,
     onSingleThrowFinished: () -> Unit
 ) {
-    for (throwNumber in 1 until setting.diceNumber + 1) {
+    val setting = currentState.setting
+
+    for (throwNumber in currentState.currentThrow until setting.diceNumber + 1) {
         performThrow(
             die = setting.die,
             onNewRandomValue = onNewRandomValue
