@@ -1,6 +1,7 @@
 package com.krystianrymonlipinski.dicepouch.model
 
 import android.os.Parcelable
+import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 
 
@@ -13,6 +14,10 @@ data class RollState(
         TryState(List(setting.diceNumber) { null })
     }
 ) : Parcelable {
+
+    @IgnoredOnParcel
+    val isFinished: Boolean
+        get() = tries.any { it.isChosen }
 
     fun updateTryWithNewThrow(throwValue: Int) : RollState {
         val updatedTries = tries.toMutableList().apply {

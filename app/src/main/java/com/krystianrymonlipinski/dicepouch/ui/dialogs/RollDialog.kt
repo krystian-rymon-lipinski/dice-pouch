@@ -51,22 +51,26 @@ fun RollDialog(
 ) {
     val dialogStateHolder = rememberRollDialogStateHolder(setting)
 
-    LaunchedRollProcess(
-        setting = dialogStateHolder.rollState.setting,
-        onNewRandomValue = { newValue -> dialogStateHolder.updateRandomizer(newValue) },
-        onSingleThrowFinished = {
-            dialogStateHolder.addThrowResult()
-            dialogStateHolder.clearRandomizer()
-            dialogStateHolder.markNextThrow()
-        },
-        onTryFinished = {
-            dialogStateHolder.calculateTryResult()
-            dialogStateHolder.markNextTry()
-        },
-        onRollingFinished = {
-            dialogStateHolder.markChosenTry()
+    if (!dialogStateHolder.rollState.isFinished) {
+        LaunchedEffect(key1 = dialogStateHolder.rollState.setting) { //TODO: fix LaunchedEffect key for changing orientation
+            performRoll(
+                setting = dialogStateHolder.rollState.setting,
+                onNewRandomValue = { newValue -> dialogStateHolder.updateRandomizer(newValue) },
+                onSingleThrowFinished = {
+                    dialogStateHolder.addThrowResult()
+                    dialogStateHolder.clearRandomizer()
+                    dialogStateHolder.markNextThrow()
+                },
+                onTryFinished = {
+                    dialogStateHolder.calculateTryResult()
+                    dialogStateHolder.markNextTry()
+                },
+                onRollFinished = {
+                    dialogStateHolder.markChosenTry()
+                }
+            )
         }
-    )
+    }
 
     AlertDialog(
         properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false),
@@ -227,37 +231,33 @@ fun DiceSum(setting: RollSetting, throws: List<Int?>, isCurrentTry: Boolean, cur
 
 /* --------- */
 
-@Composable
-fun LaunchedRollProcess(
+private suspend fun performRoll(
     setting: RollSetting,
     onNewRandomValue: (Int) -> Unit,
     onSingleThrowFinished: () -> Unit,
     onTryFinished: () -> Unit,
-    onRollingFinished: () -> Unit
+    onRollFinished: () -> Unit
 ) {
-    //TODO: Fix handling coroutines when changing orientation
-    LaunchedEffect(key1 = Unit) {
-        delay(INITIAL_ROLL_DELAY)
-        for (tryNumber in 1 until setting.numberOfTries + 1) {
-            performTry(
-                setting = setting,
-                onNewRandomValue = onNewRandomValue,
-                onSingleThrowFinished = onSingleThrowFinished
-            )
-            if (setting.modifier != 0 || setting.diceNumber > 1) {
-                delay(SHOW_TRY_RESULT_DELAY)
-            }
-            onTryFinished()
-            if (tryNumber < setting.numberOfTries) {
-                delay(DELAY_BETWEEN_THROWS)
-            }
+    delay(INITIAL_ROLL_DELAY)
+    for (tryNumber in 1 until setting.numberOfTries + 1) {
+        performTry(
+            setting = setting,
+            onNewRandomValue = onNewRandomValue,
+            onSingleThrowFinished = onSingleThrowFinished
+        )
+        if (setting.modifier != 0 || setting.diceNumber > 1) {
+            delay(SHOW_TRY_RESULT_DELAY)
         }
-
-        if (setting.numberOfTries > 1) {
-            delay(SHOW_ROLL_RESULT_DELAY)
+        onTryFinished()
+        if (tryNumber < setting.numberOfTries) {
+            delay(DELAY_BETWEEN_THROWS)
         }
-        onRollingFinished()
     }
+
+    if (setting.numberOfTries > 1) {
+        delay(SHOW_ROLL_RESULT_DELAY)
+    }
+    onRollFinished()
 }
 
 private suspend fun performTry(
