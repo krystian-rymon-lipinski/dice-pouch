@@ -19,7 +19,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,7 +43,7 @@ fun MechanicSegmentedButton(
     onSelectedButtonChanged: (RollSetting.Mechanic) -> Unit = {},
     die: Die = Die(4)
 ) {
-    var selectedButtonIndex by remember { mutableStateOf(1) }
+    var selectedButtonIndex by rememberSaveable { mutableStateOf(1) }
 
     Surface(
         modifier = Modifier

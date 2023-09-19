@@ -1,6 +1,7 @@
 package com.krystianrymonlipinski.dicepouch.dialogs
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -8,7 +9,6 @@ import androidx.compose.ui.test.performClick
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollSettingsDialog
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
@@ -17,72 +17,80 @@ class RollSettingsDialogTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 
-    @Before
-    fun setUp() {
-        composeTestRule.setContent {
-            DicePouchTheme {
-                RollSettingsDialog(die = Die(20))
-            }
-        }
-    }
 
     @Test
     fun rollSettingChange_diceNumberIncrement() {
+        setupDialog()
         composeTestRule.apply {
-            this
-                .onAllNodesWithContentDescription("plus")[0]
-                .performClick()
-            this.onNodeWithText("2d20").assertIsDisplayed()
+            onAllNodesWithContentDescription("plus")[0].performClick()
+            onNodeWithText("2d20").assertIsDisplayed()
         }
     }
 
     @Test
     fun rollSettingChange_diceNumberDecrement() {
+        setupDialog()
         composeTestRule.apply {
-            this
-                .onAllNodesWithContentDescription("minus")[0]
-                .performClick()
-            this.onNodeWithText("30d20").assertIsDisplayed()
+            onAllNodesWithContentDescription("minus")[0].performClick()
+            onNodeWithText("30d20").assertIsDisplayed()
         }
     }
 
     @Test
     fun rollSettingChange_modifierIncrement() {
+        setupDialog()
         composeTestRule.apply {
-            this
-                .onAllNodesWithContentDescription("plus")[1]
-                .performClick()
-            this.onNodeWithText("1d20 + 1").assertIsDisplayed()
+            onAllNodesWithContentDescription("plus")[1].performClick()
+            onNodeWithText("1d20 + 1").assertIsDisplayed()
         }
     }
 
     @Test
     fun rollSettingChange_modifierDecrement() {
+        setupDialog()
         composeTestRule.apply {
-            this
-                .onAllNodesWithContentDescription("minus")[1]
-                .performClick()
-            this.onNodeWithText("1d20 - 1").assertIsDisplayed()
+            onAllNodesWithContentDescription("minus")[1].performClick()
+            onNodeWithText("1d20 - 1").assertIsDisplayed()
         }
     }
 
     @Test
     fun rollSettingChange_mechanicChanges() {
+        setupDialog()
         composeTestRule.apply {
-            this
-                .onAllNodesWithContentDescription("mechanics_option")[0]
-                .performClick()
-            this.onNodeWithText("1d20 (D)").assertIsDisplayed()
+            onAllNodesWithContentDescription("mechanics_option")[0].performClick()
+            onNodeWithText("1d20 (D)").assertIsDisplayed()
 
-            this
-                .onAllNodesWithContentDescription("mechanics_option")[1]
-                .performClick()
-            this.onNodeWithText("1d20").assertIsDisplayed()
+            onAllNodesWithContentDescription("mechanics_option")[1].performClick()
+            onNodeWithText("1d20").assertIsDisplayed()
 
-            this
-                .onAllNodesWithContentDescription("mechanics_option")[2]
-                .performClick()
-            this.onNodeWithText("1d20 (A)").assertIsDisplayed()
+            onAllNodesWithContentDescription("mechanics_option")[2].performClick()
+            onNodeWithText("1d20 (A)").assertIsDisplayed()
+        }
+    }
+
+    @Test
+    fun rollSettingsChange_stateRestoration() {
+        val restorationTester = StateRestorationTester(composeTestRule).apply {
+            setContent {
+                DicePouchTheme { RollSettingsDialog(die = Die(20)) }
+            }
+        }
+
+        composeTestRule.apply {
+            onAllNodesWithContentDescription("plus")[0].performClick()
+            onAllNodesWithContentDescription("minus")[1].performClick()
+            onAllNodesWithContentDescription("mechanics_option")[2].performClick()
+
+            onNodeWithText("2d20 - 1 (A)").assertIsDisplayed()
+            restorationTester.emulateSavedInstanceStateRestore()
+            onNodeWithText("2d20 - 1 (A)").assertIsDisplayed()
+        }
+    }
+
+    private fun setupDialog() {
+        composeTestRule.setContent {
+            DicePouchTheme { RollSettingsDialog(die = Die(20)) }
         }
     }
 }

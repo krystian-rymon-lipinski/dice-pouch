@@ -17,7 +17,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.Saver
@@ -33,6 +32,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
+import com.krystianrymonlipinski.dicepouch.LaunchedRollProcess
 import com.krystianrymonlipinski.dicepouch.R
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
@@ -41,11 +41,7 @@ import com.krystianrymonlipinski.dicepouch.model.TryState
 import com.krystianrymonlipinski.dicepouch.ui.components.DieImage
 import com.krystianrymonlipinski.dicepouch.ui.components.CenteredDialogConfirmButton
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlin.system.measureTimeMillis
+
 
 @Composable
 fun RollDialog(
@@ -55,7 +51,7 @@ fun RollDialog(
     val dialogStateHolder = rememberRollDialogStateHolder(setting)
 
     LaunchedRollProcess(
-        setting = dialogStateHolder.rollState.setting,
+        currentState = dialogStateHolder.rollState,
         onNewRandomValue = { newValue -> dialogStateHolder.updateRandomizer(newValue) },
         onSingleThrowFinished = {
             dialogStateHolder.addThrowResult()
@@ -66,7 +62,7 @@ fun RollDialog(
             dialogStateHolder.calculateTryResult()
             dialogStateHolder.markNextTry()
         },
-        onRollingFinished = {
+        onRollFinished = {
             dialogStateHolder.markChosenTry()
         }
     )
@@ -228,80 +224,6 @@ fun DiceSum(setting: RollSetting, throws: List<Int?>, isCurrentTry: Boolean, cur
     }
 }
 
-/* --------- */
-
-@Composable
-fun LaunchedRollProcess(
-    setting: RollSetting,
-    onNewRandomValue: (Int) -> Unit,
-    onSingleThrowFinished: () -> Unit,
-    onTryFinished: () -> Unit,
-    onRollingFinished: () -> Unit
-) {
-    //TODO: Fix handling coroutines when changing orientation
-    LaunchedEffect(key1 = Unit) {
-        delay(INITIAL_ROLL_DELAY)
-        val rollJob = launch { repeat(setting.numberOfTries) { tryNumber ->
-                val tryJob = getSingleTryJob(
-                    scope = this,
-                    setting = setting,
-                    onNewRandomValue = onNewRandomValue,
-                    onSingleThrowFinished = onSingleThrowFinished
-                )
-                tryJob.join()
-                if (setting.modifier != 0 || setting.diceNumber > 1) {
-                    delay(SHOW_TRY_RESULT_DELAY)
-                }
-                onTryFinished()
-                if (tryNumber < setting.numberOfTries - 1) {
-                    delay(DELAY_BETWEEN_THROWS)
-                }
-        } }
-        rollJob.join()
-        if (setting.numberOfTries > 1) {
-            delay(SHOW_ROLL_RESULT_DELAY)
-        }
-        onRollingFinished()
-    }
-}
-
-private suspend fun getSingleTryJob(
-    scope: CoroutineScope,
-    setting: RollSetting,
-    onNewRandomValue: (Int) -> Unit,
-    onSingleThrowFinished: () -> Unit
-) : Job {
-    return scope.launch { repeat(setting.diceNumber) { throwNumber ->
-            val throwJob = getSingleDieThrowJob(
-                die = setting.die,
-                scope = scope,
-                onNewRandomValue = onNewRandomValue
-            )
-            throwJob.join() /* Wait for the random to end before starting next throw */
-            delay(SHOW_THROW_RESULT_DELAY)
-            onSingleThrowFinished()
-            if (throwNumber < setting.diceNumber - 1) {
-                delay(DELAY_BETWEEN_THROWS)
-            }
-    } }
-}
-
-private suspend fun getSingleDieThrowJob(
-    die: Die,
-    scope: CoroutineScope,
-    onNewRandomValue: (Int) -> Unit,
-) : Job {
-    return scope.launch {
-        var elapsedTime = 0L
-        while (elapsedTime < RANDOMIZING_TIME) {
-            elapsedTime += measureTimeMillis {
-                onNewRandomValue(die.roll())
-                delay(DELAY_BETWEEN_RANDOMS)
-            }
-        }
-    }
-}
-
 @Composable
 fun Modifier.conditionalBorder(condition: Boolean, modifier: @Composable Modifier.() -> Modifier) =
     then(if (condition) modifier.invoke(this) else this)
@@ -355,13 +277,3 @@ class RollDialogStateHolder(
         )
     }
 }
-
-private const val INITIAL_ROLL_DELAY = 800L
-private const val RANDOMIZING_TIME = 1000L
-private const val DELAY_BETWEEN_RANDOMS = 10L
-private const val DELAY_BETWEEN_THROWS = 500L
-
-private const val SHOW_RESULT_DELAY =  500L
-private const val SHOW_THROW_RESULT_DELAY = SHOW_RESULT_DELAY
-private const val SHOW_TRY_RESULT_DELAY = SHOW_RESULT_DELAY
-private const val SHOW_ROLL_RESULT_DELAY = SHOW_RESULT_DELAY
