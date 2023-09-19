@@ -17,7 +17,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.Saver
@@ -33,6 +32,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
+import com.krystianrymonlipinski.dicepouch.LaunchedRollProcess
 import com.krystianrymonlipinski.dicepouch.R
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
@@ -41,8 +41,7 @@ import com.krystianrymonlipinski.dicepouch.model.TryState
 import com.krystianrymonlipinski.dicepouch.ui.components.DieImage
 import com.krystianrymonlipinski.dicepouch.ui.components.CenteredDialogConfirmButton
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
-import kotlinx.coroutines.delay
-import kotlin.system.measureTimeMillis
+
 
 @Composable
 fun RollDialog(
@@ -51,26 +50,22 @@ fun RollDialog(
 ) {
     val dialogStateHolder = rememberRollDialogStateHolder(setting)
 
-    if (!dialogStateHolder.rollState.isFinished) {
-        LaunchedEffect(key1 = dialogStateHolder.rollState.setting) { //TODO: fix LaunchedEffect key for changing orientation
-            performRoll(
-                currentState = dialogStateHolder.rollState,
-                onNewRandomValue = { newValue -> dialogStateHolder.updateRandomizer(newValue) },
-                onSingleThrowFinished = {
-                    dialogStateHolder.addThrowResult()
-                    dialogStateHolder.clearRandomizer()
-                    dialogStateHolder.markNextThrow()
-                },
-                onTryFinished = {
-                    dialogStateHolder.calculateTryResult()
-                    dialogStateHolder.markNextTry()
-                },
-                onRollFinished = {
-                    dialogStateHolder.markChosenTry()
-                }
-            )
+    LaunchedRollProcess(
+        currentState = dialogStateHolder.rollState,
+        onNewRandomValue = { newValue -> dialogStateHolder.updateRandomizer(newValue) },
+        onSingleThrowFinished = {
+            dialogStateHolder.addThrowResult()
+            dialogStateHolder.clearRandomizer()
+            dialogStateHolder.markNextThrow()
+        },
+        onTryFinished = {
+            dialogStateHolder.calculateTryResult()
+            dialogStateHolder.markNextTry()
+        },
+        onRollFinished = {
+            dialogStateHolder.markChosenTry()
         }
-    }
+    )
 
     AlertDialog(
         properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false),
@@ -229,72 +224,6 @@ fun DiceSum(setting: RollSetting, throws: List<Int?>, isCurrentTry: Boolean, cur
     }
 }
 
-/* --------- */
-
-private suspend fun performRoll(
-    currentState: RollState,
-    onNewRandomValue: (Int) -> Unit,
-    onSingleThrowFinished: () -> Unit,
-    onTryFinished: () -> Unit,
-    onRollFinished: () -> Unit
-) {
-    val setting = currentState.setting
-
-    delay(INITIAL_ROLL_DELAY)
-    for (tryNumber in currentState.currentTry until setting.numberOfTries + 1) {
-        performTry(
-            currentState = currentState,
-            onNewRandomValue = onNewRandomValue,
-            onSingleThrowFinished = onSingleThrowFinished
-        )
-        if (setting.modifier != 0 || setting.diceNumber > 1) {
-            delay(SHOW_TRY_RESULT_DELAY)
-        }
-        onTryFinished()
-        if (tryNumber < setting.numberOfTries) {
-            delay(DELAY_BETWEEN_THROWS)
-        }
-    }
-
-    if (setting.numberOfTries > 1) {
-        delay(SHOW_ROLL_RESULT_DELAY)
-    }
-    onRollFinished()
-}
-
-private suspend fun performTry(
-    currentState: RollState,
-    onNewRandomValue: (Int) -> Unit,
-    onSingleThrowFinished: () -> Unit
-) {
-    val setting = currentState.setting
-
-    for (throwNumber in currentState.currentThrow until setting.diceNumber + 1) {
-        performThrow(
-            die = setting.die,
-            onNewRandomValue = onNewRandomValue
-        )
-        delay(SHOW_THROW_RESULT_DELAY)
-        onSingleThrowFinished()
-        if (throwNumber < setting.diceNumber) {
-            delay(DELAY_BETWEEN_THROWS)
-        }
-    }
-}
-
-private suspend fun performThrow(
-    die: Die,
-    onNewRandomValue: (Int) -> Unit,
-) {
-    var elapsedTime = 0L
-    while (elapsedTime < RANDOMIZING_TIME) {
-        elapsedTime += measureTimeMillis {
-            onNewRandomValue(die.roll())
-            delay(DELAY_BETWEEN_RANDOMS)
-        }
-    }
-}
-
 @Composable
 fun Modifier.conditionalBorder(condition: Boolean, modifier: @Composable Modifier.() -> Modifier) =
     then(if (condition) modifier.invoke(this) else this)
@@ -348,13 +277,3 @@ class RollDialogStateHolder(
         )
     }
 }
-
-private const val INITIAL_ROLL_DELAY = 800L
-private const val RANDOMIZING_TIME = 1000L
-private const val DELAY_BETWEEN_RANDOMS = 10L
-private const val DELAY_BETWEEN_THROWS = 500L
-
-private const val SHOW_RESULT_DELAY =  500L
-private const val SHOW_THROW_RESULT_DELAY = SHOW_RESULT_DELAY
-private const val SHOW_TRY_RESULT_DELAY = SHOW_RESULT_DELAY
-private const val SHOW_ROLL_RESULT_DELAY = SHOW_RESULT_DELAY
