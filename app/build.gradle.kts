@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.plugin.extraProperties
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.plugin.parcelize")
     id("org.jetbrains.kotlin.kapt")
     id("com.google.dagger.hilt.android")
 }
@@ -59,7 +60,7 @@ android {
 }
 
 dependencies {
-    val composeBom = platform("androidx.compose:compose-bom:2023.03.00")
+    val composeBom = platform("androidx.compose:compose-bom:2023.06.01")
     val hiltVersion = rootProject.extraProperties.properties["hiltVersion"] as String
 
     implementation("androidx.core:core-ktx:1.9.0")
@@ -70,8 +71,12 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+    //noinspection GradleDependency; 1.5.0 needs API 34
+    implementation("androidx.compose.material:material-icons-extended:1.4.0")
 
     implementation("com.jakewharton.timber:timber:5.0.1")
+    /* To get MaterialButtonToggleGroup (not present in Compose as of now (19/08/2023) */
+    implementation("com.google.android.material:material:1.9.0")
 
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
@@ -96,4 +101,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs> {
 
 kapt {
     correctErrorTypes = true
+    arguments {
+        arg("resourcePackageName", android.defaultConfig.applicationId ?: "com.krystianrymonlipinski.dicepouch")
+    }
 }

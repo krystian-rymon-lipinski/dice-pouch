@@ -1,0 +1,50 @@
+package com.krystianrymonlipinski.dicepouch.model
+
+import android.os.Parcelable
+import kotlinx.parcelize.IgnoredOnParcel
+import kotlinx.parcelize.Parcelize
+import kotlin.math.abs
+
+@Parcelize
+data class RollSetting(
+    val die: Die,
+    val diceNumber: Int = 1,
+    val modifier: Int = 0,
+    val mechanic: Mechanic = Mechanic.NORMAL
+) : Parcelable {
+
+    @IgnoredOnParcel
+    val numberOfTries = if (mechanic == Mechanic.NORMAL) 1 else 2
+    @IgnoredOnParcel
+    val rollDescription = buildRollDescription()
+
+
+    private fun generateModifierDescription() : String? {
+        return when {
+            modifier < 0 -> " - ${abs(modifier)}"
+            modifier > 0 -> " + $modifier"
+            else -> null
+        }
+    }
+
+    private fun buildRollDescription() : String {
+        return StringBuilder().apply {
+            append("${diceNumber}d${die.sides}")
+            generateModifierDescription()?.let { append(it) }
+            when (mechanic) {
+                Mechanic.ADVANTAGE -> append(" (A)")
+                Mechanic.DISADVANTAGE -> append(" (D)")
+                else -> { }
+            }
+
+        }.toString()
+    }
+
+
+    @Parcelize
+    enum class Mechanic : Parcelable {
+        ADVANTAGE, NORMAL, DISADVANTAGE;
+    }
+}
+
+
