@@ -1,12 +1,18 @@
 package com.krystianrymonlipinski.dicepouch.ui.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -15,8 +21,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,7 +37,9 @@ import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollSettingsDialog
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
 
 @Composable
-fun RollScreen() {
+fun RollScreen(
+    onEditIconClicked: () -> Unit = { }
+) {
     var showRollSettingsDialog by rememberSaveable { mutableStateOf<Die?>(null) }
     var showRollDialog by rememberSaveable { mutableStateOf<RollSetting?>(null) }
 
@@ -39,6 +49,7 @@ fun RollScreen() {
     ) {
         DiceGrid(
             diceSet = basicDndDiceSet,
+            onEditIconClicked = onEditIconClicked,
             onDieClicked = { die -> showRollSettingsDialog = die }
         )
         showRollSettingsDialog?.let {
@@ -63,6 +74,7 @@ fun RollScreen() {
 @Composable
 fun DiceGrid(
     diceSet: List<Die>,
+    onEditIconClicked: () -> Unit,
     onDieClicked: (Die) -> Unit
 ) {
     LazyVerticalGrid(
@@ -72,15 +84,7 @@ fun DiceGrid(
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         item(span = { GridItemSpan(maxCurrentLineSpan) }) {
-            Text(
-                text = BASIC_DND_SET_NAME,
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 1,
-                color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.titleLarge.copy(
-                    fontWeight = FontWeight.Bold
-                )
-            )
+            ChosenSetName(onEditIconClicked = onEditIconClicked)
         }
         items(count = diceSet.size) { die ->
             Surface(
@@ -94,6 +98,34 @@ fun DiceGrid(
                     textStyle = MaterialTheme.typography.headlineMedium
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun ChosenSetName(
+    onEditIconClicked: () -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            modifier = Modifier.weight(1f),
+            text = BASIC_DND_SET_NAME,
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1,
+            color = MaterialTheme.colorScheme.primary,
+            style = MaterialTheme.typography.titleLarge.copy(
+                fontWeight = FontWeight.Bold
+            )
+        )
+        IconButton(onClick = onEditIconClicked) {
+            Image(
+                imageVector = Icons.Filled.Edit,
+                contentDescription = "edit_set_icon",
+                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
+            )
         }
     }
 }
