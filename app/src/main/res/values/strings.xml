@@ -8,4 +8,6 @@
 
     <string name="btn_roll_cancel">Cancel</string>
     <string name="btn_roll_confirm_with_result">%d, got it!</string>
+
+    <string name="edit_dice_set_dice_caption">Dice</string>
 </resources>

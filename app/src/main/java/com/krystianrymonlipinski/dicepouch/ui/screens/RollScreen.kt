@@ -3,12 +3,12 @@ package com.krystianrymonlipinski.dicepouch.ui.screens
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
@@ -47,11 +47,14 @@ fun RollScreen(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-        DiceGrid(
-            diceSet = basicDndDiceSet,
-            onEditIconClicked = onEditIconClicked,
-            onDieClicked = { die -> showRollSettingsDialog = die }
-        )
+        Column {
+            ChosenSetName(onEditIconClicked = onEditIconClicked)
+            DiceGrid(
+                diceSet = basicDndDiceSet,
+                onDieClicked = { die -> showRollSettingsDialog = die }
+            )
+        }
+
         showRollSettingsDialog?.let {
             RollSettingsDialog(
                 it,
@@ -72,42 +75,13 @@ fun RollScreen(
 }
 
 @Composable
-fun DiceGrid(
-    diceSet: List<Die>,
-    onEditIconClicked: () -> Unit,
-    onDieClicked: (Die) -> Unit
-) {
-    LazyVerticalGrid(
-        columns = GridCells.Adaptive(120.dp),
-        modifier = Modifier.padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        item(span = { GridItemSpan(maxCurrentLineSpan) }) {
-            ChosenSetName(onEditIconClicked = onEditIconClicked)
-        }
-        items(count = diceSet.size) { die ->
-            Surface(
-                modifier = Modifier.clickable { onDieClicked(diceSet[die]) },
-                shape = MaterialTheme.shapes.small,
-                color = MaterialTheme.colorScheme.secondaryContainer,
-                shadowElevation = 4.dp
-            ) {
-                DieImage(
-                    die = diceSet[die],
-                    textStyle = MaterialTheme.typography.headlineMedium
-                )
-            }
-        }
-    }
-}
-
-@Composable
 fun ChosenSetName(
     onEditIconClicked: () -> Unit
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -126,6 +100,33 @@ fun ChosenSetName(
                 contentDescription = "edit_set_icon",
                 colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
             )
+        }
+    }
+}
+
+@Composable
+fun DiceGrid(
+    diceSet: List<Die>,
+    onDieClicked: (Die) -> Unit
+) {
+    LazyVerticalGrid(
+        columns = GridCells.Adaptive(120.dp),
+        modifier = Modifier.padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        items(count = diceSet.size) { die ->
+            Surface(
+                modifier = Modifier.clickable { onDieClicked(diceSet[die]) },
+                shape = MaterialTheme.shapes.small,
+                color = MaterialTheme.colorScheme.secondaryContainer,
+                shadowElevation = 4.dp
+            ) {
+                DieImage(
+                    die = diceSet[die],
+                    textStyle = MaterialTheme.typography.headlineMedium
+                )
+            }
         }
     }
 }
