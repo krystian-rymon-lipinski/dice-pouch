@@ -1,6 +1,9 @@
 package com.krystianrymonlipinski.dicepouch.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -19,4 +22,22 @@ fun ControlIcon(
         modifier = Modifier
             .background(color = MaterialTheme.colorScheme.secondaryContainer, shape = MaterialTheme.shapes.small)
     ) { Icon(imageVector = imageVector, contentDescription = contentDescription) }
+}
+
+@Composable
+fun PlusIcon(onIconClicked: () -> Unit) {
+    ControlIcon(
+        imageVector = Icons.Filled.Add,
+        contentDescription = "plus",
+        onIconClicked = onIconClicked
+    )
+}
+
+@Composable
+fun MinusIcon(onIconClicked: () -> Unit) {
+    ControlIcon(
+        imageVector = Icons.Filled.Remove,
+        contentDescription = "minus",
+        onIconClicked = onIconClicked
+    )
 }

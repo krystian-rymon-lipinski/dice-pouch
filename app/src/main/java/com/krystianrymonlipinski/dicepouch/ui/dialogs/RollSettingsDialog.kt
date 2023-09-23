@@ -7,9 +7,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -31,8 +28,9 @@ import com.krystianrymonlipinski.dicepouch.R
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
 import com.krystianrymonlipinski.dicepouch.ui.components.CenteredDialogConfirmButton
-import com.krystianrymonlipinski.dicepouch.ui.components.ControlIcon
 import com.krystianrymonlipinski.dicepouch.ui.components.MechanicSegmentedButton
+import com.krystianrymonlipinski.dicepouch.ui.components.MinusIcon
+import com.krystianrymonlipinski.dicepouch.ui.components.PlusIcon
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
 
 @Composable
@@ -114,20 +112,12 @@ fun RollSetting(
     onDecrementClicked: () -> Unit
 ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        ControlIcon(
-            imageVector = Icons.Filled.Remove,
-            contentDescription = "minus",
-            onIconClicked = { onDecrementClicked() }
-        )
+        MinusIcon(onIconClicked = { onDecrementClicked() })
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
             text = settingName
         )
-        ControlIcon(
-            imageVector = Icons.Filled.Add,
-            contentDescription = "plus",
-            onIconClicked = { onIncrementClicked() }
-        )
+        PlusIcon(onIconClicked = { onIncrementClicked() })
     }
 }
 
