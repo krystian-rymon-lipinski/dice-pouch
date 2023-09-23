@@ -10,4 +10,6 @@
     <string name="btn_roll_confirm_with_result">%d, got it!</string>
 
     <string name="edit_dice_set_dice_caption">Dice</string>
+    <string name="btn_add_new_die">Add</string>
+    <string name="sides_caption">sides</string>
 </resources>

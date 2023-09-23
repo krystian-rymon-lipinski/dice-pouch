@@ -1,4 +1,4 @@
-package com.krystianrymonlipinski.dicepouch
+package com.krystianrymonlipinski.dicepouch.screens
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.isDialog
@@ -39,13 +39,9 @@ class RollScreenTest {
 
     private fun clickDieAnTestShowingDialog(die: Die) {
         composeTestRule.apply {
-            this
-                .onNodeWithContentDescription(label = "d${die.sides}")
-                .performClick()
-            this.onNode(isDialog())
-                .assertExists()
-                .assertIsDisplayed()
-            this.onNodeWithText("1d${die.sides}").assertExists()
+            onNodeWithContentDescription(label = "d${die.sides}").performClick()
+            onNode(isDialog()).assertIsDisplayed()
+            onNodeWithText("1d${die.sides}").assertExists()
         }
     }
 }

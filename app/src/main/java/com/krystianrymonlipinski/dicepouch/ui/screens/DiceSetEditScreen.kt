@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import com.krystianrymonlipinski.dicepouch.R
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.ui.components.DieImage
+import com.krystianrymonlipinski.dicepouch.ui.dialogs.NewDieDialog
 
 @Composable
 fun DiceSetEditScreen() {
@@ -52,7 +53,10 @@ fun DiceSetEditScreen() {
         }
 
         if (showNewDieDialog) {
-            //TODO: show a dialog to add new die
+            NewDieDialog(
+                onDialogDismissed = { showNewDieDialog = false },
+                onDieChosen =  { /*TODO: add new die and save it in local database*/ }
+            )
         }
     }
 }
