@@ -15,6 +15,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.krystianrymonlipinski.dicepouch.R
@@ -57,7 +59,10 @@ fun NewDieDialogContent(
     ) {
         DieImage(die = Die(currentSidesNumber))
         Spacer(modifier = Modifier.padding(top = 16.dp))
-        DieSidesControls(onPlusMinusClicked = onPlusMinusClicked)
+        DieSidesControls(
+            currentValue = currentSidesNumber,
+            onPlusMinusClicked = onPlusMinusClicked
+        )
         Spacer(modifier = Modifier.padding(top = 8.dp))
         DieSidesSeekbar(
             currentValue = currentSidesNumber,
@@ -67,14 +72,23 @@ fun NewDieDialogContent(
 }
 
 @Composable
-fun DieSidesControls(onPlusMinusClicked: (change: Int) -> Unit) {
+fun DieSidesControls(
+    currentValue: Int,
+    onPlusMinusClicked: (change: Int) -> Unit
+) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        MinusIcon(onIconClicked = { onPlusMinusClicked(-1) })
+        MinusIcon(
+            onIconClicked = { onPlusMinusClicked(-1) },
+            isEnabled = currentValue > MIN_DIE_SIDES
+        )
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
             text = stringResource(id = R.string.sides_caption)
         )
-        PlusIcon(onIconClicked = { onPlusMinusClicked(1) })
+        PlusIcon(
+            onIconClicked = { onPlusMinusClicked(1) },
+            isEnabled = currentValue < MAX_DIE_SIDES
+        )
     }
 
 }
@@ -85,9 +99,13 @@ fun DieSidesSeekbar(
     onSeekbarValueChanged: (newValue: Int) -> Unit
 ) {
     Slider(
+        modifier = Modifier.semantics { contentDescription = "die_sides_slider" },
         valueRange = 3f.rangeTo(100f),
         value = currentValue.toFloat(),
         steps = 98,
         onValueChange = { newValue -> onSeekbarValueChanged(newValue.toInt()) }
     )
 }
+
+private const val MIN_DIE_SIDES = 3
+private const val MAX_DIE_SIDES = 100

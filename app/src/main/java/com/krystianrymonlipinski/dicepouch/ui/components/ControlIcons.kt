@@ -16,28 +16,38 @@ fun ControlIcon(
     imageVector: ImageVector,
     contentDescription: String,
     onIconClicked: () -> Unit,
+    isEnabled: Boolean = true
 ) {
     IconButton(
         onClick = { onIconClicked() },
         modifier = Modifier
-            .background(color = MaterialTheme.colorScheme.secondaryContainer, shape = MaterialTheme.shapes.small)
+            .background(color = MaterialTheme.colorScheme.secondaryContainer, shape = MaterialTheme.shapes.small),
+        enabled = isEnabled
     ) { Icon(imageVector = imageVector, contentDescription = contentDescription) }
 }
 
 @Composable
-fun PlusIcon(onIconClicked: () -> Unit) {
+fun PlusIcon(
+    onIconClicked: () -> Unit,
+    isEnabled: Boolean = true
+) {
     ControlIcon(
         imageVector = Icons.Filled.Add,
         contentDescription = "plus",
-        onIconClicked = onIconClicked
+        onIconClicked = onIconClicked,
+        isEnabled = isEnabled
     )
 }
 
 @Composable
-fun MinusIcon(onIconClicked: () -> Unit) {
+fun MinusIcon(
+    onIconClicked: () -> Unit,
+    isEnabled: Boolean = true
+) {
     ControlIcon(
         imageVector = Icons.Filled.Remove,
         contentDescription = "minus",
-        onIconClicked = onIconClicked
+        onIconClicked = onIconClicked,
+        isEnabled = isEnabled
     )
 }
