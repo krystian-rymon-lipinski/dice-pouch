@@ -29,8 +29,8 @@ fun AppNavHost(navController: NavHostController) {
             val screenState by viewModel.diceSetState.collectAsStateWithLifecycle()
             DiceSetEditScreen(
                 screenState = screenState,
-                onNewDieAdded = { sidesNumber -> viewModel.addNewDieToSet(sidesNumber) },
-                onDieDeleted = { viewModel.deleteDieFromSet() }
+                onNewDieAdded = { numberOfSides -> viewModel.addNewDieToSet(numberOfSides) },
+                onDieDeleted = { index -> viewModel.deleteDieFromSet(index) }
             )
         }
     }

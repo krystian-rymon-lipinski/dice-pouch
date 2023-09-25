@@ -1,6 +1,5 @@
 package com.krystianrymonlipinski.dicepouch.ui.screens
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,11 +9,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -26,7 +27,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -52,14 +52,16 @@ fun DiceSetEditScreen(
             DiceCaption(onAddNewDieClicked = { showNewDieDialog = true })
             EditableDiceGrid(
                 diceSet = screenState.dice,
-                onDeleteDieClicked = { onDieDeleted(it) }
+                onDeleteDieClicked = { index-> onDieDeleted(index) }
             )
         }
 
         if (showNewDieDialog) {
             NewDieDialog(
                 onDialogDismissed = { showNewDieDialog = false },
-                onNewDieAdded = { sidesNumber -> onNewDieAdded(sidesNumber) }
+                onNewDieAdded = { numberOfSides ->
+                    showNewDieDialog = false
+                    onNewDieAdded(numberOfSides) }
             )
         }
     }
@@ -76,31 +78,40 @@ fun EditableDiceGrid(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        items(count = diceSet.size) { die ->
-            ElevatedCard(
-                shape = MaterialTheme.shapes.small,
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
-                elevation = CardDefaults.cardElevation(4.dp)
+        itemsIndexed(diceSet) { index: Int, die: Die ->
+            DeletableDieImage(
+                index = index,
+                die = die,
+                onDeleteDieClicked = onDeleteDieClicked
+            )
+        }
+    }
+}
+
+@Composable
+fun DeletableDieImage(index: Int, die: Die, onDeleteDieClicked: (Int) -> Unit) {
+    ElevatedCard(
+        shape = MaterialTheme.shapes.small,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
+        elevation = CardDefaults.cardElevation(4.dp)
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            DieImage(
+                die = die,
+                textStyle = MaterialTheme.typography.headlineMedium
+            )
+            IconButton(
+                modifier = Modifier.align(Alignment.TopEnd),
+                onClick = { onDeleteDieClicked(index) }
             ) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    DieImage(
-                        die = diceSet[die],
-                        textStyle = MaterialTheme.typography.headlineMedium
-                    )
-                    IconButton(
-                        modifier = Modifier.align(Alignment.TopEnd),
-                        onClick = { onDeleteDieClicked(die) }
-                    ) {
-                        Image(
-                            imageVector = Icons.Filled.Delete,
-                            contentDescription = "delete_die_icon",
-                            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
-                        )
-                    }
-                }
+                Icon(
+                    imageVector = Icons.Filled.Delete,
+                    contentDescription = "delete_die_icon",
+                    tint = MaterialTheme.colorScheme.primary
+                )
             }
         }
     }
@@ -123,10 +134,10 @@ fun DiceCaption(onAddNewDieClicked: () -> Unit) {
             )
         )
         IconButton(onClick = onAddNewDieClicked) {
-            Image(
+            Icon(
                 imageVector = Icons.Filled.Add,
                 contentDescription = "add_die_icon",
-                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
+                tint = MaterialTheme.colorScheme.primary
             )
         }
     }

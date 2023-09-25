@@ -7,6 +7,7 @@ import com.krystianrymonlipinski.dicepouch.model.Die
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
@@ -17,11 +18,15 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
 
 
     fun addNewDieToSet(numberOfSides: Int) {
-        //TODO: implement adding die
+        _diceSetState.update {
+            it.addNewDie(Die(numberOfSides))
+        }
     }
 
-    fun deleteDieFromSet() {
-        //TODO: implement deleting die
+    fun deleteDieFromSet(index: Int) {
+        _diceSetState.update {
+            it.deleteDie(index)
+        }
     }
 
 
