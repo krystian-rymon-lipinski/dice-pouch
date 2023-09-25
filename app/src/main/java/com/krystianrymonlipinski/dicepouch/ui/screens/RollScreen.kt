@@ -3,6 +3,7 @@ package com.krystianrymonlipinski.dicepouch.ui.screens
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,9 +13,10 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -113,16 +115,21 @@ fun DiceGrid(
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         items(count = diceSet.size) { die ->
-            Surface(
+            ElevatedCard(
                 modifier = Modifier.clickable { onDieClicked(diceSet[die]) },
                 shape = MaterialTheme.shapes.small,
-                color = MaterialTheme.colorScheme.secondaryContainer,
-                shadowElevation = 4.dp
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
+                elevation = CardDefaults.cardElevation(4.dp)
             ) {
-                DieImage(
-                    die = diceSet[die],
-                    textStyle = MaterialTheme.typography.headlineMedium
-                )
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    DieImage(
+                        die = diceSet[die],
+                        textStyle = MaterialTheme.typography.headlineMedium
+                    )
+                }
             }
         }
     }
