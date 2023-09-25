@@ -2,7 +2,6 @@ package com.krystianrymonlipinski.dicepouch
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -11,13 +10,13 @@ import com.krystianrymonlipinski.dicepouch.ui.screens.DiceSetEditScreen
 import com.krystianrymonlipinski.dicepouch.ui.screens.RollScreen
 
 @Composable
-fun AppNavHost(navController: NavHostController) {
+fun AppNavHost(navController: NavHostController, viewModel: MainActivityViewModel) {
     NavHost(
         navController = navController,
         startDestination = ROUTE_ROLL_SCREEN
     ) {
+
         composable(route = ROUTE_ROLL_SCREEN) {
-            val viewModel = hiltViewModel<MainActivityViewModel>()
             val screenState by viewModel.diceSetState.collectAsStateWithLifecycle()
             RollScreen(
                 screenState = screenState,
@@ -25,7 +24,6 @@ fun AppNavHost(navController: NavHostController) {
             )
         }
         composable(route = ROUTE_DICE_SET_EDIT) {
-            val viewModel = hiltViewModel<MainActivityViewModel>()
             val screenState by viewModel.diceSetState.collectAsStateWithLifecycle()
             DiceSetEditScreen(
                 screenState = screenState,
