@@ -26,18 +26,22 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.krystianrymonlipinski.dicepouch.R
+import com.krystianrymonlipinski.dicepouch.model.DiceSet
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.ui.components.DieImage
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.NewDieDialog
 
 @Composable
-fun DiceSetEditScreen() {
+fun DiceSetEditScreen(
+    screenState: DiceSet = DiceSet(),
+    onNewDieAdded: (Int) -> Unit = {},
+    onDieDeleted: (Int) -> Unit = {}
+) {
     var showNewDieDialog by rememberSaveable { mutableStateOf(false) }
 
     Surface(
@@ -47,15 +51,15 @@ fun DiceSetEditScreen() {
         Column {
             DiceCaption(onAddNewDieClicked = { showNewDieDialog = true })
             EditableDiceGrid(
-                diceSet = basicDndDiceSet,
-                onDeleteDieClicked = { }
+                diceSet = screenState.dice,
+                onDeleteDieClicked = { onDieDeleted(it) }
             )
         }
 
         if (showNewDieDialog) {
             NewDieDialog(
                 onDialogDismissed = { showNewDieDialog = false },
-                onDieChosen =  { /*TODO: add new die and save it in local database*/ }
+                onNewDieAdded = { sidesNumber -> onNewDieAdded(sidesNumber) }
             )
         }
     }
@@ -128,12 +132,3 @@ fun DiceCaption(onAddNewDieClicked: () -> Unit) {
     }
 }
 
-private val basicDndDiceSet = listOf(
-    Die(4),
-    Die(6, Color.Green, Color.Red),
-    Die(8),
-    Die(10),
-    Die(10),
-    Die(12),
-    Die(20)
-)

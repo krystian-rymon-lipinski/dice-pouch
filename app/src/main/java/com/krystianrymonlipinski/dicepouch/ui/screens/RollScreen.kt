@@ -23,12 +23,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.krystianrymonlipinski.dicepouch.model.DiceSet
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
 import com.krystianrymonlipinski.dicepouch.ui.components.DieImage
@@ -38,6 +38,7 @@ import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
 
 @Composable
 fun RollScreen(
+    screenState: DiceSet = DiceSet(),
     onEditIconClicked: () -> Unit = { }
 ) {
     var showRollSettingsDialog by rememberSaveable { mutableStateOf<Die?>(null) }
@@ -48,9 +49,9 @@ fun RollScreen(
         color = MaterialTheme.colorScheme.background
     ) {
         Column {
-            ChosenSetName(onEditIconClicked = onEditIconClicked)
+            ChosenSetName(name = screenState.name, onEditIconClicked = onEditIconClicked)
             DiceGrid(
-                diceSet = basicDndDiceSet,
+                diceSet = screenState.dice,
                 onDieClicked = { die -> showRollSettingsDialog = die }
             )
         }
@@ -76,6 +77,7 @@ fun RollScreen(
 
 @Composable
 fun ChosenSetName(
+    name: String,
     onEditIconClicked: () -> Unit
 ) {
     Row(
@@ -86,7 +88,7 @@ fun ChosenSetName(
     ) {
         Text(
             modifier = Modifier.weight(1f),
-            text = BASIC_DND_SET_NAME,
+            text = name,
             overflow = TextOverflow.Ellipsis,
             maxLines = 1,
             color = MaterialTheme.colorScheme.primary,
@@ -130,19 +132,6 @@ fun DiceGrid(
         }
     }
 }
-
-
-private const val BASIC_DND_SET_NAME = "Basic D&D Set"
-
-private val basicDndDiceSet = listOf(
-    Die(4),
-    Die(6, Color.Green, Color.Red),
-    Die(8),
-    Die(10),
-    Die(10),
-    Die(12),
-    Die(20)
-)
 
 
 @Preview(showBackground = true, widthDp = 320, heightDp = 640)

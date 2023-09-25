@@ -23,7 +23,7 @@ class NewDieDialogTest {
     @Test
     fun checkControlIcons() {
         composeTestRule.apply {
-            setContent { DicePouchTheme { NewDieDialog(onDialogDismissed = { }, onDieChosen = { } ) } }
+            setContent { DicePouchTheme { NewDieDialog(onDialogDismissed = { }, onNewDieAdded = { } ) } }
 
             onNodeWithText("20").assertIsDisplayed()
             onNodeWithContentDescription("plus").performClick()
@@ -40,11 +40,8 @@ class NewDieDialogTest {
 
     @Test
     fun checkDieSidesIcons_ifDisabled() {
-
-
-
         composeTestRule.apply {
-            setContent { DicePouchTheme { NewDieDialog(onDialogDismissed = { }, onDieChosen = { }) } }
+            setContent { DicePouchTheme { NewDieDialog(onDialogDismissed = { }, onNewDieAdded = { }) } }
 
             for (i in 1.. 80) {
                 onNodeWithContentDescription("plus").performClick()

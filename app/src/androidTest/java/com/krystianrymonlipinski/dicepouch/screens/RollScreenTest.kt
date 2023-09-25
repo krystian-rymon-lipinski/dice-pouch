@@ -6,6 +6,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.krystianrymonlipinski.dicepouch.model.DiceSet
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.ui.screens.RollScreen
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
@@ -22,7 +23,7 @@ class RollScreenTest {
     fun setUp() {
         composeTestRule.setContent {
             DicePouchTheme {
-                RollScreen()
+                RollScreen(screenState = DiceSet("A set", listOf(Die(6), Die(8), Die(20))))
             }
         }
     }

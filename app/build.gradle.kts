@@ -10,7 +10,7 @@ plugins {
 
 android {
     namespace = "com.krystianrymonlipinski.dicepouch"
-    compileSdk = 33
+    compileSdk = 33 //TODO: bump up to API 34
 
     defaultConfig {
         applicationId = "com.krystianrymonlipinski.dicepouch"
@@ -69,6 +69,8 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.7.2")
     //noinspection GradleDependency; 2.7.2 needs API 34
     implementation("androidx.navigation:navigation-compose:$composeNavigationVersion")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.5.0")
     implementation(composeBom)
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
@@ -88,12 +90,14 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation(composeBom)
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    //noinspection GradleDependency; 2.7.2 needs API 34
     androidTestImplementation("androidx.navigation:navigation-testing:$composeNavigationVersion")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
     implementation("com.google.dagger:hilt-android:$hiltVersion")
     kapt("com.google.dagger:hilt-android-compiler:$hiltVersion")
+    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs> {

@@ -29,7 +29,7 @@ import com.krystianrymonlipinski.dicepouch.ui.components.PlusIcon
 @Composable
 fun NewDieDialog(
     onDialogDismissed: () -> Unit,
-    onDieChosen: (numberOfSides: Int) -> Unit
+    onNewDieAdded: (numberOfSides: Int) -> Unit
 ) {
     var currentSidesNumber by rememberSaveable { mutableStateOf(20) }
 
@@ -38,7 +38,7 @@ fun NewDieDialog(
         onDismissRequest = onDialogDismissed,
         confirmButton = { CenteredDialogConfirmButton(
                 text = stringResource(id = R.string.btn_add_new_die),
-                onClick = { onDieChosen(currentSidesNumber) }
+                onClick = { onNewDieAdded(currentSidesNumber) }
         ) },
         text = { NewDieDialogContent(
             currentSidesNumber = currentSidesNumber,
