@@ -1,7 +1,10 @@
 package com.krystianrymonlipinski.dicepouch
 
+import androidx.compose.foundation.background
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -13,9 +16,9 @@ import com.krystianrymonlipinski.dicepouch.ui.screens.RollScreen
 fun AppNavHost(navController: NavHostController, viewModel: MainActivityViewModel) {
     NavHost(
         navController = navController,
-        startDestination = ROUTE_ROLL_SCREEN
+        startDestination = ROUTE_ROLL_SCREEN,
+        modifier = Modifier.background(MaterialTheme.colorScheme.background)
     ) {
-
         composable(route = ROUTE_ROLL_SCREEN) {
             val screenState by viewModel.diceSetState.collectAsStateWithLifecycle()
             RollScreen(

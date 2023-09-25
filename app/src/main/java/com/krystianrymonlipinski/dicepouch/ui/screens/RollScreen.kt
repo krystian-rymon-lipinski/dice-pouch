@@ -44,34 +44,29 @@ fun RollScreen(
     var showRollSettingsDialog by rememberSaveable { mutableStateOf<Die?>(null) }
     var showRollDialog by rememberSaveable { mutableStateOf<RollSetting?>(null) }
 
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-    ) {
-        Column {
-            ChosenSetName(name = screenState.name, onEditIconClicked = onEditIconClicked)
-            DiceGrid(
-                diceSet = screenState.dice,
-                onDieClicked = { die -> showRollSettingsDialog = die }
-            )
-        }
+    Column(modifier = Modifier.fillMaxSize()) {
+        ChosenSetName(name = screenState.name, onEditIconClicked = onEditIconClicked)
+        DiceGrid(
+            diceSet = screenState.dice,
+            onDieClicked = { die -> showRollSettingsDialog = die }
+        )
+    }
 
-        showRollSettingsDialog?.let {
-            RollSettingsDialog(
-                it,
-                onDismissDialog = { showRollSettingsDialog = null },
-                onRollButtonClicked = { rollSettings ->
-                    showRollSettingsDialog = null
-                    showRollDialog = rollSettings
-                }
-            )
-        }
-        showRollDialog?.let {
-            RollDialog(
-                setting = it,
-                onConfirmButtonClicked = { showRollDialog = null }
-            )
-        }
+    showRollSettingsDialog?.let {
+        RollSettingsDialog(
+            it,
+            onDismissDialog = { showRollSettingsDialog = null },
+            onRollButtonClicked = { rollSettings ->
+                showRollSettingsDialog = null
+                showRollDialog = rollSettings
+            }
+        )
+    }
+    showRollDialog?.let {
+        RollDialog(
+            setting = it,
+            onConfirmButtonClicked = { showRollDialog = null }
+        )
     }
 }
 

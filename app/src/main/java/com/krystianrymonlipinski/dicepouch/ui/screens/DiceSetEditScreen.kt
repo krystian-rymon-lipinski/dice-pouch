@@ -18,7 +18,6 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -44,26 +43,22 @@ fun DiceSetEditScreen(
 ) {
     var showNewDieDialog by rememberSaveable { mutableStateOf(false) }
 
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-    ) {
-        Column {
-            DiceCaption(onAddNewDieClicked = { showNewDieDialog = true })
-            EditableDiceGrid(
-                diceSet = screenState.dice,
-                onDeleteDieClicked = { index-> onDieDeleted(index) }
-            )
-        }
+    Column(modifier = Modifier.fillMaxSize()) {
+        DiceCaption(onAddNewDieClicked = { showNewDieDialog = true })
+        EditableDiceGrid(
+            diceSet = screenState.dice,
+            onDeleteDieClicked = { index-> onDieDeleted(index) }
+        )
+    }
 
-        if (showNewDieDialog) {
-            NewDieDialog(
-                onDialogDismissed = { showNewDieDialog = false },
-                onNewDieAdded = { numberOfSides ->
-                    showNewDieDialog = false
-                    onNewDieAdded(numberOfSides) }
-            )
-        }
+    if (showNewDieDialog) {
+        NewDieDialog(
+            onDialogDismissed = { showNewDieDialog = false },
+            onNewDieAdded = { numberOfSides ->
+                showNewDieDialog = false
+                onNewDieAdded(numberOfSides)
+            }
+        )
     }
 }
 
