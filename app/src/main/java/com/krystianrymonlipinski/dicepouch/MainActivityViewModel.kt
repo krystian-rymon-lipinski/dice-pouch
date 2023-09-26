@@ -1,31 +1,47 @@
 package com.krystianrymonlipinski.dicepouch
 
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.krystianrymonlipinski.dicepouch.model.DiceSet
 import com.krystianrymonlipinski.dicepouch.model.Die
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MainActivityViewModel @Inject constructor() : ViewModel() {
+class MainActivityViewModel @Inject constructor(
+    private val localDataSource: DiceSetLocalDataSource
+) : ViewModel() {
 
-    private val _diceSetState: MutableStateFlow<DiceSet> = MutableStateFlow(DiceSet(BASIC_SET_NAME, basicDndDice))
-    val diceSetState: StateFlow<DiceSet> = _diceSetState
+    private val _setName = MutableStateFlow(BASIC_SET_NAME)
+    private val _diceStream = localDataSource.getDiceStream()
+
+    val diceSetState: StateFlow<DiceSet> = combine(
+        _setName, _diceStream
+    ) { setName, diceList ->
+        DiceSet(setName, diceList)
+    }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = DiceSet(BASIC_SET_NAME, basicDndDice)
+        )
 
 
     fun addNewDieToSet(numberOfSides: Int) {
-        _diceSetState.update {
-            it.addNewDie(Die(numberOfSides))
+        viewModelScope.launch {
+            localDataSource.addNewDieToSet(Die(numberOfSides))
         }
     }
 
     fun deleteDieFromSet(index: Int) {
-        _diceSetState.update {
-            it.deleteDie(index)
+        viewModelScope.launch {
+            localDataSource.deleteDieFromSet(diceSetState.value.dice[index])
         }
     }
 

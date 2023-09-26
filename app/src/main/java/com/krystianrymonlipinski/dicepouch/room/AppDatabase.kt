@@ -9,6 +9,7 @@ abstract class AppDatabase : RoomDatabase() {
 
 
     companion object {
+        const val DATABASE_NAME = "dice_pouch_database"
         const val DICE_TABLE_NAME = "dice_table"
     }
 }

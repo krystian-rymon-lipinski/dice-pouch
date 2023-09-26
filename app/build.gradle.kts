@@ -63,7 +63,7 @@ dependencies {
     val composeBom = platform("androidx.compose:compose-bom:2023.06.01")
     val hiltVersion = rootProject.extraProperties.properties["hiltVersion"] as String
     val composeNavigationVersion = "2.5.3"
-    val roomVersion = "2.4.0"
+    val roomVersion = "2.5.2"
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")

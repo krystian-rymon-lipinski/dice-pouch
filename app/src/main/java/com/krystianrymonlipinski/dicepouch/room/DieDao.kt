@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 interface DieDao {
 
     @Query("SELECT * FROM $DICE_TABLE_NAME")
-    fun retrieveAll() : Flow<DieEntity>
+    fun retrieveAll() : Flow<List<DieEntity>>
 
     @Insert
     fun add(die: DieEntity)
