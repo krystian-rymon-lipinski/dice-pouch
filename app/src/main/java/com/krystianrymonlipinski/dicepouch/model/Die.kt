@@ -9,10 +9,11 @@ import kotlinx.parcelize.Parcelize
 import kotlin.random.Random
 
 @Parcelize
-data class Die (
+data class Die(
     val sides: Int,
     val sideColor: Color = Color.White,
-    val numberColor: Color = Color.Black
+    val numberColor: Color = Color.Black,
+    val timestampId: Long = System.nanoTime()
 ) : Parcelable {
 
     fun roll() = Random.nextInt(from = 1, until = sides + 1)
@@ -23,7 +24,8 @@ data class Die (
             return Die(
                 parcel.readInt(),
                 Color(parcel.readInt()),
-                Color(parcel.readInt())
+                Color(parcel.readInt()),
+                parcel.readLong()
             )
         }
 
@@ -32,6 +34,7 @@ data class Die (
                 writeInt(sides)
                 writeInt(sideColor.toArgb())
                 writeInt(numberColor.toArgb())
+                writeLong(timestampId)
             }
         }
 
