@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 import com.krystianrymonlipinski.dicepouch.room.AppDatabase.Companion.DICE_TABLE_NAME
 
 @Entity(tableName = DICE_TABLE_NAME)
-class DieEntity(
+data class DieEntity(
     @PrimaryKey @ColumnInfo(name = "timestamp_id") val timestampId: Long,
     @ColumnInfo(name = "sides") val sides: Int,
     @ColumnInfo(name = "sides_color_argb") val sidesColorArgb: Int,
