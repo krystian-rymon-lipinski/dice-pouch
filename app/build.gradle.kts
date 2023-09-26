@@ -63,6 +63,7 @@ dependencies {
     val composeBom = platform("androidx.compose:compose-bom:2023.06.01")
     val hiltVersion = rootProject.extraProperties.properties["hiltVersion"] as String
     val composeNavigationVersion = "2.5.3"
+    val roomVersion = "2.4.0"
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
@@ -98,6 +99,9 @@ dependencies {
     implementation("com.google.dagger:hilt-android:$hiltVersion")
     kapt("com.google.dagger:hilt-android-compiler:$hiltVersion")
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
+
+    implementation("androidx.room:room-ktx:$roomVersion")
+    kapt("androidx.room:room-compiler:$roomVersion")
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs> {

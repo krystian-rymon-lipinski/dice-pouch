@@ -13,7 +13,7 @@ data class Die(
     val sides: Int,
     val sideColor: Color = Color.White,
     val numberColor: Color = Color.Black,
-    val timestampId: Long = System.nanoTime()
+    val timestampId: Long = System.currentTimeMillis()
 ) : Parcelable {
 
     fun roll() = Random.nextInt(from = 1, until = sides + 1)
