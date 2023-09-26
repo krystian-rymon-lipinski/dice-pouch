@@ -94,7 +94,7 @@ fun ChosenSetName(
             )
         )
         IconButton(onClick = onEditIconClicked) {
-            Image(
+            Image( //TODO: improve all icon buttons; for their selected state is not highlighted; also use icons, not images
                 imageVector = Icons.Filled.Edit,
                 contentDescription = "edit_set_icon",
                 colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)

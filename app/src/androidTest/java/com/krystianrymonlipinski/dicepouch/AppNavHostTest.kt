@@ -6,6 +6,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.testing.TestNavHostController
 import org.junit.Assert.assertEquals
@@ -25,7 +26,7 @@ class AppNavHostTest {
         composeTestRule.setContent {
             navController = TestNavHostController(LocalContext.current)
             navController.navigatorProvider.addNavigator(ComposeNavigator())
-            AppNavHost(navController = navController)
+            AppNavHost(navController = navController, viewModel = hiltViewModel())
         }
     }
 
