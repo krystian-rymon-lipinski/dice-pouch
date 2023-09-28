@@ -26,8 +26,18 @@ class AppNavHostTest {
     }
 
     @Test
-    fun appNavigation_navigateTo_diceSetEditScreen() {
-        composeTestRule.onNodeWithContentDescription("edit_set_icon").performClick()
-        composeTestRule.onNodeWithText("Dice").assertIsDisplayed()
+    fun appNavigation_navigateToAndFrom_diceSetEditScreen() {
+        composeTestRule.apply {
+            onNodeWithContentDescription("edit_set_icon").performClick()
+            onNodeWithText("Dice").assertIsDisplayed()
+
+            activityRule.scenario.onActivity {
+                it.onBackPressedDispatcher.onBackPressed()
+            }
+            onNodeWithText("Dice").assertDoesNotExist()
+            onNodeWithText("Basic D&D Set").assertIsDisplayed()
+        }
+
+
     }
 }
