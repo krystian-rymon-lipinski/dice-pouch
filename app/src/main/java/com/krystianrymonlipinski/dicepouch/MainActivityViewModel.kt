@@ -24,12 +24,12 @@ class MainActivityViewModel @Inject constructor(
     val diceSetState: StateFlow<DiceSet> = combine(
         _setName, _diceStream
     ) { setName, diceList ->
-        DiceSet(setName, diceList)
+        DiceSet(setName, diceList, emptyList())
     }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = DiceSet(BASIC_SET_NAME, emptyList())
+            initialValue = DiceSet(BASIC_SET_NAME, emptyList(), emptyList())
         )
 
 
