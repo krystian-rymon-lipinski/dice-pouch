@@ -21,6 +21,8 @@ object AppDatabaseModule {
             context,
             AppDatabase::class.java,
             AppDatabase.DATABASE_NAME
-        ).build()
+        )
+            .addCallback(AppDatabase.databaseCallback)
+            .build()
     }
 }

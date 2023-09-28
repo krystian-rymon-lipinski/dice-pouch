@@ -29,7 +29,7 @@ class MainActivityViewModel @Inject constructor(
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = DiceSet(BASIC_SET_NAME, basicDndDice)
+            initialValue = DiceSet(BASIC_SET_NAME, emptyList())
         )
 
 
@@ -46,21 +46,9 @@ class MainActivityViewModel @Inject constructor(
     }
 
 
-
     companion object {
         private const val BASIC_SET_NAME = "Basic D&D Set"
-
-        private val basicDndDice = listOf(
-            Die(4, timestampId = 1L),
-            Die(6, timestampId = 2L),
-            Die(8, timestampId = 3L),
-            Die(10, timestampId = 4L),
-            Die(10, timestampId = 5L),
-            Die(12, timestampId = 6L),
-            Die(20, timestampId = 7L)
-        )
     }
-
 
 }
 
