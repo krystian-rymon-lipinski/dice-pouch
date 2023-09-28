@@ -1,4 +1,4 @@
-package com.krystianrymonlipinski.dicepouch
+package com.krystianrymonlipinski.dicepouch.screens
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.isDialog
@@ -6,6 +6,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.krystianrymonlipinski.dicepouch.model.DiceSet
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.ui.screens.RollScreen
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
@@ -22,7 +23,7 @@ class RollScreenTest {
     fun setUp() {
         composeTestRule.setContent {
             DicePouchTheme {
-                RollScreen()
+                RollScreen(screenState = DiceSet("A set", listOf(Die(6), Die(8), Die(20))))
             }
         }
     }
@@ -39,13 +40,9 @@ class RollScreenTest {
 
     private fun clickDieAnTestShowingDialog(die: Die) {
         composeTestRule.apply {
-            this
-                .onNodeWithContentDescription(label = "d${die.sides}")
-                .performClick()
-            this.onNode(isDialog())
-                .assertExists()
-                .assertIsDisplayed()
-            this.onNodeWithText("1d${die.sides}").assertExists()
+            onNodeWithContentDescription(label = "d${die.sides}").performClick()
+            onNode(isDialog()).assertIsDisplayed()
+            onNodeWithText("1d${die.sides}").assertExists()
         }
     }
 }

@@ -52,7 +52,7 @@ private fun getDieImage(numberOfSides: Int): Int {
         10 -> R.drawable.d10
         12 -> R.drawable.d12
         20 -> R.drawable.d20
-        else -> R.drawable.d6
+        else -> R.drawable.d6 //TODO: define different drawable for unusual dice
     }
 }
 

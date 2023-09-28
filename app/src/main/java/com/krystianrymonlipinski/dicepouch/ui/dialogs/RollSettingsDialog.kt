@@ -1,19 +1,13 @@
 package com.krystianrymonlipinski.dicepouch.ui.dialogs
 
 import RollDescription
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,7 +19,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,6 +29,8 @@ import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
 import com.krystianrymonlipinski.dicepouch.ui.components.CenteredDialogConfirmButton
 import com.krystianrymonlipinski.dicepouch.ui.components.MechanicSegmentedButton
+import com.krystianrymonlipinski.dicepouch.ui.components.MinusIcon
+import com.krystianrymonlipinski.dicepouch.ui.components.PlusIcon
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
 
 @Composable
@@ -117,34 +112,13 @@ fun RollSetting(
     onDecrementClicked: () -> Unit
 ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        ControlIcon(
-            imageVector = Icons.Filled.Remove,
-            contentDescription = "minus",
-            onIconClicked = { onDecrementClicked() }
-        )
+        MinusIcon(onIconClicked = { onDecrementClicked() })
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
             text = settingName
         )
-        ControlIcon(
-            imageVector = Icons.Filled.Add,
-            contentDescription = "plus",
-            onIconClicked = { onIncrementClicked() }
-        )
+        PlusIcon(onIconClicked = { onIncrementClicked() })
     }
-}
-
-@Composable
-fun ControlIcon(
-    imageVector: ImageVector,
-    contentDescription: String,
-    onIconClicked: () -> Unit,
-) {
-    IconButton(
-        onClick = { onIconClicked() },
-        modifier = Modifier
-            .background(color = MaterialTheme.colorScheme.secondaryContainer, shape = MaterialTheme.shapes.small)
-    ) { Icon(imageVector = imageVector, contentDescription = contentDescription) }
 }
 
 
