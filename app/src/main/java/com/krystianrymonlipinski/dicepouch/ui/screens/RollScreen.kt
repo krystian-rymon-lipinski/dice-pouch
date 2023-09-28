@@ -30,6 +30,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.krystianrymonlipinski.dicepouch.MainActivityViewModel
 import com.krystianrymonlipinski.dicepouch.model.DiceSet
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
@@ -37,6 +40,19 @@ import com.krystianrymonlipinski.dicepouch.ui.components.DieImage
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollDialog
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollSettingsDialog
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
+
+
+@Composable
+fun RollRoute(
+    viewModel: MainActivityViewModel = hiltViewModel(),
+    onEditIconClicked: () -> Unit = { }
+) {
+    val screenState by viewModel.diceSetState.collectAsStateWithLifecycle()
+    RollScreen(
+        screenState = screenState,
+        onEditIconClicked = onEditIconClicked
+    )
+}
 
 @Composable
 fun RollScreen(

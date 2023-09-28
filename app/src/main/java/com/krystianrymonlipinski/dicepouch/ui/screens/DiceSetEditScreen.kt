@@ -29,11 +29,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.krystianrymonlipinski.dicepouch.MainActivityViewModel
 import com.krystianrymonlipinski.dicepouch.R
 import com.krystianrymonlipinski.dicepouch.model.DiceSet
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.ui.components.DieImage
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.NewDieDialog
+
+
+@Composable
+fun DiceSetEditRoute(
+    viewModel: MainActivityViewModel = hiltViewModel(),
+) {
+    val screenState by viewModel.diceSetState.collectAsStateWithLifecycle()
+
+    DiceSetEditScreen(
+        screenState = screenState,
+        onNewDieAdded = { numberOfSides -> viewModel.addNewDieToSet(numberOfSides) },
+        onDieDeleted = { index -> viewModel.deleteDieFromSet(index) }
+    )
+}
 
 @Composable
 fun DiceSetEditScreen(
