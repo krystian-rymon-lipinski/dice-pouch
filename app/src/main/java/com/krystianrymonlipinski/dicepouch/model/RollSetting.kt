@@ -44,6 +44,17 @@ data class RollSetting(
     @Parcelize
     enum class Mechanic : Parcelable {
         ADVANTAGE, NORMAL, DISADVANTAGE;
+
+        companion object {
+            fun fromString(string: String) : Mechanic {
+                return when(string) {
+                    "ADVANTAGE" -> ADVANTAGE
+                    "NORMAL" -> NORMAL
+                    "DISADVANTAGE" -> DISADVANTAGE
+                    else -> NORMAL
+                }
+            }
+        }
     }
 }
 

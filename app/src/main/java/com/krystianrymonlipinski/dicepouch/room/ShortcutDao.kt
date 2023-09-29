@@ -5,7 +5,6 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-import com.krystianrymonlipinski.dicepouch.model.RollShortcut
 import com.krystianrymonlipinski.dicepouch.room.AppDatabase.Companion.SHORTCUTS_TABLE_NAME
 import kotlinx.coroutines.flow.Flow
 
@@ -13,14 +12,14 @@ import kotlinx.coroutines.flow.Flow
 interface ShortcutDao {
 
     @Query("SELECT * FROM $SHORTCUTS_TABLE_NAME")
-    fun retrieveAll() : Flow<List<RollShortcut>>
+    fun retrieveAll() : Flow<List<ShortcutEntity>>
 
     @Insert
-    fun add(shortcut: RollShortcut)
+    fun add(shortcut: ShortcutEntity)
 
     @Update
-    fun update(shortcut: RollShortcut)
+    fun update(shortcut: ShortcutEntity)
 
     @Delete
-    fun delete(shortcut: RollShortcut)
+    fun delete(shortcut: ShortcutEntity)
 }

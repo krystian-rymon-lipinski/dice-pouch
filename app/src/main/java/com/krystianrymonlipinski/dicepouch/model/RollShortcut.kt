@@ -1,7 +1,7 @@
 package com.krystianrymonlipinski.dicepouch.model
 
 data class RollShortcut(
-    val timestampId: Long,
+    val timestampId: Long = System.currentTimeMillis(),
     val name: String,
     val setting: RollSetting = RollSetting(Die(6))
 ) {

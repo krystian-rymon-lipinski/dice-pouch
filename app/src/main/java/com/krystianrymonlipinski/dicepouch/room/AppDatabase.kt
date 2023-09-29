@@ -57,7 +57,7 @@ abstract class AppDatabase : RoomDatabase() {
         const val SHORTCUTS_TABLE_COLUMN_TIMESTAMP = "timestamp_id"
         const val SHORTCUTS_TABLE_COLUMN_NAME = "name"
         const val SHORTCUTS_TABLE_COLUMN_DICE_NUMBER = "dice_number"
-        const val SHORTCUTS_TABLE_COLUMN_DIE_TYPE = "die_type"
+        const val SHORTCUTS_TABLE_COLUMN_DIE_ID = "die_id"
         const val SHORTCUTS_TABLE_COLUMN_MODIFIER = "modifier"
         const val SHORTCUTS_TABLE_COLUMN_MECHANIC = "mechanic"
     }
