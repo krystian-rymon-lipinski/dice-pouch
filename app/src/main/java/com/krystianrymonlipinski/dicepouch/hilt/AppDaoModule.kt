@@ -2,6 +2,7 @@ package com.krystianrymonlipinski.dicepouch.hilt
 
 import com.krystianrymonlipinski.dicepouch.room.AppDatabase
 import com.krystianrymonlipinski.dicepouch.room.DieDao
+import com.krystianrymonlipinski.dicepouch.room.ShortcutDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,5 +17,11 @@ object AppDaoModule {
     @Provides
     fun provideDiceDao(appDatabase: AppDatabase) : DieDao {
         return appDatabase.dieDao()
+    }
+
+    @ViewModelScoped
+    @Provides
+    fun provideShortcutsDao(appDatabase: AppDatabase) : ShortcutDao {
+        return appDatabase.shortcutDao()
     }
 }

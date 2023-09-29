@@ -11,7 +11,9 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 
 @Database(entities = [DieEntity::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
+
     abstract fun dieDao(): DieDao
+    abstract fun shortcutDao() : ShortcutDao
 
 
     companion object {
@@ -45,10 +47,18 @@ abstract class AppDatabase : RoomDatabase() {
 
         const val DATABASE_NAME = "dice_pouch_database"
         const val DICE_TABLE_NAME = "dice_table"
+        const val SHORTCUTS_TABLE_NAME = "shortcuts_table"
 
         const val DICE_TABLE_COLUMN_TIMESTAMP = "timestamp_id"
         const val DICE_TABLE_COLUMN_SIDES = "sides"
         const val DICE_TABLE_COLUMN_SIDES_COLOR = "sides_color_argb"
         const val DICE_TABLE_COLUMN_NUMBER_COLOR = "number_color_argb"
+
+        const val SHORTCUTS_TABLE_COLUMN_TIMESTAMP = "timestamp_id"
+        const val SHORTCUTS_TABLE_COLUMN_NAME = "name"
+        const val SHORTCUTS_TABLE_COLUMN_DICE_NUMBER = "dice_number"
+        const val SHORTCUTS_TABLE_COLUMN_DIE_TYPE = "die_type"
+        const val SHORTCUTS_TABLE_COLUMN_MODIFIER = "modifier"
+        const val SHORTCUTS_TABLE_COLUMN_MECHANIC = "mechanic"
     }
 }
