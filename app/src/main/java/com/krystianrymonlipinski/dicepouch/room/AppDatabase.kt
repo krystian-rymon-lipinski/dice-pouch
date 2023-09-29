@@ -49,12 +49,12 @@ abstract class AppDatabase : RoomDatabase() {
         const val DICE_TABLE_NAME = "dice_table"
         const val SHORTCUTS_TABLE_NAME = "shortcuts_table"
 
-        const val DICE_TABLE_COLUMN_TIMESTAMP = "timestamp_id"
+        const val DICE_TABLE_COLUMN_TIMESTAMP = "dice_timestamp_id"
         const val DICE_TABLE_COLUMN_SIDES = "sides"
         const val DICE_TABLE_COLUMN_SIDES_COLOR = "sides_color_argb"
         const val DICE_TABLE_COLUMN_NUMBER_COLOR = "number_color_argb"
 
-        const val SHORTCUTS_TABLE_COLUMN_TIMESTAMP = "timestamp_id"
+        const val SHORTCUTS_TABLE_COLUMN_TIMESTAMP = "shortcut_timestamp_id"
         const val SHORTCUTS_TABLE_COLUMN_NAME = "name"
         const val SHORTCUTS_TABLE_COLUMN_DICE_NUMBER = "dice_number"
         const val SHORTCUTS_TABLE_COLUMN_DIE_ID = "die_id"

@@ -1,8 +1,10 @@
 package com.krystianrymonlipinski.dicepouch.data_layer
 
+import androidx.compose.ui.graphics.Color
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
 import com.krystianrymonlipinski.dicepouch.model.RollShortcut
+import com.krystianrymonlipinski.dicepouch.room.ShortcutAndDie
 import com.krystianrymonlipinski.dicepouch.room.ShortcutDao
 import com.krystianrymonlipinski.dicepouch.room.ShortcutEntity
 import kotlinx.coroutines.Dispatchers
@@ -45,15 +47,23 @@ class ShortcutsLocalDataSource @Inject constructor(
         )
     }
 
-    private fun convertFromEntity(entity: ShortcutEntity) : RollShortcut {
+    private fun convertFromEntity(shortcutAndDie: ShortcutAndDie) : RollShortcut {
+        val shortcut = shortcutAndDie.shortcut
+        val die = shortcutAndDie.die
+
         return RollShortcut(
-            timestampId = entity.timestampId,
-            name = entity.name,
+            timestampId = shortcut.timestampId,
+            name = shortcutAndDie.shortcut.name,
             setting = RollSetting(
-                die = Die(6), //TODO: retrieve die based on its id from the dice table
-                diceNumber = entity.diceNumber,
-                modifier = entity.modifier,
-                mechanic = RollSetting.Mechanic.fromString(entity.mechanic)
+                die = Die(
+                    sides = die.sides,
+                    sideColor = Color(die.sidesColorArgb),
+                    numberColor = Color(die.numberColorArgb),
+                    timestampId = die.timestampId
+                ),
+                diceNumber = shortcut.diceNumber,
+                modifier = shortcut.modifier,
+                mechanic = RollSetting.Mechanic.fromString(shortcut.mechanic)
             )
         )
     }
