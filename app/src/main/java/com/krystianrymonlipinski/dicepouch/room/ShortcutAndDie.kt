@@ -3,14 +3,14 @@ package com.krystianrymonlipinski.dicepouch.room
 import androidx.room.Embedded
 import androidx.room.Relation
 import com.krystianrymonlipinski.dicepouch.room.AppDatabase.Companion.DICE_TABLE_COLUMN_TIMESTAMP
-import com.krystianrymonlipinski.dicepouch.room.AppDatabase.Companion.SHORTCUTS_TABLE_COLUMN_TIMESTAMP
+import com.krystianrymonlipinski.dicepouch.room.AppDatabase.Companion.SHORTCUTS_TABLE_COLUMN_DIE_ID
 
 data class ShortcutAndDie(
-    @Embedded val shortcut: ShortcutEntity,
+    @Embedded val die: DieEntity,
     @Relation(
-        parentColumn = SHORTCUTS_TABLE_COLUMN_TIMESTAMP,
-        entityColumn = DICE_TABLE_COLUMN_TIMESTAMP
+        parentColumn = DICE_TABLE_COLUMN_TIMESTAMP,
+        entityColumn = SHORTCUTS_TABLE_COLUMN_DIE_ID
     )
-    val die: DieEntity
+    val shortcut: ShortcutEntity,
 ) {
 }

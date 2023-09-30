@@ -12,7 +12,7 @@ import com.krystianrymonlipinski.dicepouch.room.AppDatabase.Companion.SHORTCUTS_
 import com.krystianrymonlipinski.dicepouch.room.AppDatabase.Companion.SHORTCUTS_TABLE_NAME
 
 @Entity(tableName = SHORTCUTS_TABLE_NAME)
-class ShortcutEntity(
+data class ShortcutEntity(
     @PrimaryKey @ColumnInfo(name = SHORTCUTS_TABLE_COLUMN_TIMESTAMP) val timestampId: Long,
     @ColumnInfo(name = SHORTCUTS_TABLE_COLUMN_NAME) val name: String,
     @ColumnInfo(name = SHORTCUTS_TABLE_COLUMN_DICE_NUMBER) val diceNumber: Int,

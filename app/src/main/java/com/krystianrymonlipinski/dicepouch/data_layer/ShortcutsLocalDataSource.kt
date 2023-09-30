@@ -4,6 +4,7 @@ import androidx.compose.ui.graphics.Color
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
 import com.krystianrymonlipinski.dicepouch.model.RollShortcut
+import com.krystianrymonlipinski.dicepouch.room.DieDao
 import com.krystianrymonlipinski.dicepouch.room.ShortcutAndDie
 import com.krystianrymonlipinski.dicepouch.room.ShortcutDao
 import com.krystianrymonlipinski.dicepouch.room.ShortcutEntity
@@ -14,12 +15,13 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class ShortcutsLocalDataSource @Inject constructor(
-    private val shortcutDao: ShortcutDao
+    private val shortcutDao: ShortcutDao,
+    private val dieDao: DieDao
 ) {
 
     fun getShortcutsStream() : Flow<List<RollShortcut>> {
-        return shortcutDao.retrieveAll().map {
-            it.map { entity -> convertFromEntity(entity) }
+        return dieDao.retrieveAllWithShortcuts().map {
+            it.map { shortcutAndDie -> convertFromEntity(shortcutAndDie) }
         }
     }
 

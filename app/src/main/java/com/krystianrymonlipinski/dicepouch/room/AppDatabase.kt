@@ -9,7 +9,7 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 
 
-@Database(entities = [DieEntity::class], version = 1)
+@Database(entities = [DieEntity::class, ShortcutEntity::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun dieDao(): DieDao
