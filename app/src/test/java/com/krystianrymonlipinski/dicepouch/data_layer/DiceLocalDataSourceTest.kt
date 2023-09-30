@@ -2,7 +2,6 @@ package com.krystianrymonlipinski.dicepouch.data_layer
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import com.krystianrymonlipinski.dicepouch.DiceSetLocalDataSource
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.room.DieDao
 import com.krystianrymonlipinski.dicepouch.room.DieEntity
@@ -24,9 +23,9 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 @RunWith(MockitoJUnitRunner::class)
-class DiceSetLocalDataSourceTest {
+class DiceLocalDataSourceTest {
 
-    private lateinit var testObj: DiceSetLocalDataSource
+    private lateinit var testObj: DiceLocalDataSource
 
     @Mock
     private lateinit var dieDao: DieDao
@@ -36,7 +35,7 @@ class DiceSetLocalDataSourceTest {
 
     @Before
     fun setUp() {
-        testObj = DiceSetLocalDataSource(dieDao)
+        testObj = DiceLocalDataSource(dieDao)
     }
 
 

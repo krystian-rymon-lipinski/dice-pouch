@@ -2,6 +2,7 @@ package com.krystianrymonlipinski.dicepouch
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.krystianrymonlipinski.dicepouch.data_layer.DiceLocalDataSource
 import com.krystianrymonlipinski.dicepouch.data_layer.ShortcutsLocalDataSource
 import com.krystianrymonlipinski.dicepouch.model.DiceSet
 import com.krystianrymonlipinski.dicepouch.model.Die
@@ -18,7 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(
-    private val localDataSource: DiceSetLocalDataSource,
+    private val localDataSource: DiceLocalDataSource,
     private val shortcutsLocalDataSource: ShortcutsLocalDataSource
 ) : ViewModel() {
 
