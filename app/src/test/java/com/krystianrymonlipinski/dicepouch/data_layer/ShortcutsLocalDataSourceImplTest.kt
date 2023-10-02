@@ -27,9 +27,9 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 @RunWith(MockitoJUnitRunner::class)
-class ShortcutsLocalDataSourceTest {
+class ShortcutsLocalDataSourceImplTest {
 
-    private lateinit var testObj: ShortcutsLocalDataSource
+    private lateinit var testObj: ShortcutsLocalDataSourceImpl
 
     @Mock
     lateinit var dieDao: DieDao
@@ -43,7 +43,7 @@ class ShortcutsLocalDataSourceTest {
 
     @Before
     fun setUp() {
-        testObj = ShortcutsLocalDataSource(shortcutDao, dieDao)
+        testObj = ShortcutsLocalDataSourceImpl(shortcutDao, dieDao)
     }
 
     @Test

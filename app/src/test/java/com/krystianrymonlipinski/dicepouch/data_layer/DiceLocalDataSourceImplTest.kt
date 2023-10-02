@@ -23,9 +23,9 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 @RunWith(MockitoJUnitRunner::class)
-class DiceLocalDataSourceTest {
+class DiceLocalDataSourceImplTest {
 
-    private lateinit var testObj: DiceLocalDataSource
+    private lateinit var testObj: DiceLocalDataSourceImpl
 
     @Mock
     private lateinit var dieDao: DieDao
@@ -35,7 +35,7 @@ class DiceLocalDataSourceTest {
 
     @Before
     fun setUp() {
-        testObj = DiceLocalDataSource(dieDao)
+        testObj = DiceLocalDataSourceImpl(dieDao)
     }
 
 

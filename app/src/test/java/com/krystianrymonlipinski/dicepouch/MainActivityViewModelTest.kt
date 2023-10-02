@@ -1,8 +1,8 @@
 package com.krystianrymonlipinski.dicepouch
 
 import androidx.compose.ui.graphics.Color
-import com.krystianrymonlipinski.dicepouch.data_layer.DiceLocalDataSource
-import com.krystianrymonlipinski.dicepouch.data_layer.ShortcutsLocalDataSource
+import com.krystianrymonlipinski.dicepouch.data_layer.DiceLocalDataSourceImpl
+import com.krystianrymonlipinski.dicepouch.data_layer.ShortcutsLocalDataSourceImpl
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
 import com.krystianrymonlipinski.dicepouch.model.RollShortcut
@@ -30,9 +30,9 @@ class MainActivityViewModelTest {
     private lateinit var testObj: MainActivityViewModel
 
     @Mock
-    lateinit var diceLocalDataSource: DiceLocalDataSource
+    lateinit var diceLocalDataSourceImpl: DiceLocalDataSourceImpl
     @Mock
-    lateinit var shortcutsLocalDataSource: ShortcutsLocalDataSource
+    lateinit var shortcutsLocalDataSourceImpl: ShortcutsLocalDataSourceImpl
 
     @Captor
     lateinit var dieCaptor: ArgumentCaptor<Die>
@@ -45,9 +45,9 @@ class MainActivityViewModelTest {
         val testDispatcher = UnconfinedTestDispatcher()
         Dispatchers.setMain(testDispatcher)
 
-        whenever(diceLocalDataSource.getDiceStream()).thenReturn(flowOf(listOf()))
-        whenever(shortcutsLocalDataSource.getShortcutsStream()).thenReturn(flowOf(listOf()))
-        testObj = MainActivityViewModel(diceLocalDataSource, shortcutsLocalDataSource)
+        whenever(diceLocalDataSourceImpl.getDiceStream()).thenReturn(flowOf(listOf()))
+        whenever(shortcutsLocalDataSourceImpl.getShortcutsStream()).thenReturn(flowOf(listOf()))
+        testObj = MainActivityViewModel(diceLocalDataSourceImpl, shortcutsLocalDataSourceImpl)
 
     }
 
@@ -56,7 +56,7 @@ class MainActivityViewModelTest {
         val dieToBeAdded = Die(sides = 6, sideColor = Color.White, numberColor = Color.Black)
 
         testObj.addNewDieToSet(numberOfSides = 6)
-        verify(diceLocalDataSource).addNewDieToSet(capture(dieCaptor))
+        verify(diceLocalDataSourceImpl).addNewDieToSet(capture(dieCaptor))
         assertEqualsDie_withoutTimestampId(dieToBeAdded, dieCaptor.value)
     }
 
@@ -65,7 +65,7 @@ class MainActivityViewModelTest {
         val dieToBeDeleted = Die(sides = 8, sideColor = Color.White, numberColor = Color.Black)
         testObj.deleteDieFromSet(die = dieToBeDeleted)
 
-        verify(diceLocalDataSource).deleteDieFromSet(capture(dieCaptor))
+        verify(diceLocalDataSourceImpl).deleteDieFromSet(capture(dieCaptor))
         assertEqualsDie_withoutTimestampId(dieToBeDeleted, dieCaptor.value)
     }
 
@@ -84,7 +84,7 @@ class MainActivityViewModelTest {
             setting = RollSetting(die = Die(sides = 5), modifier = -2)
         )
 
-        verify(shortcutsLocalDataSource).addNewShortcutToSet(capture(shortcutCaptor))
+        verify(shortcutsLocalDataSourceImpl).addNewShortcutToSet(capture(shortcutCaptor))
         assertEqualsRollShortcut_withoutTimestampId(shortcutToBeAdded, shortcutCaptor.value)
     }
 
@@ -103,7 +103,7 @@ class MainActivityViewModelTest {
             setting = RollSetting(die = Die(sides = 3), mechanic = RollSetting.Mechanic.ADVANTAGE)
         ))
 
-        verify(shortcutsLocalDataSource).updateShortcut(capture(shortcutCaptor))
+        verify(shortcutsLocalDataSourceImpl).updateShortcut(capture(shortcutCaptor))
         assertEqualsRollShortcut_withoutTimestampId(updatedShortcut, shortcutCaptor.value)
     }
 
@@ -119,7 +119,7 @@ class MainActivityViewModelTest {
         )
         testObj.deleteShortcut(shortcutToBeDeleted)
 
-        verify(shortcutsLocalDataSource).deleteShortcutFromSet(capture(shortcutCaptor))
+        verify(shortcutsLocalDataSourceImpl).deleteShortcutFromSet(capture(shortcutCaptor))
         assertEqualsRollShortcut_withoutTimestampId(shortcutToBeDeleted, shortcutCaptor.value)
     }
 
