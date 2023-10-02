@@ -1,14 +1,18 @@
 package com.krystianrymonlipinski.dicepouch
 
 import androidx.compose.ui.graphics.Color
+import com.krystianrymonlipinski.dicepouch.data_layer.DiceLocalDataSource
 import com.krystianrymonlipinski.dicepouch.data_layer.DiceLocalDataSourceImpl
+import com.krystianrymonlipinski.dicepouch.data_layer.ShortcutsLocalDataSource
 import com.krystianrymonlipinski.dicepouch.data_layer.ShortcutsLocalDataSourceImpl
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
 import com.krystianrymonlipinski.dicepouch.model.RollShortcut
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -24,6 +28,7 @@ import org.mockito.kotlin.capture
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(MockitoJUnitRunner::class)
 class MainActivityViewModelTest {
 
@@ -39,16 +44,42 @@ class MainActivityViewModelTest {
     @Captor
     lateinit var shortcutCaptor: ArgumentCaptor<RollShortcut>
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Before
     fun setUp() {
         val testDispatcher = UnconfinedTestDispatcher()
         Dispatchers.setMain(testDispatcher)
 
-        whenever(diceLocalDataSourceImpl.getDiceStream()).thenReturn(flowOf(listOf()))
-        whenever(shortcutsLocalDataSourceImpl.getShortcutsStream()).thenReturn(flowOf(listOf()))
+        whenever(diceLocalDataSourceImpl.getDiceStream()).thenReturn(flowOf(emptyList()))
+        whenever(shortcutsLocalDataSourceImpl.getShortcutsStream()).thenReturn(flowOf(emptyList()))
         testObj = MainActivityViewModel(diceLocalDataSourceImpl, shortcutsLocalDataSourceImpl)
+    }
 
+    @Test
+    fun detectDiceStreamChange() = runTest {
+        val diceToEmit = listOf(Die(sides = 6, timestampId = 1L))
+        val diceSource = FakeDiceLocalDataSource()
+        val testObj2 = MainActivityViewModel(diceSource, shortcutsLocalDataSourceImpl)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            testObj2.diceSetState.collect { /* Collector (even an empty one) needed for .stateIn operator to work properly */ }
+        }
+
+        assertEquals(emptyList<Die>(), testObj2.diceSetState.value.dice)
+        diceSource.emit(diceToEmit)
+        assertEquals(diceToEmit, testObj2.diceSetState.value.dice)
+    }
+
+    @Test
+    fun detectShortcutsStreamChange() = runTest {
+        val shortcutsToEmit = listOf(RollShortcut(name = "a_name", setting = RollSetting(die = Die(20))))
+        val shortcutsSource = FakeShortcutsLocalDataSource()
+        val testObj2 = MainActivityViewModel(diceLocalDataSourceImpl, shortcutsSource)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            testObj2.diceSetState.collect { /* Collector (even an empty one) needed for .stateIn operator to work properly */ }
+        }
+
+        assertEquals(emptyList<RollShortcut>(), testObj2.diceSetState.value.shortcuts)
+        shortcutsSource.emit(shortcutsToEmit)
+        assertEquals(shortcutsToEmit, testObj2.diceSetState.value.shortcuts)
     }
 
     @Test
@@ -139,6 +170,28 @@ class MainActivityViewModelTest {
     private fun assertEqualsRollShortcut_withoutTimestampId(assumedShortcut: RollShortcut, capturedShortcut: RollShortcut) {
         assertEquals(assumedShortcut.name, capturedShortcut.name)
         assertEqualsShortcutSetting(assumedShortcut.setting, capturedShortcut.setting)
+    }
+
+    private class FakeDiceLocalDataSource : DiceLocalDataSource {
+        private val flow = MutableStateFlow(emptyList<Die>())
+
+        suspend fun emit(value: List<Die>) = flow.emit(value)
+        override fun getDiceStream() = flow
+
+        override suspend fun addNewDieToSet(die: Die) { /* Do nothing */ }
+        override suspend fun deleteDieFromSet(die: Die) { /* Do nothing */ }
+    }
+
+    private class FakeShortcutsLocalDataSource : ShortcutsLocalDataSource {
+        private val flow = MutableStateFlow(emptyList<RollShortcut>())
+
+        suspend fun emit(value: List<RollShortcut>) = flow.emit(value)
+        override fun getShortcutsStream() = flow
+
+        override suspend fun addNewShortcutToSet(newShortcut: RollShortcut) { }
+        override suspend fun updateShortcut(shortcutToUpdate: RollShortcut) { }
+        override suspend fun deleteShortcutFromSet(shortcutToDelete: RollShortcut) { }
+
     }
 
 }
