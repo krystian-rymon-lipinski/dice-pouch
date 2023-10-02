@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
@@ -48,7 +47,7 @@ fun DiceSetEditRoute(
     DiceSetEditScreen(
         screenState = screenState,
         onNewDieAdded = { numberOfSides -> viewModel.addNewDieToSet(numberOfSides) },
-        onDieDeleted = { index -> viewModel.deleteDieFromSet(index) }
+        onDeleteDieClicked = { die -> viewModel.deleteDieFromSet(die) }
     )
 }
 
@@ -56,7 +55,7 @@ fun DiceSetEditRoute(
 fun DiceSetEditScreen(
     screenState: DiceSet = DiceSet(),
     onNewDieAdded: (Int) -> Unit = {},
-    onDieDeleted: (Int) -> Unit = {}
+    onDeleteDieClicked: (Die) -> Unit = {}
 ) {
     var showNewDieDialog by rememberSaveable { mutableStateOf(false) }
 
@@ -64,7 +63,7 @@ fun DiceSetEditScreen(
         DiceCaption(onAddNewDieClicked = { showNewDieDialog = true })
         EditableDiceGrid(
             diceSet = screenState.dice,
-            onDeleteDieClicked = { index-> onDieDeleted(index) }
+            onDeleteDieClicked = onDeleteDieClicked
         )
     }
 
@@ -82,7 +81,7 @@ fun DiceSetEditScreen(
 @Composable
 fun EditableDiceGrid(
     diceSet: List<Die>,
-    onDeleteDieClicked: (Int) -> Unit
+    onDeleteDieClicked: (Die) -> Unit
 ) {
     LazyVerticalGrid(
         columns = GridCells.Adaptive(120.dp),
@@ -90,10 +89,9 @@ fun EditableDiceGrid(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        itemsIndexed(diceSet) { index: Int, die: Die ->
+        items(diceSet.size) {dieIndex: Int ->
             DeletableDieImage(
-                index = index,
-                die = die,
+                die = diceSet[dieIndex],
                 onDeleteDieClicked = onDeleteDieClicked
             )
         }
@@ -101,7 +99,7 @@ fun EditableDiceGrid(
 }
 
 @Composable
-fun DeletableDieImage(index: Int, die: Die, onDeleteDieClicked: (Int) -> Unit) {
+fun DeletableDieImage(die: Die, onDeleteDieClicked: (Die) -> Unit) {
     ElevatedCard(
         shape = MaterialTheme.shapes.small,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
@@ -117,7 +115,7 @@ fun DeletableDieImage(index: Int, die: Die, onDeleteDieClicked: (Int) -> Unit) {
             )
             IconButton(
                 modifier = Modifier.align(Alignment.TopEnd),
-                onClick = { onDeleteDieClicked(index) }
+                onClick = { onDeleteDieClicked(die) }
             ) {
                 Icon(
                     imageVector = Icons.Filled.Delete,

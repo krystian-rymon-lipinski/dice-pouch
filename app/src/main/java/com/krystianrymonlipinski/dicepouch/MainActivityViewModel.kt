@@ -19,12 +19,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(
-    private val localDataSource: DiceLocalDataSource,
+    private val diceLocalDataSource: DiceLocalDataSource,
     private val shortcutsLocalDataSource: ShortcutsLocalDataSource
 ) : ViewModel() {
 
     private val _setName = MutableStateFlow(BASIC_SET_NAME)
-    private val _diceStream = localDataSource.getDiceStream()
+    private val _diceStream = diceLocalDataSource.getDiceStream()
     private val _shortcutsStream = shortcutsLocalDataSource.getShortcutsStream()
 
     val diceSetState: StateFlow<DiceSet> = combine(
@@ -41,13 +41,13 @@ class MainActivityViewModel @Inject constructor(
 
     fun addNewDieToSet(numberOfSides: Int) {
         viewModelScope.launch {
-            localDataSource.addNewDieToSet(Die(numberOfSides))
+            diceLocalDataSource.addNewDieToSet(Die(numberOfSides))
         }
     }
 
-    fun deleteDieFromSet(index: Int) {
+    fun deleteDieFromSet(die: Die) {
         viewModelScope.launch {
-            localDataSource.deleteDieFromSet(diceSetState.value.dice[index])
+            diceLocalDataSource.deleteDieFromSet(die)
         }
     }
 
@@ -66,9 +66,9 @@ class MainActivityViewModel @Inject constructor(
         }
     }
 
-    fun deleteShortcut(index: Int) {
+    fun deleteShortcut(shortcut: RollShortcut) {
         viewModelScope.launch {
-            shortcutsLocalDataSource.deleteShortcutFromSet(diceSetState.value.shortcuts[index])
+            shortcutsLocalDataSource.deleteShortcutFromSet(shortcut)
         }
     }
 
