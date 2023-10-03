@@ -68,22 +68,12 @@ class ShortcutDaoTest {
     }
 
     @Test
-    fun retrieveShortcutWithDie() = runTest {
-        shortcutDao.add(shortcutsExample1[0])
-        val shortcutAndDieStored = dieDao.retrieveAllWithShortcuts().take(1).single()
-
-        assertEquals(1, shortcutAndDieStored.size)
-        assertEquals(shortcutsExample1, shortcutAndDieStored[0].shortcuts)
-        assertEquals(dieExample, shortcutAndDieStored[0].die)
-    }
-
-    @Test
     fun addShortcutToDatabase() = runTest {
         shortcutDao.add(shortcutsExample1[0])
-        val shortcutsStored = dieDao.retrieveAllWithShortcuts().take(1).single()
+        val shortcutsStored = shortcutDao.retrieveAll().take(1).single()
 
         assertEquals(1, shortcutsStored.size)
-        assertEquals(shortcutsExample1, shortcutsStored[0].shortcuts)
+        assertEquals(shortcutsExample1, shortcutsStored)
     }
 
     @Test
@@ -93,10 +83,10 @@ class ShortcutDaoTest {
             add(shortcutsExample1[0])
             delete(shortcutsExample2[0])
         }
-        val shortcutsStored = dieDao.retrieveAllWithShortcuts().take(1).single()
+        val shortcutsStored = shortcutDao.retrieveAll().take(1).single()
 
         assertEquals(1, shortcutsStored.size)
-        assertEquals(shortcutsExample1, shortcutsStored[0].shortcuts)
+        assertEquals(shortcutsExample1, shortcutsStored)
     }
 
     @Test
@@ -105,10 +95,10 @@ class ShortcutDaoTest {
             add(shortcutsExample1[0])
             update(shortcutsExample1Updated[0])
         }
-        val shortcutsStored = dieDao.retrieveAllWithShortcuts().take(1).single()
+        val shortcutsStored = shortcutDao.retrieveAll().take(1).single()
 
         assertEquals(1, shortcutsStored.size)
-        assertEquals(shortcutsExample1Updated, shortcutsStored[0].shortcuts)
+        assertEquals(shortcutsExample1Updated, shortcutsStored)
     }
 
 

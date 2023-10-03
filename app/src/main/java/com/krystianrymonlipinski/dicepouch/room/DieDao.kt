@@ -11,9 +11,6 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface DieDao {
 
-    @Query("SELECT * FROM $DICE_TABLE_NAME")
-    fun retrieveAll() : Flow<List<DieEntity>>
-
     @Transaction
     @Query("SELECT * FROM $DICE_TABLE_NAME")
     fun retrieveAllWithShortcuts() : Flow<List<DieWithShortcuts>>
