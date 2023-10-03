@@ -25,7 +25,7 @@ class MainActivityViewModel @Inject constructor(
 
     private val _setName = MutableStateFlow(BASIC_SET_NAME)
     private val _diceStream = diceLocalDataSource.getDiceStream()
-    private val _shortcutsStream = shortcutsLocalDataSource.getShortcutsStream()
+    private val _shortcutsStream = diceLocalDataSource.getShortcutsStream()
 
     val diceSetState: StateFlow<DiceSet> = combine(
         _setName, _diceStream, _shortcutsStream

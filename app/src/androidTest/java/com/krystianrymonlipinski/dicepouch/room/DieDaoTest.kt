@@ -36,10 +36,10 @@ class DieDaoTest {
         val dieToAdd = DieEntity(timestampId = 1, sides = 6, sidesColorArgb = 0, numberColorArgb = 0)
 
         dieDao.add(dieToAdd)
-        val diceStored = dieDao.retrieveAll().take(1).single()
+        val diceStored = dieDao.retrieveAllWithShortcuts().take(1).single()
 
         assertEquals(1, diceStored.size)
-        assertEquals(dieToAdd, diceStored[0])
+        assertEquals(dieToAdd, diceStored[0].die)
     }
 
     @Test
@@ -50,10 +50,10 @@ class DieDaoTest {
         dieDao.add(dieToDelete)
         dieDao.add(dieToSpare)
         dieDao.delete(dieToDelete)
-        val diceStored = dieDao.retrieveAll().take(1).single()
+        val diceStored = dieDao.retrieveAllWithShortcuts().take(1).single()
 
         assertEquals(1, diceStored.size)
-        assertEquals(dieToSpare, diceStored[0])
+        assertEquals(dieToSpare, diceStored[0].die)
     }
 
 

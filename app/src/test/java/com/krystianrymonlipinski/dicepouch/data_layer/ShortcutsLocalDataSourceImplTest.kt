@@ -1,18 +1,10 @@
 package com.krystianrymonlipinski.dicepouch.data_layer
 
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
 import com.krystianrymonlipinski.dicepouch.model.RollShortcut
-import com.krystianrymonlipinski.dicepouch.room.DieDao
-import com.krystianrymonlipinski.dicepouch.room.DieEntity
-import com.krystianrymonlipinski.dicepouch.room.ShortcutAndDie
 import com.krystianrymonlipinski.dicepouch.room.ShortcutDao
 import com.krystianrymonlipinski.dicepouch.room.ShortcutEntity
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.single
-import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -24,15 +16,11 @@ import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.kotlin.capture
 import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever
 
 @RunWith(MockitoJUnitRunner::class)
 class ShortcutsLocalDataSourceImplTest {
 
     private lateinit var testObj: ShortcutsLocalDataSourceImpl
-
-    @Mock
-    lateinit var dieDao: DieDao
 
     @Mock
     lateinit var shortcutDao: ShortcutDao
@@ -43,7 +31,7 @@ class ShortcutsLocalDataSourceImplTest {
 
     @Before
     fun setUp() {
-        testObj = ShortcutsLocalDataSourceImpl(shortcutDao, dieDao)
+        testObj = ShortcutsLocalDataSourceImpl(shortcutDao)
     }
 
     @Test
@@ -109,45 +97,4 @@ class ShortcutsLocalDataSourceImplTest {
         assertEquals(shortcutEntityToCheck, shortcutEntityCaptor.value)
     }
 
-    @Test
-    fun getShortcutsStream_transformFromTwoRelatedDatabaseObjects() = runTest {
-        val shortcutAndDie = ShortcutAndDie(
-            die = DieEntity(
-                timestampId = 10L,
-                sides = 4,
-                sidesColorArgb = Color.White.toArgb(),
-                numberColorArgb = Color.Black.toArgb()
-            ),
-            shortcut = ShortcutEntity(
-                timestampId = 1L,
-                name = "a_name",
-                diceNumber = 3,
-                dieId = 10L,
-                modifier = -2,
-                mechanic = "DISADVANTAGE"
-            )
-        )
-
-        val shortcutToRetrieve = RollShortcut(
-            timestampId = 1L,
-            name = "a_name",
-            setting = RollSetting(
-                die = Die(
-                    timestampId = 10L,
-                    sides = 4,
-                    sideColor = Color.White,
-                    numberColor = Color.Black
-                ),
-                diceNumber = 3,
-                modifier = -2,
-                mechanic = RollSetting.Mechanic.DISADVANTAGE
-            )
-        )
-
-        whenever(dieDao.retrieveAllWithShortcuts()).thenReturn(flowOf(listOf(shortcutAndDie)))
-
-        val retrievedShortcuts = testObj.getShortcutsStream().take(1).single()
-        assertEquals(1, retrievedShortcuts.size)
-        assertEquals(shortcutToRetrieve, retrievedShortcuts[0])
-    }
 }

@@ -18,6 +18,6 @@ data class ShortcutEntity(
     @ColumnInfo(name = SHORTCUTS_TABLE_COLUMN_DICE_NUMBER) val diceNumber: Int,
     @ColumnInfo(name = SHORTCUTS_TABLE_COLUMN_DIE_ID) val dieId: Long,
     @ColumnInfo(name = SHORTCUTS_TABLE_COLUMN_MODIFIER) val modifier: Int,
-    @ColumnInfo(name = SHORTCUTS_TABLE_COLUMN_MECHANIC) val mechanic: String
-) {
-}
+    @ColumnInfo(name = SHORTCUTS_TABLE_COLUMN_MECHANIC) val mechanic: String,
+
+)

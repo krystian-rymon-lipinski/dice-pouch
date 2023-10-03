@@ -16,7 +16,7 @@ interface DieDao {
 
     @Transaction
     @Query("SELECT * FROM $DICE_TABLE_NAME")
-    fun retrieveAllWithShortcuts() : Flow<List<ShortcutAndDie>>
+    fun retrieveAllWithShortcuts() : Flow<List<DieWithShortcuts>>
 
     @Insert
     fun add(die: DieEntity)
