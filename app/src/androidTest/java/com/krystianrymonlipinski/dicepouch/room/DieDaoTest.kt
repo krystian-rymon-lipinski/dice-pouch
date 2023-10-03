@@ -76,7 +76,26 @@ class DieDaoTest {
         assertEquals(dieEntity, diceStored[0].die)
         assertEquals(2, diceStored[0].shortcuts.size)
         assertEquals(listOf(shortcutEntity1, shortcutEntity2), diceStored[0].shortcuts)
+    }
 
+
+    @Test
+    fun deleteDie_withShortcuts() = runTest {
+        val dieId = 1L
+        val dieEntity = DieEntity(timestampId = dieId, sides = 4, sidesColorArgb = 0, numberColorArgb = 0)
+        val shortcutEntity1 = ShortcutEntity(timestampId = 12L, name = "a_name", diceNumber = 2, dieId = dieId, modifier = -1, mechanic = "NORMAL")
+        val shortcutEntity2 = ShortcutEntity(timestampId = 13L, name = "b_name", diceNumber = 1, dieId = dieId, modifier = 0, mechanic = "NORMAL")
+
+        dieDao.add(dieEntity)
+        shortcutsDao.add(shortcutEntity1)
+        shortcutsDao.add(shortcutEntity2)
+        dieDao.delete(dieEntity)
+
+        val diceStored = dieDao.retrieveAllWithShortcuts().take(1).single()
+        val shortcutsStored = shortcutsDao.retrieveAll().take(1).single()
+
+        assertEquals(0, diceStored.size)
+        assertEquals(0, shortcutsStored.size)
     }
 
 

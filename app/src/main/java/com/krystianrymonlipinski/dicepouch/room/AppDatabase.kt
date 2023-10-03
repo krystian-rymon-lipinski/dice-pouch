@@ -29,7 +29,7 @@ abstract class AppDatabase : RoomDatabase() {
         private fun prepopulateDice(db: SupportSQLiteDatabase) {
             defaultDice.forEach {
                 val contentValues = ContentValues(defaultDice.size).apply {
-                    put(DICE_TABLE_COLUMN_TIMESTAMP, it.timestampId)
+                    put(DICE_TABLE_COLUMN_TIMESTAMP_ID, it.timestampId)
                     put(DICE_TABLE_COLUMN_SIDES, it.sides)
                     put(DICE_TABLE_COLUMN_SIDES_COLOR, it.sidesColorArgb)
                     put(DICE_TABLE_COLUMN_NUMBER_COLOR, it.numberColorArgb)
@@ -79,7 +79,7 @@ abstract class AppDatabase : RoomDatabase() {
         const val DICE_TABLE_NAME = "dice_table"
         const val SHORTCUTS_TABLE_NAME = "shortcuts_table"
 
-        const val DICE_TABLE_COLUMN_TIMESTAMP = "dice_timestamp_id"
+        const val DICE_TABLE_COLUMN_TIMESTAMP_ID = "dice_timestamp_id"
         const val DICE_TABLE_COLUMN_SIDES = "sides"
         const val DICE_TABLE_COLUMN_SIDES_COLOR = "sides_color_argb"
         const val DICE_TABLE_COLUMN_NUMBER_COLOR = "number_color_argb"
