@@ -136,25 +136,25 @@ class RollSettingsDialogStateHolder(rollSetting: RollSetting) {
     var state by mutableStateOf(rollSetting)
 
     fun changeDiceNumber(change: Int) {
-        state = state.copy(diceNumber = state.diceNumber + change)
+        state = state.changeDiceNumber(newValue = state.diceNumber + change)
         if (state.diceNumber < MIN_DICE) {
-            state = state.copy(diceNumber = MAX_DICE)
+            state = state.changeDiceNumber(newValue = MAX_DICE)
         } else if (state.diceNumber > MAX_DICE) {
-            state = state.copy(diceNumber = MIN_DICE)
+            state = state.changeDiceNumber(newValue = MIN_DICE)
         }
     }
 
     fun changeModifier(change: Int) {
-        state = state.copy(modifier = state.modifier + change)
+        state = state.changeModifier(newValue = state.modifier + change)
         if (state.modifier < MIN_MOD) {
-            state = state.copy(modifier = MAX_MOD)
+            state = state.changeModifier(newValue = MAX_MOD)
         } else if (state.modifier > MAX_MOD) {
             state = state.copy(modifier = MIN_MOD)
         }
     }
 
     fun changeMechanic(newValue: RollSetting.Mechanic) {
-        state = state.copy(mechanic = newValue).copy()
+        state = state.changeMechanic(newValue = newValue)
     }
 
     companion object {

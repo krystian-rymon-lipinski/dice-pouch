@@ -1,12 +1,45 @@
 package com.krystianrymonlipinski.dicepouch.model
 
 import org.junit.Assert.assertEquals
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.junit.MockitoJUnitRunner
 
 @RunWith(MockitoJUnitRunner::class)
 class RollSettingTest {
+
+    private lateinit var testObj: RollSetting
+
+    @Before
+    fun setUp() {
+        testObj = RollSetting(Die(6))
+    }
+
+    @Test
+    fun changeDie() {
+        val dieToChange = Die(20)
+        testObj = testObj.changeDie(dieToChange)
+        assertEquals(dieToChange, testObj.die)
+    }
+
+    @Test
+    fun changeDiceNumber() {
+        testObj = testObj.changeDiceNumber(12)
+        assertEquals(12, testObj.diceNumber)
+    }
+
+    @Test
+    fun changeModifier() {
+        testObj = testObj.changeModifier(-4)
+        assertEquals(-4, testObj.modifier)
+    }
+
+    @Test
+    fun changeMechanic() {
+        testObj = testObj.changeMechanic(RollSetting.Mechanic.ADVANTAGE)
+        assertEquals(RollSetting.Mechanic.ADVANTAGE, testObj.mechanic)
+    }
 
     @Test
     fun buildRollDescription_withOneDie() {

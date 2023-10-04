@@ -18,6 +18,22 @@ data class RollSetting(
     @IgnoredOnParcel
     val rollDescription = buildRollDescription()
 
+    fun changeDie(newDie: Die) : RollSetting {
+        return copy(die = newDie)
+    }
+
+    fun changeDiceNumber(newValue: Int) : RollSetting {
+        return copy(diceNumber = newValue)
+    }
+
+    fun changeModifier(newValue: Int) : RollSetting {
+        return copy(modifier = newValue)
+    }
+
+    fun changeMechanic(newValue: Mechanic) : RollSetting {
+        return copy(mechanic = newValue)
+    }
+
 
     private fun generateModifierDescription() : String? {
         return when {
