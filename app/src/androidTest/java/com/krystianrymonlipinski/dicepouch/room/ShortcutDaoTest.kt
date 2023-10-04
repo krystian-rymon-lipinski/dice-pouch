@@ -21,7 +21,6 @@ class ShortcutDaoTest {
     private lateinit var dieDao: DieDao
 
     private val dieId: Long = 1L
-    private val dieId2: Long = 2L
     private val shortcutsExample1 = listOf(ShortcutEntity(
         timestampId = 0L,
         name = "a_name",
@@ -35,7 +34,7 @@ class ShortcutDaoTest {
     timestampId = 4L,
     name = "another_name",
     diceNumber = 4,
-    dieId = dieId2,
+    dieId = dieId,
     modifier = -2,
     mechanic = RollSetting.Mechanic.ADVANTAGE.toString()
     ))
@@ -83,8 +82,10 @@ class ShortcutDaoTest {
             add(shortcutsExample1[0])
             delete(shortcutsExample2[0])
         }
+        val diceStored = dieDao.retrieveAllWithShortcuts().take(1).single()
         val shortcutsStored = shortcutDao.retrieveAll().take(1).single()
 
+        assertEquals(1, diceStored.size)
         assertEquals(1, shortcutsStored.size)
         assertEquals(shortcutsExample1, shortcutsStored)
     }
