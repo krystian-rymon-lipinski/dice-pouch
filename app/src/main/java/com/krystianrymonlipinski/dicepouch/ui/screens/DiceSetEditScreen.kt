@@ -137,7 +137,7 @@ fun DiceCaption(onAddNewDieClicked: () -> Unit) {
     ) {
         Text(
             modifier = Modifier.weight(1f),
-            text = stringResource(id = R.string.edit_dice_set_dice_caption),
+            text = stringResource(id = R.string.dice_caption),
             color = MaterialTheme.colorScheme.primary,
             style = MaterialTheme.typography.titleMedium.copy(
                 fontWeight = FontWeight.Bold

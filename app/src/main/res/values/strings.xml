@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Dice Pouch</string>
 
+    <string name="dice_caption">Dice</string>
+    <string name="shortcuts_caption">Shortcuts</string>
 
     <string name="roll_setting_dice_number">dice</string>
     <string name="roll_setting_modifier">mod</string>
@@ -9,7 +11,6 @@
     <string name="btn_roll_cancel">Cancel</string>
     <string name="btn_roll_confirm_with_result">%d, got it!</string>
 
-    <string name="edit_dice_set_dice_caption">Dice</string>
     <string name="btn_add_new_die">Add</string>
     <string name="sides_caption">sides</string>
 </resources>
