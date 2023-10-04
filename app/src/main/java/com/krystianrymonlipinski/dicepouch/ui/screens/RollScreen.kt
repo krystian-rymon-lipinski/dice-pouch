@@ -216,7 +216,8 @@ fun ShortcutCard(
     ) {
         Text(
             text = shortcut.name,
-            modifier = Modifier.padding(4.dp),
+            modifier = Modifier.padding(8.dp),
+            color = shortcut.setting.die.numberColor,
             textAlign = TextAlign.Center,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,

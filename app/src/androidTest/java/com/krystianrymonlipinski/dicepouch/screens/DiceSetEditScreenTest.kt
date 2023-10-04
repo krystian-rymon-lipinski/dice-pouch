@@ -3,7 +3,7 @@ package com.krystianrymonlipinski.dicepouch.screens
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.krystianrymonlipinski.dicepouch.ui.screens.DiceSetEditScreen
@@ -21,7 +21,7 @@ class DiceSetEditScreenTest {
         composeTestRule.apply {
             setContent { DicePouchTheme { DiceSetEditScreen() } }
 
-            onNodeWithContentDescription("add_die_icon").performClick()
+            onAllNodesWithContentDescription("add_icon")[0].performClick()
             onNode(isDialog()).assertIsDisplayed()
             onNodeWithText("sides").assertIsDisplayed()
         }
