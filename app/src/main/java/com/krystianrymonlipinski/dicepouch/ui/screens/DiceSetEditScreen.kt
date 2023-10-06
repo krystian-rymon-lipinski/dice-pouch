@@ -89,26 +89,27 @@ fun DiceSetEditScreen(
     var showDeleteDieDialog by rememberSaveable { mutableStateOf<Die?>(null) }
 
     val scope = rememberCoroutineScope()
-    val snackbarHostState = remember { SnackbarHostState() }
-    val snackbarMessage = stringResource(id = R.string.no_dice_snackbar_message)
+    val snackBarHostState = remember { SnackbarHostState() }
+    val snackBarMessage = stringResource(id = R.string.no_dice_snackbar_message)
 
     Column(modifier = Modifier
         .fillMaxSize()
-        .padding(start = 16.dp, end = 16.dp, top = 8.dp)) {
+        .padding(start = 16.dp, end = 16.dp, top = 8.dp)
+    ) {
         DiceCaption(onAddNewDieClicked = { showNewDieDialog = true })
         Spacer(modifier = Modifier.height(8.dp))
         EditableDiceGrid(
             diceSet = screenState.dice,
             onDeleteDieClicked = { dieToBeDeleted ->
-                if (screenState.dice.isEmpty()) onDeleteDieClicked(dieToBeDeleted)
-                else showDeleteDieDialog = dieToBeDeleted
+                if (screenState.shortcuts.any { it.setting.die == dieToBeDeleted }) showDeleteDieDialog = dieToBeDeleted
+                else onDeleteDieClicked(dieToBeDeleted)
             }
         )
         Spacer(modifier = Modifier.height(8.dp))
         ShortcutsCaption(onAddShortcutClicked = {
             if (screenState.dice.isNotEmpty()) showNewShortcutDialog = true
-            else scope.launch { snackbarHostState.showSnackbar(
-                message = snackbarMessage,
+            else scope.launch { snackBarHostState.showSnackbar(
+                message = snackBarMessage,
                 duration = SnackbarDuration.Short
             ) }
         })
@@ -240,7 +241,7 @@ fun DeletableDieImage(die: Die, onDeleteDieClicked: (Die) -> Unit) {
 
 
 @Composable
-fun ShortcutsCaption(onAddShortcutClicked: () -> Unit, ) {
+fun ShortcutsCaption(onAddShortcutClicked: () -> Unit) {
     RowWithCaptionAndPlusIcon(
         captionText = stringResource(id = R.string.shortcuts_caption),
         onPlusIconClicked = onAddShortcutClicked
@@ -281,9 +282,7 @@ fun DeletableShortcutCard(
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(4.dp),
+            modifier = Modifier.fillMaxWidth().padding(4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
