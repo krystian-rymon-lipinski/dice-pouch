@@ -25,14 +25,40 @@ class RollSettingTest {
 
     @Test
     fun changeDiceNumber() {
-        testObj = testObj.changeDiceNumber(12)
-        assertEquals(12, testObj.diceNumber)
+        testObj = testObj.changeDiceNumber(change = 1)
+        assertEquals(2, testObj.diceNumber)
+    }
+
+    @Test
+    fun changeDiceNumber_checkConstraints() {
+        testObj = testObj
+            .copy(diceNumber = 30)
+            .changeDiceNumber(change = 1)
+        assertEquals(1, testObj.diceNumber)
+
+        testObj = testObj
+            .copy(diceNumber = 1)
+            .changeDiceNumber(change = -1)
+        assertEquals(30, testObj.diceNumber)
     }
 
     @Test
     fun changeModifier() {
-        testObj = testObj.changeModifier(-4)
-        assertEquals(-4, testObj.modifier)
+        testObj = testObj.changeModifier(change = 1)
+        assertEquals(1, testObj.modifier)
+    }
+
+    @Test
+    fun changeModifier_checkConstraints() {
+        testObj = testObj
+            .copy(modifier = 30)
+            .changeModifier(change = 1)
+        assertEquals(-30, testObj.modifier)
+
+        testObj = testObj
+            .copy(modifier = -30)
+            .changeModifier(change = -1)
+        assertEquals(30, testObj.modifier)
     }
 
     @Test

@@ -22,11 +22,21 @@ data class RollSetting(
         return copy(die = newDie)
     }
 
-    fun changeDiceNumber(newValue: Int) : RollSetting {
+    fun changeDiceNumber(change: Int) : RollSetting {
+        var newValue = diceNumber + change
+        newValue =
+            if (newValue > Constraint.MAX_DICE) Constraint.MIN_DICE
+            else if (newValue < Constraint.MIN_DICE) Constraint.MAX_DICE
+            else newValue
         return copy(diceNumber = newValue)
     }
 
-    fun changeModifier(newValue: Int) : RollSetting {
+    fun changeModifier(change: Int) : RollSetting {
+        var newValue = modifier + change
+        newValue =
+            if (newValue > Constraint.MAX_MOD) Constraint.MIN_MOD
+            else if (newValue < Constraint.MIN_MOD) Constraint.MAX_MOD
+            else newValue
         return copy(modifier = newValue)
     }
 
@@ -71,6 +81,13 @@ data class RollSetting(
                 }
             }
         }
+    }
+
+    object Constraint {
+        const val MIN_DICE = 1
+        const val MAX_DICE = 30
+        const val MIN_MOD = -30
+        const val MAX_MOD = 30
     }
 }
 

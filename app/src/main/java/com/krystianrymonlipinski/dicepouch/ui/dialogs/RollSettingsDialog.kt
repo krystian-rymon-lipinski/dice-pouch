@@ -114,21 +114,11 @@ class RollSettingsDialogStateHolder(rollSetting: RollSetting) {
     var state by mutableStateOf(rollSetting)
 
     fun changeDiceNumber(change: Int) {
-        state = state.changeDiceNumber(newValue = state.diceNumber + change)
-        if (state.diceNumber < MIN_DICE) { //TODO: add this constraints in data class
-            state = state.changeDiceNumber(newValue = MAX_DICE)
-        } else if (state.diceNumber > MAX_DICE) {
-            state = state.changeDiceNumber(newValue = MIN_DICE)
-        }
+        state = state.changeDiceNumber(change = change)
     }
 
     fun changeModifier(change: Int) {
-        state = state.changeModifier(newValue = state.modifier + change)
-        if (state.modifier < MIN_MOD) {
-            state = state.changeModifier(newValue = MAX_MOD)
-        } else if (state.modifier > MAX_MOD) {
-            state = state.copy(modifier = MIN_MOD)
-        }
+        state = state.changeModifier(change = change)
     }
 
     fun changeMechanic(newValue: RollSetting.Mechanic) {
@@ -142,9 +132,3 @@ class RollSettingsDialogStateHolder(rollSetting: RollSetting) {
         )
     }
 }
-
-
-private const val MIN_DICE = 1
-private const val MAX_DICE = 30
-private const val MIN_MOD = -30
-private const val MAX_MOD = 30

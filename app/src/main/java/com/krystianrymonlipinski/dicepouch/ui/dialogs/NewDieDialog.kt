@@ -79,7 +79,7 @@ fun DieSidesControls(
     Row(verticalAlignment = Alignment.CenterVertically) {
         MinusIcon(
             onIconClicked = { onPlusMinusClicked(-1) },
-            isEnabled = currentValue > MIN_DIE_SIDES
+            isEnabled = currentValue > Die.Constraint.MIN_DIE_SIDES
         )
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
@@ -87,7 +87,7 @@ fun DieSidesControls(
         )
         PlusIcon(
             onIconClicked = { onPlusMinusClicked(1) },
-            isEnabled = currentValue < MAX_DIE_SIDES
+            isEnabled = currentValue < Die.Constraint.MAX_DIE_SIDES
         )
     }
 
@@ -106,6 +106,3 @@ fun DieSidesSeekbar(
         onValueChange = { newValue -> onSeekbarValueChanged(newValue.toInt()) }
     )
 }
-
-private const val MIN_DIE_SIDES = 3 //TODO: contain this in data class instead of composable file
-private const val MAX_DIE_SIDES = 100
