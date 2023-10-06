@@ -1,7 +1,6 @@
 package com.krystianrymonlipinski.dicepouch.dialogs
 
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -43,10 +42,8 @@ class RollSettingsDialogTest : BaseAndroidTest() {
 
     @Test
     fun rollSettingsChange_stateRestoration() {
-        val restorationTester = StateRestorationTester(composeTestRule).apply {
-            setContent {
-                DicePouchTheme { RollSettingsDialog(die = Die(20)) }
-            }
+        restorationTester.setContent {
+            DicePouchTheme { RollSettingsDialog(die = Die(20)) }
         }
 
         composeTestRule.apply {

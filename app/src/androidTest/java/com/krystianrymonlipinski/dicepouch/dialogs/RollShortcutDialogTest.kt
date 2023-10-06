@@ -1,7 +1,6 @@
 package com.krystianrymonlipinski.dicepouch.dialogs
 
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -101,12 +100,10 @@ class RollShortcutDialogTest : BaseAndroidTest() {
 
     @Test
     fun rollShortcutDialog_restoreState() {
-        val restorationTester = StateRestorationTester(composeTestRule).apply {
-            setContent { DicePouchTheme { RollShortcutDialog(
-                shortcut = null,
-                diceInSet = listOf(Die(8), Die(12), Die(15))
-            )}}
-        }
+        restorationTester.setContent { DicePouchTheme { RollShortcutDialog(
+            shortcut = null,
+            diceInSet = listOf(Die(8), Die(12), Die(15))
+        )}}
 
         composeTestRule.apply {
             onNodeWithContentDescription("arrow_right").performClick()

@@ -49,4 +49,18 @@ class NewDieDialogTest : BaseAndroidTest() {
             onNodeWithContentDescription(useUnmergedTree = true, label = "minus").onParent().assertIsNotEnabled()
         }
     }
+
+    @Test
+    fun newDieDialog_stateRestoration() {
+        restorationTester.setContent {
+            DicePouchTheme { NewDieDialog(onDialogDismissed = { }, onNewDieAdded = { }) }
+        }
+
+        composeTestRule.apply {
+            onNodeWithContentDescription("plus").performClick()
+            onNodeWithText("21").assertIsDisplayed()
+            restorationTester.emulateSavedInstanceStateRestore()
+            onNodeWithText("21").assertIsDisplayed()
+        }
+    }
 }
