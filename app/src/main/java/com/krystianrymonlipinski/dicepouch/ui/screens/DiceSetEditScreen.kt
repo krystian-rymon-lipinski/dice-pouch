@@ -16,15 +16,22 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -35,6 +42,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.krystianrymonlipinski.dicepouch.MainActivityViewModel
@@ -47,6 +55,7 @@ import com.krystianrymonlipinski.dicepouch.ui.components.DieImage
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.NewDieDialog
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollShortcutDialog
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -77,6 +86,11 @@ fun DiceSetEditScreen(
     var showNewDieDialog by rememberSaveable { mutableStateOf(false) }
     var showNewShortcutDialog by rememberSaveable { mutableStateOf(false) }
     var showUpdateShortcutDialog by rememberSaveable { mutableStateOf<RollShortcut?>(null) }
+    var showDeleteDieDialog by rememberSaveable { mutableStateOf<Die?>(null) }
+
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val snackbarMessage = stringResource(id = R.string.no_dice_snackbar_message)
 
     Column(modifier = Modifier
         .fillMaxSize()
@@ -85,10 +99,19 @@ fun DiceSetEditScreen(
         Spacer(modifier = Modifier.height(8.dp))
         EditableDiceGrid(
             diceSet = screenState.dice,
-            onDeleteDieClicked = onDeleteDieClicked
+            onDeleteDieClicked = { dieToBeDeleted ->
+                if (screenState.dice.isEmpty()) onDeleteDieClicked(dieToBeDeleted)
+                else showDeleteDieDialog = dieToBeDeleted
+            }
         )
         Spacer(modifier = Modifier.height(8.dp))
-        ShortcutsCaption(onAddShortcutClicked = { showNewShortcutDialog = true })
+        ShortcutsCaption(onAddShortcutClicked = {
+            if (screenState.dice.isNotEmpty()) showNewShortcutDialog = true
+            else scope.launch { snackbarHostState.showSnackbar(
+                message = snackbarMessage,
+                duration = SnackbarDuration.Short
+            ) }
+        })
         Spacer(modifier = Modifier.height(8.dp))
         EditableShortcutsGrid(
             screenState.shortcuts,
@@ -103,6 +126,16 @@ fun DiceSetEditScreen(
             onNewDieAdded = { numberOfSides ->
                 showNewDieDialog = false
                 onNewDieAdded(numberOfSides)
+            }
+        )
+    }
+
+    showDeleteDieDialog?.let { dieToBeDeleted ->
+        DeleteDieAlertDialog(
+            onDialogDismissed = { showDeleteDieDialog = null },
+            onDeleteButtonClicked = {
+                onDeleteDieClicked(dieToBeDeleted)
+                showDeleteDieDialog = null
             }
         )
     }
@@ -124,6 +157,28 @@ fun DiceSetEditScreen(
             }
         )
     }
+}
+
+@Composable
+fun DeleteDieAlertDialog(
+    onDialogDismissed: () -> Unit,
+    onDeleteButtonClicked: () -> Unit
+) {
+    AlertDialog(
+        properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true),
+        onDismissRequest = onDialogDismissed,
+        confirmButton = {
+            ElevatedButton(onClick = onDeleteButtonClicked) {
+                Text(text = stringResource(id = R.string.btn_add_new_die))
+            }
+        },
+        dismissButton = {
+            OutlinedButton(onClick = onDialogDismissed) {
+                Text(text = stringResource(id = R.string.btn_cancel))
+            }
+        },
+        text = { Text(text = stringResource(id = R.string.delete_die_dialog_message)) }
+    )
 }
 
 @Composable
