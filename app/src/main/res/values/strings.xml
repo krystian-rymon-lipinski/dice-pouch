@@ -13,4 +13,7 @@
 
     <string name="btn_add_new_die">Add</string>
     <string name="sides_caption">sides</string>
+
+    <string name="new_shortcut">New shortcut</string>
+    <string name="btn_save">Save</string>
 </resources>

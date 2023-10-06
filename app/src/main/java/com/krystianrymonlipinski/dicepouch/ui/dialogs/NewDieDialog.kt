@@ -107,5 +107,5 @@ fun DieSidesSeekbar(
     )
 }
 
-private const val MIN_DIE_SIDES = 3
+private const val MIN_DIE_SIDES = 3 //TODO: contain this in data class instead of composable file
 private const val MAX_DIE_SIDES = 100

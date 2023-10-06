@@ -41,9 +41,11 @@ import com.krystianrymonlipinski.dicepouch.MainActivityViewModel
 import com.krystianrymonlipinski.dicepouch.R
 import com.krystianrymonlipinski.dicepouch.model.DiceSet
 import com.krystianrymonlipinski.dicepouch.model.Die
+import com.krystianrymonlipinski.dicepouch.model.RollSetting
 import com.krystianrymonlipinski.dicepouch.model.RollShortcut
 import com.krystianrymonlipinski.dicepouch.ui.components.DieImage
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.NewDieDialog
+import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollShortcutDialog
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
 
 
@@ -57,6 +59,8 @@ fun DiceSetEditRoute(
         screenState = screenState,
         onNewDieAdded = { numberOfSides -> viewModel.addNewDieToSet(numberOfSides) },
         onDeleteDieClicked = { die -> viewModel.deleteDieFromSet(die) },
+        onNewShortcutAdded = { name, setting -> viewModel.addNewShortcutToSet(name, setting) },
+        onShortcutUpdated = { shortcut -> viewModel.updateShortcut(shortcut) },
         onDeleteShortcutClicked = { shortcut -> viewModel.deleteShortcut(shortcut) }
     )
 }
@@ -66,9 +70,13 @@ fun DiceSetEditScreen(
     screenState: DiceSet = DiceSet("A set", listOf(Die(20), Die(15)), listOf(RollShortcut(name = "Some check"))),
     onNewDieAdded: (Int) -> Unit = {},
     onDeleteDieClicked: (Die) -> Unit = {},
+    onNewShortcutAdded: (String, RollSetting) -> Unit = { _, _ -> /* Nothing by default */},
+    onShortcutUpdated: (RollShortcut) -> Unit = {},
     onDeleteShortcutClicked: (RollShortcut) -> Unit = {}
 ) {
     var showNewDieDialog by rememberSaveable { mutableStateOf(false) }
+    var showNewShortcutDialog by rememberSaveable { mutableStateOf(false) }
+    var showUpdateShortcutDialog by rememberSaveable { mutableStateOf<RollShortcut?>(null) }
 
     Column(modifier = Modifier
         .fillMaxSize()
@@ -80,13 +88,11 @@ fun DiceSetEditScreen(
             onDeleteDieClicked = onDeleteDieClicked
         )
         Spacer(modifier = Modifier.height(8.dp))
-        ShortcutsCaption(
-            onAddShortcutClicked = { /*TODO: show ShortcutSettingDialog with basic settings*/ }
-        )
+        ShortcutsCaption(onAddShortcutClicked = { showNewShortcutDialog = true })
         Spacer(modifier = Modifier.height(8.dp))
         EditableShortcutsGrid(
             screenState.shortcuts,
-            onShortcutClicked = { /*TODO: show ShortcutSettingDialog with current settings*/ },
+            onShortcutClicked = { shortcut -> showUpdateShortcutDialog = shortcut },
             onDeleteShortcutClicked = onDeleteShortcutClicked
         )
     }
@@ -97,6 +103,24 @@ fun DiceSetEditScreen(
             onNewDieAdded = { numberOfSides ->
                 showNewDieDialog = false
                 onNewDieAdded(numberOfSides)
+            }
+        )
+    }
+
+    if (showNewShortcutDialog || showUpdateShortcutDialog != null) {
+        RollShortcutDialog(
+            shortcut = showUpdateShortcutDialog,
+            diceInSet = screenState.dice,
+            onDialogDismissed = {
+                showNewShortcutDialog = false
+                showUpdateShortcutDialog = null
+            },
+            onSaveShortcutClicked = { shortcut ->
+                if (showNewShortcutDialog) onNewShortcutAdded(shortcut.name, shortcut.setting)
+                else onShortcutUpdated(shortcut)
+
+                showNewShortcutDialog = false
+                showUpdateShortcutDialog = null
             }
         )
     }
@@ -202,7 +226,9 @@ fun DeletableShortcutCard(
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(4.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(

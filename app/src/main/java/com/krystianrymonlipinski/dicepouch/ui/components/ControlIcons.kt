@@ -3,6 +3,8 @@ package com.krystianrymonlipinski.dicepouch.ui.components
 import androidx.compose.foundation.background
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowLeft
+import androidx.compose.material.icons.filled.ArrowRight
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -48,6 +50,32 @@ fun MinusIcon(
         imageVector = Icons.Filled.Remove,
         contentDescription = "minus",
         onIconClicked = onIconClicked,
+        isEnabled = isEnabled
+    )
+}
+
+@Composable
+fun LeftArrow(
+    onIconClicked: () -> Unit,
+    isEnabled: Boolean
+) {
+    ControlIcon(
+        imageVector = Icons.Filled.ArrowLeft,
+        contentDescription = "arrow_left",
+        onIconClicked =  onIconClicked,
+        isEnabled = isEnabled
+    )
+}
+
+@Composable
+fun RightArrow(
+    onIconClicked: () -> Unit,
+    isEnabled: Boolean
+) {
+    ControlIcon(
+        imageVector = Icons.Filled.ArrowRight,
+        contentDescription = "arrow_right",
+        onIconClicked =  onIconClicked,
         isEnabled = isEnabled
     )
 }
