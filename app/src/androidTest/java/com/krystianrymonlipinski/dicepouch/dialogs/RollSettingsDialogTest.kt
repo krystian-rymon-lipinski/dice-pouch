@@ -2,20 +2,16 @@ package com.krystianrymonlipinski.dicepouch.dialogs
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.StateRestorationTester
-import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.krystianrymonlipinski.dicepouch.BaseAndroidTest
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollSettingsDialog
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
-import org.junit.Rule
 import org.junit.Test
 
-class RollSettingsDialogTest {
-
-    @get:Rule
-    val composeTestRule = createComposeRule()
+class RollSettingsDialogTest : BaseAndroidTest() {
 
 
     @Test

@@ -2,19 +2,16 @@ package com.krystianrymonlipinski.dicepouch.screens
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.isDialog
-import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.krystianrymonlipinski.dicepouch.BaseAndroidTest
 import com.krystianrymonlipinski.dicepouch.ui.screens.DiceSetEditScreen
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
-import org.junit.Rule
 import org.junit.Test
 
-class DiceSetEditScreenTest {
+class DiceSetEditScreenTest : BaseAndroidTest() {
 
-    @get:Rule
-    val composeTestRule = createComposeRule()
 
     @Test
     fun showAddNewDieDialog() {

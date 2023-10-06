@@ -1,19 +1,14 @@
 package com.krystianrymonlipinski.dicepouch
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.test.junit4.StateRestorationTester
-import androidx.compose.ui.test.junit4.createComposeRule
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
 import com.krystianrymonlipinski.dicepouch.model.RollState
 import org.junit.Assert.assertEquals
-import org.junit.Rule
 import org.junit.Test
 
-class LaunchedRollProcessTest {
+class LaunchedRollProcessTest : BaseAndroidTest() {
 
-    @get:Rule
-    val composeTestRule = createComposeRule()
 
     @Test
     fun rollProcess_checkNumberOfThrows() {
@@ -35,7 +30,6 @@ class LaunchedRollProcessTest {
     fun rollProcess_withOrientationChange_duringRoll() {
         var rollState = RollState(setting = RollSetting(die = Die(6), diceNumber = 4))
         var rollingFinished = false
-        val restorationTester = StateRestorationTester(composeTestRule)
 
         restorationTester.setContent {
             LaunchedTestRollProcess(
@@ -56,7 +50,6 @@ class LaunchedRollProcessTest {
     fun rollProcess_withOrientationChange_afterRoll() {
         var rollState = RollState(setting = RollSetting(die = Die(6), diceNumber = 3))
         var rollingFinished = false
-        val restorationTester = StateRestorationTester(composeTestRule)
 
         restorationTester.setContent {
             LaunchedTestRollProcess(

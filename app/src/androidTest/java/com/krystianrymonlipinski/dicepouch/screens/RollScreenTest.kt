@@ -2,24 +2,21 @@ package com.krystianrymonlipinski.dicepouch.screens
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.isDialog
-import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onParent
 import androidx.compose.ui.test.performClick
+import com.krystianrymonlipinski.dicepouch.BaseAndroidTest
 import com.krystianrymonlipinski.dicepouch.model.DiceSet
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollShortcut
 import com.krystianrymonlipinski.dicepouch.ui.screens.RollScreen
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 
-class RollScreenTest {
+class RollScreenTest : BaseAndroidTest() {
 
-    @get:Rule
-    val composeTestRule = createComposeRule()
 
     private val shortcut = RollShortcut(name = "a_shortcut_name")
 
