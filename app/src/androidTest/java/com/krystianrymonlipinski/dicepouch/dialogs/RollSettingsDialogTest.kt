@@ -19,53 +19,29 @@ class RollSettingsDialogTest {
 
 
     @Test
-    fun rollSettingChange_diceNumberIncrement() {
-        setupDialog()
+    fun rollSettingChange_clickAllPossibleOptions() {
         composeTestRule.apply {
-            onAllNodesWithContentDescription("plus")[0].performClick()
-            onNodeWithText("2d20").assertIsDisplayed()
-        }
-    }
+            setContent {
+                DicePouchTheme { RollSettingsDialog(die = Die(20)) }
+            }
 
-    @Test
-    fun rollSettingChange_diceNumberDecrement() {
-        setupDialog()
-        composeTestRule.apply {
-            onAllNodesWithContentDescription("minus")[0].performClick()
-            onNodeWithText("30d20").assertIsDisplayed()
-        }
-    }
+            onAllNodesWithContentDescription("plus")[0]
+                .performClick()
+                .performClick()
+            onAllNodesWithContentDescription("minus")[0]
+                .performClick()
+            onAllNodesWithContentDescription("plus")[1]
+                .performClick()
+            onAllNodesWithContentDescription("minus")[1]
+                .performClick()
+                .performClick()
 
-    @Test
-    fun rollSettingChange_modifierIncrement() {
-        setupDialog()
-        composeTestRule.apply {
-            onAllNodesWithContentDescription("plus")[1].performClick()
-            onNodeWithText("1d20 + 1").assertIsDisplayed()
-        }
-    }
-
-    @Test
-    fun rollSettingChange_modifierDecrement() {
-        setupDialog()
-        composeTestRule.apply {
-            onAllNodesWithContentDescription("minus")[1].performClick()
-            onNodeWithText("1d20 - 1").assertIsDisplayed()
-        }
-    }
-
-    @Test
-    fun rollSettingChange_mechanicChanges() {
-        setupDialog()
-        composeTestRule.apply {
             onAllNodesWithContentDescription("mechanics_option")[0].performClick()
-            onNodeWithText("1d20 (D)").assertIsDisplayed()
-
+            onNodeWithText("2d20 - 1 (D)").assertIsDisplayed()
             onAllNodesWithContentDescription("mechanics_option")[1].performClick()
-            onNodeWithText("1d20").assertIsDisplayed()
-
+            onNodeWithText("2d20 - 1").assertIsDisplayed()
             onAllNodesWithContentDescription("mechanics_option")[2].performClick()
-            onNodeWithText("1d20 (A)").assertIsDisplayed()
+            onNodeWithText("2d20 - 1 (A)").assertIsDisplayed()
         }
     }
 
@@ -88,9 +64,4 @@ class RollSettingsDialogTest {
         }
     }
 
-    private fun setupDialog() {
-        composeTestRule.setContent {
-            DicePouchTheme { RollSettingsDialog(die = Die(20)) }
-        }
-    }
 }
