@@ -122,14 +122,14 @@ fun ShortcutSettingColumn(
         Spacer(modifier = Modifier.height(16.dp))
         RollSettingRow(
             settingName = stringResource(id = R.string.roll_setting_dice_number),
-            onIncrementClicked = { onSettingChanged(rollSetting.changeDiceNumber(rollSetting.diceNumber + 1)) },
-            onDecrementClicked = { onSettingChanged(rollSetting.changeDiceNumber(rollSetting.diceNumber - 1)) }
+            onIncrementClicked = { onSettingChanged(rollSetting.changeDiceNumber(change = 1)) },
+            onDecrementClicked = { onSettingChanged(rollSetting.changeDiceNumber(change = -1)) }
         )
         Spacer(modifier = Modifier.height(8.dp))
         RollSettingRow(
             settingName = stringResource(id = R.string.roll_setting_modifier),
-            onIncrementClicked = { onSettingChanged(rollSetting.changeModifier(rollSetting.modifier + 1)) },
-            onDecrementClicked = { onSettingChanged(rollSetting.changeModifier(rollSetting.modifier - 1)) }
+            onIncrementClicked = { onSettingChanged(rollSetting.changeModifier(change = 1)) },
+            onDecrementClicked = { onSettingChanged(rollSetting.changeModifier(change = -1)) }
         )
         Spacer(modifier = Modifier.height(16.dp))
         MechanicSegmentedButton(
