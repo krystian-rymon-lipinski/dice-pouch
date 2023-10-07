@@ -135,6 +135,7 @@ fun ShortcutSettingColumn(
         Spacer(modifier = Modifier.height(16.dp))
         MechanicSegmentedButton(
             die = rollSetting.die,
+            selectedState = rollSetting.mechanic,
             onSelectedButtonChanged = { newValue -> onSettingChanged(rollSetting.changeMechanic(newValue = newValue)) }
         )
     }
