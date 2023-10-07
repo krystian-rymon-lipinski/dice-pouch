@@ -2,8 +2,12 @@ package com.krystianrymonlipinski.dicepouch
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.krystianrymonlipinski.dicepouch.data_layer.DiceLocalDataSource
+import com.krystianrymonlipinski.dicepouch.data_layer.ShortcutsLocalDataSource
 import com.krystianrymonlipinski.dicepouch.model.DiceSet
 import com.krystianrymonlipinski.dicepouch.model.Die
+import com.krystianrymonlipinski.dicepouch.model.RollSetting
+import com.krystianrymonlipinski.dicepouch.model.RollShortcut
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -15,33 +19,56 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(
-    private val localDataSource: DiceSetLocalDataSource
+    private val diceLocalDataSource: DiceLocalDataSource,
+    private val shortcutsLocalDataSource: ShortcutsLocalDataSource
 ) : ViewModel() {
 
     private val _setName = MutableStateFlow(BASIC_SET_NAME)
-    private val _diceStream = localDataSource.getDiceStream()
+    private val _diceStream = diceLocalDataSource.getDiceStream()
+    private val _shortcutsStream = diceLocalDataSource.getShortcutsStream()
 
     val diceSetState: StateFlow<DiceSet> = combine(
-        _setName, _diceStream
-    ) { setName, diceList ->
-        DiceSet(setName, diceList)
+        _setName, _diceStream, _shortcutsStream
+    ) { setName, diceList, shortcutsList ->
+        DiceSet(setName, diceList, shortcutsList)
     }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = DiceSet(BASIC_SET_NAME, emptyList())
+            initialValue = DiceSet(BASIC_SET_NAME, emptyList(), emptyList())
         )
 
 
     fun addNewDieToSet(numberOfSides: Int) {
         viewModelScope.launch {
-            localDataSource.addNewDieToSet(Die(numberOfSides))
+            diceLocalDataSource.addNewDieToSet(Die(numberOfSides))
         }
     }
 
-    fun deleteDieFromSet(index: Int) {
+    fun deleteDieFromSet(die: Die) {
         viewModelScope.launch {
-            localDataSource.deleteDieFromSet(diceSetState.value.dice[index])
+            diceLocalDataSource.deleteDieFromSet(die)
+        }
+    }
+
+    fun addNewShortcutToSet(name: String, setting: RollSetting) {
+        viewModelScope.launch {
+            shortcutsLocalDataSource.addNewShortcutToSet(RollShortcut(
+                name = name,
+                setting = setting
+            ))
+        }
+    }
+
+    fun updateShortcut(shortcutWithChanges: RollShortcut) {
+        viewModelScope.launch {
+            shortcutsLocalDataSource.updateShortcut(shortcutWithChanges)
+        }
+    }
+
+    fun deleteShortcut(shortcut: RollShortcut) {
+        viewModelScope.launch {
+            shortcutsLocalDataSource.deleteShortcutFromSet(shortcut)
         }
     }
 

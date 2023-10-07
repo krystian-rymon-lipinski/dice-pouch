@@ -1,12 +1,71 @@
 package com.krystianrymonlipinski.dicepouch.model
 
 import org.junit.Assert.assertEquals
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.junit.MockitoJUnitRunner
 
 @RunWith(MockitoJUnitRunner::class)
 class RollSettingTest {
+
+    private lateinit var testObj: RollSetting
+
+    @Before
+    fun setUp() {
+        testObj = RollSetting(Die(6))
+    }
+
+    @Test
+    fun changeDie() {
+        val dieToChange = Die(20)
+        testObj = testObj.changeDie(dieToChange)
+        assertEquals(dieToChange, testObj.die)
+    }
+
+    @Test
+    fun changeDiceNumber() {
+        testObj = testObj.changeDiceNumber(change = 1)
+        assertEquals(2, testObj.diceNumber)
+    }
+
+    @Test
+    fun changeDiceNumber_checkConstraints() {
+        testObj = testObj
+            .copy(diceNumber = 30)
+            .changeDiceNumber(change = 1)
+        assertEquals(1, testObj.diceNumber)
+
+        testObj = testObj
+            .copy(diceNumber = 1)
+            .changeDiceNumber(change = -1)
+        assertEquals(30, testObj.diceNumber)
+    }
+
+    @Test
+    fun changeModifier() {
+        testObj = testObj.changeModifier(change = 1)
+        assertEquals(1, testObj.modifier)
+    }
+
+    @Test
+    fun changeModifier_checkConstraints() {
+        testObj = testObj
+            .copy(modifier = 30)
+            .changeModifier(change = 1)
+        assertEquals(-30, testObj.modifier)
+
+        testObj = testObj
+            .copy(modifier = -30)
+            .changeModifier(change = -1)
+        assertEquals(30, testObj.modifier)
+    }
+
+    @Test
+    fun changeMechanic() {
+        testObj = testObj.changeMechanic(RollSetting.Mechanic.ADVANTAGE)
+        assertEquals(RollSetting.Mechanic.ADVANTAGE, testObj.mechanic)
+    }
 
     @Test
     fun buildRollDescription_withOneDie() {

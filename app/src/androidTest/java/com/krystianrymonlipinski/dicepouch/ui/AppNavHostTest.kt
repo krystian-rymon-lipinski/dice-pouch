@@ -1,10 +1,11 @@
-package com.krystianrymonlipinski.dicepouch
+package com.krystianrymonlipinski.dicepouch.ui
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.krystianrymonlipinski.dicepouch.MainActivity
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Rule
@@ -29,12 +30,11 @@ class AppNavHostTest {
     fun appNavigation_navigateToAndFrom_diceSetEditScreen() {
         composeTestRule.apply {
             onNodeWithContentDescription("edit_set_icon").performClick()
-            onNodeWithText("Dice").assertIsDisplayed()
+            onNodeWithText("Basic D&D Set").assertDoesNotExist()
 
             activityRule.scenario.onActivity {
                 it.onBackPressedDispatcher.onBackPressed()
             }
-            onNodeWithText("Dice").assertDoesNotExist()
             onNodeWithText("Basic D&D Set").assertIsDisplayed()
         }
 

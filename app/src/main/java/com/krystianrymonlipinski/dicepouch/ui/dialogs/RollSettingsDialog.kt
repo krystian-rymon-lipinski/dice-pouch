@@ -2,14 +2,12 @@ package com.krystianrymonlipinski.dicepouch.ui.dialogs
 
 import RollDescription
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,8 +27,7 @@ import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
 import com.krystianrymonlipinski.dicepouch.ui.components.CenteredDialogConfirmButton
 import com.krystianrymonlipinski.dicepouch.ui.components.MechanicSegmentedButton
-import com.krystianrymonlipinski.dicepouch.ui.components.MinusIcon
-import com.krystianrymonlipinski.dicepouch.ui.components.PlusIcon
+import com.krystianrymonlipinski.dicepouch.ui.components.RollSettingRow
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
 
 @Composable
@@ -80,16 +77,13 @@ fun RollSettingsDialogContent(
                 fontWeight = FontWeight.Bold
             )
         )
-        RollSetting(
+        RollSettingRow(
             settingName = stringResource(id = R.string.roll_setting_dice_number),
             onIncrementClicked = { onDiceNumberChanged(1) },
             onDecrementClicked = { onDiceNumberChanged(-1) }
         )
-        Spacer(modifier = Modifier
-            .fillMaxWidth()
-            .height(8.dp)
-        )
-        RollSetting(
+        Spacer(modifier = Modifier.height(8.dp))
+        RollSettingRow(
             settingName = stringResource(id = R.string.roll_setting_modifier),
             onIncrementClicked = { onModifierChanged(1) },
             onDecrementClicked = { onModifierChanged(-1) }
@@ -102,22 +96,6 @@ fun RollSettingsDialogContent(
             die = state.die,
             onSelectedButtonChanged = { newMechanic -> onMechanicSettingChanged(newMechanic) }
         )
-    }
-}
-
-@Composable
-fun RollSetting(
-    settingName: String,
-    onIncrementClicked: () -> Unit,
-    onDecrementClicked: () -> Unit
-) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        MinusIcon(onIconClicked = { onDecrementClicked() })
-        Text(
-            modifier = Modifier.padding(horizontal = 16.dp),
-            text = settingName
-        )
-        PlusIcon(onIconClicked = { onIncrementClicked() })
     }
 }
 
@@ -136,25 +114,15 @@ class RollSettingsDialogStateHolder(rollSetting: RollSetting) {
     var state by mutableStateOf(rollSetting)
 
     fun changeDiceNumber(change: Int) {
-        state = state.copy(diceNumber = state.diceNumber + change)
-        if (state.diceNumber < MIN_DICE) {
-            state = state.copy(diceNumber = MAX_DICE)
-        } else if (state.diceNumber > MAX_DICE) {
-            state = state.copy(diceNumber = MIN_DICE)
-        }
+        state = state.changeDiceNumber(change = change)
     }
 
     fun changeModifier(change: Int) {
-        state = state.copy(modifier = state.modifier + change)
-        if (state.modifier < MIN_MOD) {
-            state = state.copy(modifier = MAX_MOD)
-        } else if (state.modifier > MAX_MOD) {
-            state = state.copy(modifier = MIN_MOD)
-        }
+        state = state.changeModifier(change = change)
     }
 
     fun changeMechanic(newValue: RollSetting.Mechanic) {
-        state = state.copy(mechanic = newValue).copy()
+        state = state.changeMechanic(newValue = newValue)
     }
 
     companion object {
@@ -164,9 +132,3 @@ class RollSettingsDialogStateHolder(rollSetting: RollSetting) {
         )
     }
 }
-
-
-private const val MIN_DICE = 1
-private const val MAX_DICE = 30
-private const val MIN_MOD = -30
-private const val MAX_MOD = 30

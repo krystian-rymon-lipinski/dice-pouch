@@ -43,4 +43,38 @@ class DiceSetTest {
         testObj = testObj.changeName("new_name")
         assertEquals("new_name", testObj.name)
     }
+
+    @Test
+    fun addShortcut() {
+        val newShortcut = RollShortcut(0L, "a_shortcut", RollSetting(Die(8)))
+        testObj = testObj.addNewShortcut(newShortcut)
+
+        assertEquals(1, testObj.shortcuts.size)
+        assertEquals(newShortcut, testObj.shortcuts[0])
+    }
+
+    @Test
+    fun changeShortcut() {
+        val changedShortcut = RollShortcut(10L, "new_name", RollSetting(Die(20), 2, -1, RollSetting.Mechanic.ADVANTAGE))
+        testObj = testObj.copy(shortcuts = listOf(
+            RollShortcut(0L, "a_shortcut", RollSetting(Die(8))),
+            RollShortcut(1L, "b_shortcut", RollSetting(Die(20)))
+        ))
+
+        testObj = testObj.changeShortcut(0, changedShortcut)
+        assertEquals(changedShortcut, testObj.shortcuts[0])
+    }
+
+    @Test
+    fun deleteShortcut() {
+        val shortcutToRemain = RollShortcut(0L, "name", RollSetting(Die(12)))
+        testObj = testObj.copy(shortcuts = listOf(
+            RollShortcut(0L, "a_shortcut", RollSetting(Die(8))),
+            shortcutToRemain
+        ))
+
+        testObj = testObj.deleteShortcut(0)
+        assertEquals(1, testObj.shortcuts.size)
+        assertEquals(shortcutToRemain, testObj.shortcuts[0])
+    }
 }

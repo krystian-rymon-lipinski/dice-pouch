@@ -1,24 +1,19 @@
-package com.krystianrymonlipinski.dicepouch.dialogs
+package com.krystianrymonlipinski.dicepouch.ui.dialogs
 
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performScrollToIndex
+import com.krystianrymonlipinski.dicepouch.BaseAndroidTest
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
-import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollDialog
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
-import org.junit.Rule
 import org.junit.Test
 
-class RollDialogTest {
-
-    @get:Rule
-    val composeTestRule = createComposeRule()
+class RollDialogTest : BaseAndroidTest() {
 
 
     @Test

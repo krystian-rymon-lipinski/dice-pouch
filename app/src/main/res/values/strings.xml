@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Dice Pouch</string>
 
+    <string name="dice_caption">Dice</string>
+    <string name="shortcuts_caption">Shortcuts</string>
 
     <string name="roll_setting_dice_number">dice</string>
     <string name="roll_setting_modifier">mod</string>
@@ -9,7 +11,16 @@
     <string name="btn_roll_cancel">Cancel</string>
     <string name="btn_roll_confirm_with_result">%d, got it!</string>
 
-    <string name="edit_dice_set_dice_caption">Dice</string>
     <string name="btn_add_new_die">Add</string>
     <string name="sides_caption">sides</string>
+
+    <string name="new_shortcut">New shortcut</string>
+    <string name="btn_save">Save</string>
+
+    <string name="no_dice_snackbar_message">Creating shortcut needs a die</string> <!-- TODO: improve snackbar message -->
+    <string name="btn_yes">Yes</string>
+    <string name="btn_no">No</string>
+    <string name="delete_die_dialog_message">Die chosen to be deleted is a base of at least one
+        shortcut. Deleting it will result with them gone as well. Do you wish to proceed?</string> <!-- TODO: improve popup message -->
+
 </resources>

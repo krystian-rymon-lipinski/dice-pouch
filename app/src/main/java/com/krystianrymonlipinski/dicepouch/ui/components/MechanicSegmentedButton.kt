@@ -40,10 +40,15 @@ import com.krystianrymonlipinski.dicepouch.ui.theme.dieAdvantage
 
 @Composable
 fun MechanicSegmentedButton(
+    selectedState: RollSetting.Mechanic = RollSetting.Mechanic.NORMAL,
     onSelectedButtonChanged: (RollSetting.Mechanic) -> Unit = {},
     die: Die = Die(4)
 ) {
-    var selectedButtonIndex by rememberSaveable { mutableStateOf(1) }
+    var selectedButtonIndex by rememberSaveable { mutableStateOf(when (selectedState) {
+        RollSetting.Mechanic.DISADVANTAGE -> 0
+        RollSetting.Mechanic.NORMAL -> 1
+        RollSetting.Mechanic.ADVANTAGE -> 2
+    }) }
 
     Surface(
         modifier = Modifier

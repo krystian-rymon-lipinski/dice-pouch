@@ -37,6 +37,10 @@ data class Die(
                 writeLong(timestampId)
             }
         }
+    }
 
+    object Constraint {
+        const val MIN_DIE_SIDES = 3
+        const val MAX_DIE_SIDES = 100
     }
 }

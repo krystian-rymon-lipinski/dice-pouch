@@ -1,23 +1,18 @@
-package com.krystianrymonlipinski.dicepouch.dialogs
+package com.krystianrymonlipinski.dicepouch.ui.dialogs
 
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
-import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onParent
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTouchInput
-import com.krystianrymonlipinski.dicepouch.ui.dialogs.NewDieDialog
+import com.krystianrymonlipinski.dicepouch.BaseAndroidTest
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
-import org.junit.Rule
 import org.junit.Test
 
-class NewDieDialogTest {
-
-    @get:Rule
-    val composeTestRule = createComposeRule()
+class NewDieDialogTest : BaseAndroidTest() {
 
 
     @Test
@@ -51,6 +46,20 @@ class NewDieDialogTest {
                 onNodeWithContentDescription("minus").performClick()
             }
             onNodeWithContentDescription(useUnmergedTree = true, label = "minus").onParent().assertIsNotEnabled()
+        }
+    }
+
+    @Test
+    fun newDieDialog_stateRestoration() {
+        restorationTester.setContent {
+            DicePouchTheme { NewDieDialog(onDialogDismissed = { }, onNewDieAdded = { }) }
+        }
+
+        composeTestRule.apply {
+            onNodeWithContentDescription("plus").performClick()
+            onNodeWithText("21").assertIsDisplayed()
+            restorationTester.emulateSavedInstanceStateRestore()
+            onNodeWithText("21").assertIsDisplayed()
         }
     }
 }
