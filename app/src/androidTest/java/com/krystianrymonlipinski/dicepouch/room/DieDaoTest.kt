@@ -1,7 +1,5 @@
 package com.krystianrymonlipinski.dicepouch.room
 
-import androidx.room.Room
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.single
@@ -15,19 +13,14 @@ import org.junit.runner.RunWith
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
-class DieDaoTest {
+class DieDaoTest : BaseDaoTest() {
 
-    private lateinit var db: AppDatabase
     private lateinit var dieDao: DieDao
     private lateinit var shortcutsDao: ShortcutDao
 
 
     @Before
-    fun setUp() {
-        db = Room.inMemoryDatabaseBuilder(
-            context = ApplicationProvider.getApplicationContext(),
-            AppDatabase::class.java
-        ).build()
+    fun setUpDao() {
         dieDao = db.dieDao()
         shortcutsDao = db.shortcutDao()
     }

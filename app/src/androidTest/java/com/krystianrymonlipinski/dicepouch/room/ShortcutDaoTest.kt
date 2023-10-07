@@ -2,8 +2,6 @@ package com.krystianrymonlipinski.dicepouch.room
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.room.Room
-import androidx.test.core.app.ApplicationProvider
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.single
@@ -14,9 +12,8 @@ import org.junit.Before
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class ShortcutDaoTest {
+class ShortcutDaoTest : BaseDaoTest() {
 
-    private lateinit var db: AppDatabase
     private lateinit var shortcutDao: ShortcutDao
     private lateinit var dieDao: DieDao
 
@@ -55,11 +52,7 @@ class ShortcutDaoTest {
 
 
     @Before
-    fun setUp() {
-        db = Room.inMemoryDatabaseBuilder(
-            context = ApplicationProvider.getApplicationContext(),
-            AppDatabase::class.java
-        ).build()
+    fun setUpDao() {
         shortcutDao = db.shortcutDao()
         dieDao = db.dieDao()
 
