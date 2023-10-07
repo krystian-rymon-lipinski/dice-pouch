@@ -18,8 +18,8 @@
     <string name="btn_save">Save</string>
 
     <string name="no_dice_snackbar_message">Creating shortcut needs a die</string> <!-- TODO: improve snackbar message -->
-    <string name="btn_cancel">Cancel</string>
-    <string name="btn_delete">Delete</string>
+    <string name="btn_yes">Yes</string>
+    <string name="btn_no">No</string>
     <string name="delete_die_dialog_message">Die chosen to be deleted is a base of at least one
         shortcut. Deleting it will result with them gone as well. Do you wish to proceed?</string> <!-- TODO: improve popup message -->
 

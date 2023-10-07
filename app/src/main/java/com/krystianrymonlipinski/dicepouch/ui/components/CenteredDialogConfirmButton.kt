@@ -3,6 +3,7 @@ package com.krystianrymonlipinski.dicepouch.ui.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -22,11 +23,13 @@ fun CenteredDialogConfirmButton(
     ) {
         TextButton(
             onClick = onClick,
+            colors = ButtonDefaults.textButtonColors(
+                contentColor = MaterialTheme.colorScheme.secondary,
+            ),
             enabled = isEnabled
         ) {
             Text(
                 text = text,
-                color = MaterialTheme.colorScheme.secondary,
                 style = MaterialTheme.typography.headlineSmall.copy(
                     fontWeight = FontWeight.Bold
                 )

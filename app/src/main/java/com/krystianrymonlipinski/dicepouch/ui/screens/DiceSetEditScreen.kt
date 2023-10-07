@@ -18,7 +18,6 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -27,6 +26,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -169,13 +169,13 @@ fun DeleteDieAlertDialog(
         properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true),
         onDismissRequest = onDialogDismissed,
         confirmButton = {
-            ElevatedButton(onClick = onDeleteButtonClicked) {
-                Text(text = stringResource(id = R.string.btn_add_new_die))
+            OutlinedButton(onClick = onDeleteButtonClicked) {
+                Text(text = stringResource(id = R.string.btn_yes))
             }
         },
         dismissButton = {
-            OutlinedButton(onClick = onDialogDismissed) {
-                Text(text = stringResource(id = R.string.btn_cancel))
+            TextButton(onClick = onDialogDismissed) {
+                Text(text = stringResource(id = R.string.btn_no))
             }
         },
         text = { Text(text = stringResource(id = R.string.delete_die_dialog_message)) }
