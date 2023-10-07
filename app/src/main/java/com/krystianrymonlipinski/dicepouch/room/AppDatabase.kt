@@ -10,11 +10,18 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
 
 
-@Database(entities = [DieEntity::class, ShortcutEntity::class], version = 1)
+@Database(
+    entities = [
+        DieEntity::class,
+        ShortcutEntity::class,
+        SetEntity::class
+    ],
+    version = 1)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun dieDao(): DieDao
     abstract fun shortcutDao() : ShortcutDao
+    abstract fun setDao() : SetDao
 
 
     companion object {
@@ -78,6 +85,7 @@ abstract class AppDatabase : RoomDatabase() {
         const val DATABASE_NAME = "dice_pouch_database"
         const val DICE_TABLE_NAME = "dice_table"
         const val SHORTCUTS_TABLE_NAME = "shortcuts_table"
+        const val SETS_TABLE_NAME = "sets_table"
 
         const val DICE_TABLE_COLUMN_TIMESTAMP_ID = "dice_timestamp_id"
         const val DICE_TABLE_COLUMN_SIDES = "sides"
@@ -90,5 +98,10 @@ abstract class AppDatabase : RoomDatabase() {
         const val SHORTCUTS_TABLE_COLUMN_DIE_ID = "die_id"
         const val SHORTCUTS_TABLE_COLUMN_MODIFIER = "modifier"
         const val SHORTCUTS_TABLE_COLUMN_MECHANIC = "mechanic"
+
+        const val SET_TABLE_COLUMN_ID = "set_id"
+        const val SET_TABLE_COLUMN_NAME = "name"
+        const val SET_TABLE_COLUMN_DICE_SIDE_COLOR = "dice_sides_color_argb"
+        const val SET_TABLE_COLUMN_DICE_NUMBER_COLOR = "dice_number_color_arg"
     }
 }
