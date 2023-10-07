@@ -33,7 +33,7 @@ class DiceLocalDataSourceImpl @Inject constructor(
                 entity.shortcuts.map { shortcut ->
                     convertToShortcutFromRelatedEntities(shortcut, entity.die)
                 }
-            }
+            }.sortedBy { it.timestampId }
         }
     }
 
