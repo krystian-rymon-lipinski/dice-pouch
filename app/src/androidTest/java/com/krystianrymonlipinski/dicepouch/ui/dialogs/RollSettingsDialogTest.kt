@@ -1,4 +1,4 @@
-package com.krystianrymonlipinski.dicepouch.dialogs
+package com.krystianrymonlipinski.dicepouch.ui.dialogs
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.onAllNodesWithContentDescription
@@ -6,7 +6,6 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.krystianrymonlipinski.dicepouch.BaseAndroidTest
 import com.krystianrymonlipinski.dicepouch.model.Die
-import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollSettingsDialog
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
 import org.junit.Test
 

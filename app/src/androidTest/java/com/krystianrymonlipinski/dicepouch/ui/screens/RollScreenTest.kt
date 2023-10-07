@@ -1,4 +1,4 @@
-package com.krystianrymonlipinski.dicepouch.screens
+package com.krystianrymonlipinski.dicepouch.ui.screens
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.isDialog
@@ -10,7 +10,6 @@ import com.krystianrymonlipinski.dicepouch.BaseAndroidTest
 import com.krystianrymonlipinski.dicepouch.model.DiceSet
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollShortcut
-import com.krystianrymonlipinski.dicepouch.ui.screens.RollScreen
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
 import org.junit.Before
 import org.junit.Test

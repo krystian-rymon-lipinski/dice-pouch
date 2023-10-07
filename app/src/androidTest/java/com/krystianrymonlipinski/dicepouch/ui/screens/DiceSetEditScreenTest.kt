@@ -1,4 +1,4 @@
-package com.krystianrymonlipinski.dicepouch.screens
+package com.krystianrymonlipinski.dicepouch.ui.screens
 
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertCountEquals
@@ -15,7 +15,6 @@ import com.krystianrymonlipinski.dicepouch.model.DiceSet
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
 import com.krystianrymonlipinski.dicepouch.model.RollShortcut
-import com.krystianrymonlipinski.dicepouch.ui.screens.DiceSetEditScreen
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
 import org.junit.Ignore
 import org.junit.Test
