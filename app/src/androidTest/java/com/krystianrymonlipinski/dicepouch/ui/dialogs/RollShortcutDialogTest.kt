@@ -1,11 +1,14 @@
 package com.krystianrymonlipinski.dicepouch.ui.dialogs
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.performTextReplacement
 import com.krystianrymonlipinski.dicepouch.BaseAndroidTest
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
@@ -93,6 +96,18 @@ class RollShortcutDialogTest : BaseAndroidTest() {
                 .performClick()
 
             onNodeWithText("30d15 + 2 (A)").assertIsDisplayed()
+        }
+    }
+
+    @Test
+    fun rollShortcutDialog_saveButtonDisabled_whenNameBlank() {
+        composeTestRule.apply {
+            setContent { DicePouchTheme { RollShortcutDialog(
+                shortcut = null, diceInSet = listOf(Die(20))) } }
+
+            onNodeWithText("Save").assertIsEnabled()
+            onNodeWithText("New shortcut").performTextReplacement("  ")
+            onNodeWithText("Save").assertIsNotEnabled()
         }
     }
 

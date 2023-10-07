@@ -13,13 +13,17 @@ import androidx.compose.ui.text.font.FontWeight
 @Composable
 fun CenteredDialogConfirmButton(
     text: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    isEnabled: Boolean = true
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
     ) {
-        TextButton(onClick = onClick) {
+        TextButton(
+            onClick = onClick,
+            enabled = isEnabled
+        ) {
             Text(
                 text = text,
                 color = MaterialTheme.colorScheme.secondary,
