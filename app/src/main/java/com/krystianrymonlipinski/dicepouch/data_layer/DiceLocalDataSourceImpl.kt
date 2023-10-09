@@ -50,6 +50,7 @@ class DiceLocalDataSourceImpl @Inject constructor(
     private fun convertToEntity(die: Die) : DieEntity {
         return DieEntity(
             die.timestampId,
+            0, //TODO: pass correct setId
             die.sides,
             die.sideColor.toArgb(),
             die.numberColor.toArgb()

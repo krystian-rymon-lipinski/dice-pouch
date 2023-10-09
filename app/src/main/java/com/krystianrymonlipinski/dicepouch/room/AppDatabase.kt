@@ -64,13 +64,14 @@ abstract class AppDatabase : RoomDatabase() {
         }
 
         private val defaultDice = listOf(
-            DieEntity(timestampId = 1L, sides = 4, sidesColorArgb = Color.White.toArgb(), numberColorArgb = Color.Black.toArgb()),
-            DieEntity(timestampId = 2L, sides = 6, sidesColorArgb = Color.White.toArgb(), numberColorArgb = Color.Black.toArgb()),
-            DieEntity(timestampId = 3L, sides = 8, sidesColorArgb = Color.White.toArgb(), numberColorArgb = Color.Black.toArgb()),
-            DieEntity(timestampId = 4L, sides = 10, sidesColorArgb = Color.White.toArgb(), numberColorArgb = Color.Black.toArgb()),
-            DieEntity(timestampId = 5L, sides = 12, sidesColorArgb = Color.White.toArgb(), numberColorArgb = Color.Black.toArgb()),
-            DieEntity(timestampId = 6L, sides = 20, sidesColorArgb = Color.White.toArgb(), numberColorArgb = Color.Black.toArgb()),
+            generateDie(id = 1L, sides = 4),
+            generateDie(id = 2L, sides = 6),
+            generateDie(id = 3L, sides = 8),
+            generateDie(id = 4L, sides = 10),
+            generateDie(id = 5L, sides = 12),
+            generateDie(id = 6L, sides = 20)
         )
+
         private val defaultShortcuts = listOf(
             ShortcutEntity(
                 timestampId = 1L,
@@ -82,12 +83,18 @@ abstract class AppDatabase : RoomDatabase() {
             )
         )
 
+        private fun generateDie(id: Long, sides: Int) : DieEntity {
+            return DieEntity(timestampId = id, setId = 1, sides = sides,
+                sidesColorArgb = Color.White.toArgb(), numberColorArgb = Color.Black.toArgb())
+        }
+
         const val DATABASE_NAME = "dice_pouch_database"
         const val DICE_TABLE_NAME = "dice_table"
         const val SHORTCUTS_TABLE_NAME = "shortcuts_table"
         const val SETS_TABLE_NAME = "sets_table"
 
         const val DICE_TABLE_COLUMN_TIMESTAMP_ID = "dice_timestamp_id"
+        const val DICE_TABLE_COLUMN_SET_ID = "set_id"
         const val DICE_TABLE_COLUMN_SIDES = "sides"
         const val DICE_TABLE_COLUMN_SIDES_COLOR = "sides_color_argb"
         const val DICE_TABLE_COLUMN_NUMBER_COLOR = "number_color_argb"

@@ -14,8 +14,12 @@ import org.junit.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class ShortcutDaoTest : BaseDaoTest() {
 
-    private lateinit var shortcutDao: ShortcutDao
-    private lateinit var dieDao: DieDao
+    @Before
+    fun setUpDiceSet() {
+        setDao.add(SetEntity(id = setId, name = "a_set",
+            diceSideColorArgb = 0, diceNumberColorArgb = 10))
+    }
+
 
     private val dieId: Long = 1L
     private val shortcutsExample1 = listOf(ShortcutEntity(
@@ -45,6 +49,7 @@ class ShortcutDaoTest : BaseDaoTest() {
 
     private val dieExample = DieEntity(
         timestampId = dieId,
+        setId = setId,
         sides = 6,
         sidesColorArgb = Color.White.toArgb(),
         numberColorArgb = Color.Black.toArgb()
