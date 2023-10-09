@@ -1,10 +1,13 @@
 package com.krystianrymonlipinski.dicepouch
 
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.krystianrymonlipinski.dicepouch.data_layer.DiceLocalDataSource
+import com.krystianrymonlipinski.dicepouch.data_layer.SetsLocalDataSource
 import com.krystianrymonlipinski.dicepouch.data_layer.ShortcutsLocalDataSource
 import com.krystianrymonlipinski.dicepouch.model.DiceSet
+import com.krystianrymonlipinski.dicepouch.model.DiceSetInfo
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
 import com.krystianrymonlipinski.dicepouch.model.RollShortcut
@@ -19,6 +22,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(
+    private val setsLocalDataSource: SetsLocalDataSource,
     private val diceLocalDataSource: DiceLocalDataSource,
     private val shortcutsLocalDataSource: ShortcutsLocalDataSource
 ) : ViewModel() {
@@ -38,6 +42,25 @@ class MainActivityViewModel @Inject constructor(
             initialValue = DiceSet(BASIC_SET_NAME, emptyList(), emptyList())
         )
 
+    val allSetsState: StateFlow<List<DiceSetInfo>> = setsLocalDataSource.retrieveAllSetsInfo()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = emptyList()
+        )
+
+
+    fun addNewSet(name: String, diceColor: Color, numbersColor: Color) {
+        viewModelScope.launch {
+            setsLocalDataSource.addDiceSet(DiceSetInfo(name, diceColor, numbersColor))
+        }
+    }
+
+    fun deleteSet(set: DiceSetInfo) {
+        viewModelScope.launch {
+            setsLocalDataSource.deleteDiceSet(set)
+        }
+    }
 
     fun addNewDieToSet(numberOfSides: Int) {
         viewModelScope.launch {
