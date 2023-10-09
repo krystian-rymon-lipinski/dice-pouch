@@ -2,6 +2,8 @@ package com.krystianrymonlipinski.dicepouch.hilt
 
 import com.krystianrymonlipinski.dicepouch.data_layer.DiceLocalDataSource
 import com.krystianrymonlipinski.dicepouch.data_layer.DiceLocalDataSourceImpl
+import com.krystianrymonlipinski.dicepouch.data_layer.SetsLocalDataSource
+import com.krystianrymonlipinski.dicepouch.data_layer.SetsLocalDataSourceImpl
 import com.krystianrymonlipinski.dicepouch.data_layer.ShortcutsLocalDataSource
 import com.krystianrymonlipinski.dicepouch.data_layer.ShortcutsLocalDataSourceImpl
 import dagger.Binds
@@ -18,4 +20,7 @@ abstract class AppDataLayerModule {
 
     @Binds
     abstract fun bindShortcutsDataSource(impl: ShortcutsLocalDataSourceImpl) : ShortcutsLocalDataSource
+
+    @Binds
+    abstract fun bindSetsDataSource(impl: SetsLocalDataSourceImpl) : SetsLocalDataSource
 }

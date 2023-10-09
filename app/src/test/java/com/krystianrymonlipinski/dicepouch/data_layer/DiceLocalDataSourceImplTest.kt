@@ -46,8 +46,8 @@ class DiceLocalDataSourceImplTest {
 
     @Test
     fun getDiceStream() = runTest {
-        val dieEntity1 = DieEntity(timestampId = 4, sides = 4, sidesColorArgb = Color.White.toArgb(), numberColorArgb = Color.Black.toArgb())
-        val dieEntity2 = DieEntity(timestampId = 12, sides = 8, sidesColorArgb = Color.Red.toArgb(), numberColorArgb = Color.Green.toArgb())
+        val dieEntity1 = DieEntity(timestampId = 4, setId = 1, sides = 4, sidesColorArgb = Color.White.toArgb(), numberColorArgb = Color.Black.toArgb())
+        val dieEntity2 = DieEntity(timestampId = 12, setId = 1, sides = 8, sidesColorArgb = Color.Red.toArgb(), numberColorArgb = Color.Green.toArgb())
         val dieToCheck1 = Die(timestampId = 4, sides = 4, sideColor = Color.White, numberColor = Color.Black)
         val dieToCheck2 = Die(timestampId = 12, sides = 8, sideColor = Color.Red, numberColor = Color.Green)
 
@@ -69,6 +69,7 @@ class DiceLocalDataSourceImplTest {
         val dieWithShortcuts = DieWithShortcuts(
             die = DieEntity(
                 timestampId = 10L,
+                setId = 1,
                 sides = 4,
                 sidesColorArgb = Color.White.toArgb(),
                 numberColorArgb = Color.Black.toArgb()
@@ -110,7 +111,7 @@ class DiceLocalDataSourceImplTest {
     @Test
     fun addNewDieToSet() = runTest {
         val dieToAdd = Die(sides = 6, timestampId = 10, sideColor = Color.Magenta, numberColor = Color.Blue)
-        val dieEntityToCheck = DieEntity(timestampId = 10, sides = 6, sidesColorArgb = Color.Magenta.toArgb(), numberColorArgb = Color.Blue.toArgb())
+        val dieEntityToCheck = DieEntity(timestampId = 10, setId = 1, sides = 6, sidesColorArgb = Color.Magenta.toArgb(), numberColorArgb = Color.Blue.toArgb())
 
         testObj.addNewDieToSet(dieToAdd)
         verify(dieDao).add(capture(dieEntityCaptor))
@@ -120,7 +121,7 @@ class DiceLocalDataSourceImplTest {
     @Test
     fun deleteDieFromSet() = runTest {
         val dieToDelete = Die(sides = 6, timestampId = 10, sideColor = Color.Magenta, numberColor = Color.Blue)
-        val dieEntityToCheck = DieEntity(timestampId = 10, sides = 6, sidesColorArgb = Color.Magenta.toArgb(), numberColorArgb = Color.Blue.toArgb())
+        val dieEntityToCheck = DieEntity(timestampId = 10, setId = 1, sides = 6, sidesColorArgb = Color.Magenta.toArgb(), numberColorArgb = Color.Blue.toArgb())
 
         testObj.deleteDieFromSet(dieToDelete)
         verify(dieDao).delete(capture(dieEntityCaptor))

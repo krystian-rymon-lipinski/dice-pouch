@@ -21,10 +21,10 @@ class SetDaoTest : BaseDaoTest() {
         setDao.add(diceSetToAdd1)
         setDao.add(diceSetToAdd2)
 
-        val retrievedSets = setDao.retrieveAllWithDice().take(1).single()
+        val retrievedSets = setDao.retrieveAll().take(1).single()
         assertEquals(2, retrievedSets.size)
-        assertEquals(diceSetAfterAdding1, retrievedSets[0].set)
-        assertEquals(diceSetAfterAdding2, retrievedSets[1].set)
+        assertEquals(diceSetAfterAdding1, retrievedSets[0])
+        assertEquals(diceSetAfterAdding2, retrievedSets[1])
     }
 
     @Test
@@ -40,9 +40,9 @@ class SetDaoTest : BaseDaoTest() {
             delete(diceSetToDelete)
         }
 
-        val retrievedSets = setDao.retrieveAllWithDice().take(1).single()
+        val retrievedSets = setDao.retrieveAll().take(1).single()
         assertEquals(1, retrievedSets.size)
-        assertEquals(diceSetToSpare, retrievedSets[0].set)
+        assertEquals(diceSetToSpare, retrievedSets[0])
     }
 
     @Test
@@ -54,9 +54,9 @@ class SetDaoTest : BaseDaoTest() {
         setDao.add(diceSetToAdd)
         setDao.update(setUpdate)
 
-        val retrievedSets = setDao.retrieveAllWithDice().take(1).single()
+        val retrievedSets = setDao.retrieveAll().take(1).single()
         assertEquals(1, retrievedSets.size)
-        assertEquals(diceSetAfterAdding, retrievedSets[0].set)
+        assertEquals(diceSetAfterAdding, retrievedSets[0])
     }
 
     @Test
@@ -64,7 +64,7 @@ class SetDaoTest : BaseDaoTest() {
         val setup = createBasicDatabaseSetup()
         setDao.delete(setup.set)
 
-        val retrievedSets = setDao.retrieveAllWithDice().take(1).single()
+        val retrievedSets = setDao.retrieveAll().take(1).single()
         val retrievedDice = dieDao.retrieveAllWithShortcuts().take(1).single()
         val retrievedShortcuts = shortcutDao.retrieveAll().take(1).single()
 
