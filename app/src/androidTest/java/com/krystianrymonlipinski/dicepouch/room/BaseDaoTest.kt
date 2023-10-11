@@ -75,6 +75,18 @@ open class BaseDaoTest {
         )
     )
 
+    protected fun insertBasicDatabaseSetup(setWithDice: SetWithDice) {
+        setWithDice.apply {
+            setDao.add(set)
+            diceWithShortcuts.map { it.die }.forEach {
+                dieDao.add(it)
+            }
+            diceWithShortcuts.flatMap { it.shortcuts }.forEach {
+                shortcutDao.add(it)
+            }
+        }
+    }
+
     companion object {
         @JvmStatic protected val setId = 1
         @JvmStatic protected val dieId = 1L

@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
@@ -13,7 +14,11 @@ interface SetDao {
     @Query("SELECT * FROM ${AppDatabase.SETS_TABLE_NAME}")
     fun retrieveAll() : Flow<List<SetEntity>>
 
-    //TODO: retrieve chosen set by name; also ensure that all names are unique,
+    @Transaction
+    @Query("SELECT * FROM ${AppDatabase.SETS_TABLE_NAME} WHERE ${AppDatabase.SET_TABLE_COLUMN_NAME} = :name")
+    fun retrieveSetWithName(name: String) : Flow<SetWithDice>
+
+    //TODO: ensure that all names are unique,
     // either by uniqueness of a column or an impossibility of adding another with the same name
 
     @Insert

@@ -62,15 +62,36 @@ class SetDaoTest : BaseDaoTest() {
     @Test
     fun deleteSet_withItsDiceAndShortcuts() = runTest {
         val setup = createBasicDatabaseSetup()
+        insertBasicDatabaseSetup(setup)
+
+        val retrievedSetsBefore = setDao.retrieveAll().take(1).single()
+        val retrievedDiceBefore = dieDao.retrieveAllWithShortcuts().take(1).single()
+        val retrievedShortcutsBefore = shortcutDao.retrieveAll().take(1).single()
+
+        assertEquals(1, retrievedSetsBefore.size)
+        assertEquals(2, retrievedDiceBefore.size)
+        assertEquals(3, retrievedShortcutsBefore.size)
+
         setDao.delete(setup.set)
 
-        val retrievedSets = setDao.retrieveAll().take(1).single()
-        val retrievedDice = dieDao.retrieveAllWithShortcuts().take(1).single()
-        val retrievedShortcuts = shortcutDao.retrieveAll().take(1).single()
+        val retrievedSetsAfter = setDao.retrieveAll().take(1).single()
+        val retrievedDiceAfter = dieDao.retrieveAllWithShortcuts().take(1).single()
+        val retrievedShortcutsAfter = shortcutDao.retrieveAll().take(1).single()
 
-        assertEquals(0, retrievedSets.size)
-        assertEquals(0, retrievedDice.size)
-        assertEquals(0, retrievedShortcuts.size)
+        assertEquals(0, retrievedSetsAfter.size)
+        assertEquals(0, retrievedDiceAfter.size)
+        assertEquals(0, retrievedShortcutsAfter.size)
+    }
+
+    @Test
+    fun retrieveSet_withChosenName() = runTest {
+        val setup = createBasicDatabaseSetup()
+        insertBasicDatabaseSetup(setup)
+        val retrievedSet = setDao.retrieveSetWithName(setup.set.name).take(1).single()
+
+        assertEquals("first_set", retrievedSet.set.name)
+        assertEquals(2, retrievedSet.diceWithShortcuts.size)
+        assertEquals(3, retrievedSet.diceWithShortcuts.flatMap { it.shortcuts }.size)
     }
 
 

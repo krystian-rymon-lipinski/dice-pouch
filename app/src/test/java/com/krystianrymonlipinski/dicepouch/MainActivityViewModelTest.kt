@@ -5,6 +5,7 @@ import com.krystianrymonlipinski.dicepouch.data_layer.DiceLocalDataSource
 import com.krystianrymonlipinski.dicepouch.data_layer.DiceLocalDataSourceImpl
 import com.krystianrymonlipinski.dicepouch.data_layer.SetsLocalDataSource
 import com.krystianrymonlipinski.dicepouch.data_layer.ShortcutsLocalDataSourceImpl
+import com.krystianrymonlipinski.dicepouch.model.DiceSet
 import com.krystianrymonlipinski.dicepouch.model.DiceSetInfo
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
@@ -232,6 +233,7 @@ class MainActivityViewModelTest {
         suspend fun emitSets(value: List<DiceSetInfo>) { flow.emit(value) }
         override fun retrieveAllSetsInfo() = flow
 
+        override fun retrieveSetWithName(name: String) = flowOf<DiceSet>()
         override suspend fun addDiceSet(set: DiceSetInfo) { /* Do nothing */ }
         override suspend fun deleteDiceSet(set: DiceSetInfo) { /* Do nothing */ }
 
