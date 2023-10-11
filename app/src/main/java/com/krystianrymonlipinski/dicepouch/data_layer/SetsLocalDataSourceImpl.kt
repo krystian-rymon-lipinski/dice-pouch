@@ -61,8 +61,8 @@ class SetsLocalDataSourceImpl @Inject constructor(
 
     private fun convertFromEntityWithDice(entity: SetWithDice) : DiceSet {
         return DiceSet(
-            id = entity.set.id,
-            name = entity.set.name,
+            info = DiceSetInfo(id = entity.set.id, name = entity.set.name,
+                diceColor = Color(entity.set.diceSideColorArgb), numbersColor = Color(entity.set.diceNumberColorArgb)),
             dice = entity.diceWithShortcuts.map { convertToDieFromEntity(it.die) },
             shortcuts = entity.diceWithShortcuts.flatMap { dieWithShortcuts ->
                 dieWithShortcuts.shortcuts.map { shortcut ->

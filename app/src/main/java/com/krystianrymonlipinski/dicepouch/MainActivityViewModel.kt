@@ -31,7 +31,7 @@ class MainActivityViewModel @Inject constructor(
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = DiceSet(id = 0, name = "")
+            initialValue = DiceSet()
         )
 
     val allSetsState: StateFlow<List<DiceSetInfo>> = setsLocalDataSource.retrieveAllSetsInfo()
@@ -44,7 +44,10 @@ class MainActivityViewModel @Inject constructor(
 
     fun addNewSet(name: String, diceColor: Color, numbersColor: Color) {
         viewModelScope.launch {
-            setsLocalDataSource.addDiceSet(DiceSetInfo(name, diceColor, numbersColor))
+            setsLocalDataSource.addDiceSet(DiceSetInfo(
+                name = name,
+                diceColor = diceColor,
+                numbersColor = numbersColor))
         }
     }
 
@@ -56,13 +59,13 @@ class MainActivityViewModel @Inject constructor(
 
     fun addNewDieToSet(numberOfSides: Int) {
         viewModelScope.launch {
-            diceLocalDataSource.addNewDieToSet(diceSetState.value.id, Die(numberOfSides))
+            diceLocalDataSource.addNewDieToSet(diceSetState.value.info.id, Die(numberOfSides))
         }
     }
 
     fun deleteDieFromSet(die: Die) {
         viewModelScope.launch {
-            diceLocalDataSource.deleteDieFromSet(diceSetState.value.id, die)
+            diceLocalDataSource.deleteDieFromSet(diceSetState.value.info.id, die)
         }
     }
 

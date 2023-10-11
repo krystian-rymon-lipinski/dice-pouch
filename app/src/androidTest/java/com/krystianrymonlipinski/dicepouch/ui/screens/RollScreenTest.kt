@@ -8,6 +8,7 @@ import androidx.compose.ui.test.onParent
 import androidx.compose.ui.test.performClick
 import com.krystianrymonlipinski.dicepouch.BaseAndroidTest
 import com.krystianrymonlipinski.dicepouch.model.DiceSet
+import com.krystianrymonlipinski.dicepouch.model.DiceSetInfo
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollShortcut
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
@@ -24,8 +25,7 @@ class RollScreenTest : BaseAndroidTest() {
         composeTestRule.setContent {
             DicePouchTheme {
                 RollScreen(screenState = DiceSet(
-                    0,
-                    "A set",
+                    DiceSetInfo(0, "A set"),
                     listOf(Die(6), Die(8), Die(20)),
                     listOf(shortcut)
                 ))

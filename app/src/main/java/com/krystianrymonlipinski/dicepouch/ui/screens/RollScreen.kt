@@ -71,7 +71,7 @@ fun RollScreen(
     Column(modifier = Modifier
         .fillMaxSize()
         .padding(horizontal = 16.dp)) {
-        ChosenSetName(name = screenState.name, onEditIconClicked = onEditIconClicked)
+        ChosenSetName(name = screenState.info.name, onEditIconClicked = onEditIconClicked)
         DiceText()
         Spacer(modifier = Modifier.height(8.dp))
         DiceGrid(

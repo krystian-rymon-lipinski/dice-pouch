@@ -58,7 +58,7 @@ class MainActivityViewModelTest {
     @Test
     fun detectCurrentSetStreamChange() = runTest {
         val die = Die(sides = 20)
-        val setToEmit = DiceSet(id = 10, name = "a_name", dice = listOf(die),
+        val setToEmit = DiceSet(info = DiceSetInfo(id = 10, name = "a_name"), dice = listOf(die),
                 shortcuts = listOf(RollShortcut(name = "sh", setting = RollSetting(die = die))))
         val setsSource = FakeSetsLocalDataSource()
         val testObj2 = MainActivityViewModel(setsSource, diceLocalDataSourceImpl, shortcutsLocalDataSourceImpl)
@@ -74,8 +74,8 @@ class MainActivityViewModelTest {
     @Test
     fun detectSetsStreamChange() = runTest {
         val setsToEmit = listOf(
-            DiceSetInfo("grr", Color.White, Color.Black),
-            DiceSetInfo("wrrr", Color.Black, Color.White)
+            DiceSetInfo(2, "grr", Color.White, Color.Black),
+            DiceSetInfo(3, "wrrr", Color.Black, Color.White)
         )
         val setsSource = FakeSetsLocalDataSource()
         val testObj2 = MainActivityViewModel(setsSource, diceLocalDataSourceImpl, shortcutsLocalDataSourceImpl)
