@@ -25,11 +25,26 @@ abstract class AppDatabase : RoomDatabase() {
 
 
     companion object {
+        const val DEFAULT_SET_NAME = "Basic set"
+
         val databaseCallback: Callback = object : Callback() {
             override fun onCreate(db: SupportSQLiteDatabase) {
+                prepopulateSet(db)
                 prepopulateDice(db)
                 prepopulateShortcuts(db)
                 //TODO: prepopulate database within coroutine
+            }
+        }
+
+        private fun prepopulateSet(db: SupportSQLiteDatabase) {
+            defaultSet.forEach {
+                val contentValues = ContentValues(defaultSet.size).apply {
+                    put(SET_TABLE_COLUMN_ID, 1)
+                    put(SET_TABLE_COLUMN_NAME, it.name)
+                    put(SET_TABLE_COLUMN_DICE_SIDE_COLOR, it.diceSideColorArgb)
+                    put(SET_TABLE_COLUMN_DICE_NUMBER_COLOR, it.diceNumberColorArgb)
+                }
+                insertTableRow(db, SETS_TABLE_NAME, contentValues)
             }
         }
 
@@ -37,6 +52,7 @@ abstract class AppDatabase : RoomDatabase() {
             defaultDice.forEach {
                 val contentValues = ContentValues(defaultDice.size).apply {
                     put(DICE_TABLE_COLUMN_TIMESTAMP_ID, it.timestampId)
+                    put(DICE_TABLE_COLUMN_SET_ID, it.setId)
                     put(DICE_TABLE_COLUMN_SIDES, it.sides)
                     put(DICE_TABLE_COLUMN_SIDES_COLOR, it.sidesColorArgb)
                     put(DICE_TABLE_COLUMN_NUMBER_COLOR, it.numberColorArgb)
@@ -62,6 +78,10 @@ abstract class AppDatabase : RoomDatabase() {
         private fun insertTableRow(db: SupportSQLiteDatabase, tableName: String, values: ContentValues) {
             db.insert(table = tableName, values = values, conflictAlgorithm = CONFLICT_REPLACE)
         }
+
+        private val defaultSet = listOf(SetEntity(
+            name = DEFAULT_SET_NAME, diceSideColorArgb = Color.White.toArgb(), diceNumberColorArgb = Color.Black.toArgb())
+        )
 
         private val defaultDice = listOf(
             generateDie(id = 1L, sides = 4),
