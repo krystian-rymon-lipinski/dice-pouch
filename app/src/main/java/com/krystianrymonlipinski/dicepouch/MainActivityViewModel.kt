@@ -11,11 +11,10 @@ import com.krystianrymonlipinski.dicepouch.model.DiceSetInfo
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
 import com.krystianrymonlipinski.dicepouch.model.RollShortcut
+import com.krystianrymonlipinski.dicepouch.room.AppDatabase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -27,19 +26,12 @@ class MainActivityViewModel @Inject constructor(
     private val shortcutsLocalDataSource: ShortcutsLocalDataSource
 ) : ViewModel() {
 
-    private val _setName = MutableStateFlow(BASIC_SET_NAME)
-    private val _diceStream = diceLocalDataSource.getDiceStream()
-    private val _shortcutsStream = diceLocalDataSource.getShortcutsStream()
 
-    val diceSetState: StateFlow<DiceSet> = combine(
-        _setName, _diceStream, _shortcutsStream
-    ) { setName, diceList, shortcutsList ->
-        DiceSet(0, setName, diceList, shortcutsList) //TODO: enclose this to a single object flow
-    }
+    val diceSetState: StateFlow<DiceSet> = setsLocalDataSource.retrieveSetWithName(AppDatabase.DEFAULT_SET_NAME)
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = DiceSet(0, BASIC_SET_NAME, emptyList(), emptyList())
+            initialValue = DiceSet(id = 0, name = "")
         )
 
     val allSetsState: StateFlow<List<DiceSetInfo>> = setsLocalDataSource.retrieveAllSetsInfo()
@@ -95,10 +87,6 @@ class MainActivityViewModel @Inject constructor(
         }
     }
 
-
-    companion object {
-        private const val BASIC_SET_NAME = "Basic D&D Set"
-    }
 
 }
 

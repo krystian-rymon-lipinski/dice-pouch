@@ -1,7 +1,6 @@
 package com.krystianrymonlipinski.dicepouch
 
 import androidx.compose.ui.graphics.Color
-import com.krystianrymonlipinski.dicepouch.data_layer.DiceLocalDataSource
 import com.krystianrymonlipinski.dicepouch.data_layer.DiceLocalDataSourceImpl
 import com.krystianrymonlipinski.dicepouch.data_layer.SetsLocalDataSource
 import com.krystianrymonlipinski.dicepouch.data_layer.ShortcutsLocalDataSourceImpl
@@ -12,9 +11,7 @@ import com.krystianrymonlipinski.dicepouch.model.RollSetting
 import com.krystianrymonlipinski.dicepouch.model.RollShortcut
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -30,7 +27,6 @@ import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.kotlin.capture
 import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(MockitoJUnitRunner::class)
@@ -56,9 +52,23 @@ class MainActivityViewModelTest {
     fun setUp() {
         val testDispatcher = UnconfinedTestDispatcher()
         Dispatchers.setMain(testDispatcher)
-
-        whenever(diceLocalDataSourceImpl.getDiceStream()).thenReturn(flowOf(emptyList()))
         testObj = MainActivityViewModel(setsLocalDataSource, diceLocalDataSourceImpl, shortcutsLocalDataSourceImpl)
+    }
+
+    @Test
+    fun detectCurrentSetStreamChange() = runTest {
+        val die = Die(sides = 20)
+        val setToEmit = DiceSet(id = 10, name = "a_name", dice = listOf(die),
+                shortcuts = listOf(RollShortcut(name = "sh", setting = RollSetting(die = die))))
+        val setsSource = FakeSetsLocalDataSource()
+        val testObj2 = MainActivityViewModel(setsSource, diceLocalDataSourceImpl, shortcutsLocalDataSourceImpl)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            testObj2.diceSetState.collect { /* Collector (even an empty one) needed for .stateIn operator to work properly */ }
+        }
+
+        assertEquals(DiceSet(), testObj2.diceSetState.value)
+        setsSource.emitSet(setToEmit)
+        assertEquals(setToEmit, testObj2.diceSetState.value)
     }
 
     @Test
@@ -78,33 +88,6 @@ class MainActivityViewModelTest {
         assertEquals(setsToEmit, testObj2.allSetsState.value)
     }
 
-    @Test
-    fun detectDiceStreamChange() = runTest {
-        val diceToEmit = listOf(Die(sides = 6, timestampId = 1L))
-        val diceSource = FakeDiceLocalDataSource()
-        val testObj2 = MainActivityViewModel(setsLocalDataSource, diceSource, shortcutsLocalDataSourceImpl)
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
-            testObj2.diceSetState.collect { /* Collector (even an empty one) needed for .stateIn operator to work properly */ }
-        }
-
-        assertEquals(emptyList<Die>(), testObj2.diceSetState.value.dice)
-        diceSource.emitDice(diceToEmit)
-        assertEquals(diceToEmit, testObj2.diceSetState.value.dice)
-    }
-
-    @Test
-    fun detectShortcutsStreamChange() = runTest {
-        val shortcutsToEmit = listOf(RollShortcut(name = "a_name", setting = RollSetting(die = Die(20))))
-        val shortcutsSource = FakeDiceLocalDataSource()
-        val testObj2 = MainActivityViewModel(setsLocalDataSource, shortcutsSource, shortcutsLocalDataSourceImpl)
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
-            testObj2.diceSetState.collect { /* Collector (even an empty one) needed for .stateIn operator to work properly */ }
-        }
-
-        assertEquals(emptyList<RollShortcut>(), testObj2.diceSetState.value.shortcuts)
-        shortcutsSource.emitShortcuts(shortcutsToEmit)
-        assertEquals(shortcutsToEmit, testObj2.diceSetState.value.shortcuts)
-    }
 
     @Test
     fun addNewSet() = runTest {
@@ -214,26 +197,15 @@ class MainActivityViewModelTest {
         assertEqualsShortcutSetting(assumedShortcut.setting, capturedShortcut.setting)
     }
 
-    private class FakeDiceLocalDataSource : DiceLocalDataSource {
-        private val diceFlow = MutableStateFlow(emptyList<Die>())
-        private val shortcutsFlow = MutableStateFlow(emptyList<RollShortcut>())
-
-        suspend fun emitDice(value: List<Die>) = diceFlow.emit(value)
-        suspend fun emitShortcuts(value: List<RollShortcut>) = shortcutsFlow.emit(value)
-        override fun getDiceStream() = diceFlow
-        override fun getShortcutsStream(): Flow<List<RollShortcut>> = shortcutsFlow
-
-        override suspend fun addNewDieToSet(setId: Int, die: Die) { /* Do nothing */ }
-        override suspend fun deleteDieFromSet(setId: Int, die: Die) { /* Do nothing */ }
-    }
-
     private class FakeSetsLocalDataSource : SetsLocalDataSource {
-        private val flow = MutableStateFlow(emptyList<DiceSetInfo>())
+        private val allSetsFlow = MutableStateFlow(emptyList<DiceSetInfo>())
+        private val currentSetFlow = MutableStateFlow(DiceSet())
 
-        suspend fun emitSets(value: List<DiceSetInfo>) { flow.emit(value) }
-        override fun retrieveAllSetsInfo() = flow
+        suspend fun emitSets(value: List<DiceSetInfo>) { allSetsFlow.emit(value) }
+        suspend fun emitSet(value: DiceSet) { currentSetFlow.emit(value) }
+        override fun retrieveAllSetsInfo() = allSetsFlow
+        override fun retrieveSetWithName(name: String) = currentSetFlow
 
-        override fun retrieveSetWithName(name: String) = flowOf<DiceSet>()
         override suspend fun addDiceSet(set: DiceSetInfo) { /* Do nothing */ }
         override suspend fun deleteDiceSet(set: DiceSetInfo) { /* Do nothing */ }
 

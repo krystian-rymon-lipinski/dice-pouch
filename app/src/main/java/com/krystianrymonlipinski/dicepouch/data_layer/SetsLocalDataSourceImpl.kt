@@ -59,7 +59,6 @@ class SetsLocalDataSourceImpl @Inject constructor(
     }
 
 
-
     private fun convertFromEntityWithDice(entity: SetWithDice) : DiceSet {
         return DiceSet(
             id = entity.set.id,
