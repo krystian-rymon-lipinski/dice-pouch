@@ -34,12 +34,12 @@ class MainActivityViewModel @Inject constructor(
     val diceSetState: StateFlow<DiceSet> = combine(
         _setName, _diceStream, _shortcutsStream
     ) { setName, diceList, shortcutsList ->
-        DiceSet(setName, diceList, shortcutsList)
+        DiceSet(0, setName, diceList, shortcutsList) //TODO: enclose this to a single object flow
     }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = DiceSet(BASIC_SET_NAME, emptyList(), emptyList())
+            initialValue = DiceSet(0, BASIC_SET_NAME, emptyList(), emptyList())
         )
 
     val allSetsState: StateFlow<List<DiceSetInfo>> = setsLocalDataSource.retrieveAllSetsInfo()
@@ -64,13 +64,13 @@ class MainActivityViewModel @Inject constructor(
 
     fun addNewDieToSet(numberOfSides: Int) {
         viewModelScope.launch {
-            diceLocalDataSource.addNewDieToSet(Die(numberOfSides))
+            diceLocalDataSource.addNewDieToSet(diceSetState.value.id, Die(numberOfSides))
         }
     }
 
     fun deleteDieFromSet(die: Die) {
         viewModelScope.launch {
-            diceLocalDataSource.deleteDieFromSet(die)
+            diceLocalDataSource.deleteDieFromSet(diceSetState.value.id, die)
         }
     }
 

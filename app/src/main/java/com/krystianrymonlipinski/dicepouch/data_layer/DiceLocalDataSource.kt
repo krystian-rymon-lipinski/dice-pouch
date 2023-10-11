@@ -8,6 +8,6 @@ interface DiceLocalDataSource {
 
     fun getDiceStream() : Flow<List<Die>>
     fun getShortcutsStream() : Flow<List<RollShortcut>>
-    suspend fun addNewDieToSet(die: Die)
-    suspend fun deleteDieFromSet(die: Die)
+    suspend fun addNewDieToSet(setId: Int, die: Die)
+    suspend fun deleteDieFromSet(setId: Int, die: Die)
 }

@@ -24,6 +24,7 @@ class RollScreenTest : BaseAndroidTest() {
         composeTestRule.setContent {
             DicePouchTheme {
                 RollScreen(screenState = DiceSet(
+                    0,
                     "A set",
                     listOf(Die(6), Die(8), Die(20)),
                     listOf(shortcut)

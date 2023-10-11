@@ -110,20 +110,22 @@ class DiceLocalDataSourceImplTest {
 
     @Test
     fun addNewDieToSet() = runTest {
+        val setId = 1
         val dieToAdd = Die(sides = 6, timestampId = 10, sideColor = Color.Magenta, numberColor = Color.Blue)
         val dieEntityToCheck = DieEntity(timestampId = 10, setId = 1, sides = 6, sidesColorArgb = Color.Magenta.toArgb(), numberColorArgb = Color.Blue.toArgb())
 
-        testObj.addNewDieToSet(dieToAdd)
+        testObj.addNewDieToSet(setId, dieToAdd)
         verify(dieDao).add(capture(dieEntityCaptor))
         assertEquals(dieEntityToCheck, dieEntityCaptor.value)
     }
 
     @Test
     fun deleteDieFromSet() = runTest {
+        val setId = 1
         val dieToDelete = Die(sides = 6, timestampId = 10, sideColor = Color.Magenta, numberColor = Color.Blue)
         val dieEntityToCheck = DieEntity(timestampId = 10, setId = 1, sides = 6, sidesColorArgb = Color.Magenta.toArgb(), numberColorArgb = Color.Blue.toArgb())
 
-        testObj.deleteDieFromSet(dieToDelete)
+        testObj.deleteDieFromSet(setId, dieToDelete)
         verify(dieDao).delete(capture(dieEntityCaptor))
         assertEquals(dieEntityToCheck, dieEntityCaptor.value)
     }

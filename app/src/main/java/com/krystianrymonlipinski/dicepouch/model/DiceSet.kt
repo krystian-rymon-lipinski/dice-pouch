@@ -1,6 +1,7 @@
 package com.krystianrymonlipinski.dicepouch.model
 
 data class DiceSet(
+    val id: Int = 0,
     val name: String = "Random name",
     val dice: List<Die> = emptyList(),
     val shortcuts: List<RollShortcut> = emptyList()

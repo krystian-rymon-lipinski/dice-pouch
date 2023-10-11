@@ -37,20 +37,20 @@ class DiceLocalDataSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun addNewDieToSet(die: Die) = withContext(Dispatchers.IO) {
-        dieDao.add(convertToEntity(die))
+    override suspend fun addNewDieToSet(setId: Int, die: Die) = withContext(Dispatchers.IO) {
+        dieDao.add(convertToEntity(setId, die))
     }
 
-    override suspend fun deleteDieFromSet(die: Die) = withContext(Dispatchers.IO) {
-        dieDao.delete(convertToEntity(die))
+    override suspend fun deleteDieFromSet(setId: Int, die: Die) = withContext(Dispatchers.IO) {
+        dieDao.delete(convertToEntity(setId, die))
     }
 
 
 
-    private fun convertToEntity(die: Die) : DieEntity {
+    private fun convertToEntity(setId: Int, die: Die) : DieEntity {
         return DieEntity(
             die.timestampId,
-            0, //TODO: pass correct setId
+            setId,
             die.sides,
             die.sideColor.toArgb(),
             die.numberColor.toArgb()

@@ -76,7 +76,7 @@ fun DiceSetEditRoute(
 
 @Composable
 fun DiceSetEditScreen(
-    screenState: DiceSet = DiceSet("A set", listOf(Die(20), Die(15)), listOf(RollShortcut(name = "Some check"))),
+    screenState: DiceSet = DiceSet(0, "A set", listOf(Die(20), Die(15)), listOf(RollShortcut(name = "Some check"))),
     onNewDieAdded: (Int) -> Unit = {},
     onDeleteDieClicked: (Die) -> Unit = {},
     onNewShortcutAdded: (String, RollSetting) -> Unit = { _, _ -> /* Nothing by default */},

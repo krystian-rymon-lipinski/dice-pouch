@@ -23,6 +23,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.Captor
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
@@ -127,16 +128,16 @@ class MainActivityViewModelTest {
         val dieToBeAdded = Die(sides = 6, sideColor = Color.White, numberColor = Color.Black)
 
         testObj.addNewDieToSet(numberOfSides = 6)
-        verify(diceLocalDataSourceImpl).addNewDieToSet(capture(dieCaptor))
+        verify(diceLocalDataSourceImpl).addNewDieToSet(anyInt(), capture(dieCaptor))
         assertEqualsDie_withoutTimestampId(dieToBeAdded, dieCaptor.value)
     }
 
     @Test
     fun deleteDie() = runTest {
         val dieToBeDeleted = Die(sides = 8, sideColor = Color.White, numberColor = Color.Black)
-        testObj.deleteDieFromSet(die = dieToBeDeleted)
 
-        verify(diceLocalDataSourceImpl).deleteDieFromSet(capture(dieCaptor))
+        testObj.deleteDieFromSet(die = dieToBeDeleted)
+        verify(diceLocalDataSourceImpl).deleteDieFromSet(anyInt(), capture(dieCaptor))
         assertEqualsDie_withoutTimestampId(dieToBeDeleted, dieCaptor.value)
     }
 
@@ -221,8 +222,8 @@ class MainActivityViewModelTest {
         override fun getDiceStream() = diceFlow
         override fun getShortcutsStream(): Flow<List<RollShortcut>> = shortcutsFlow
 
-        override suspend fun addNewDieToSet(die: Die) { /* Do nothing */ }
-        override suspend fun deleteDieFromSet(die: Die) { /* Do nothing */ }
+        override suspend fun addNewDieToSet(setId: Int, die: Die) { /* Do nothing */ }
+        override suspend fun deleteDieFromSet(setId: Int, die: Die) { /* Do nothing */ }
     }
 
     private class FakeSetsLocalDataSource : SetsLocalDataSource {
