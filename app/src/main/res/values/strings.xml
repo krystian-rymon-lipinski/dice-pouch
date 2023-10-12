@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Dice Pouch</string>
 
+    <string name="tab_table">Table</string>
+    <string name="tab_pouch">Pouch</string>
+
     <string name="dice_caption">Dice</string>
     <string name="shortcuts_caption">Shortcuts</string>
 

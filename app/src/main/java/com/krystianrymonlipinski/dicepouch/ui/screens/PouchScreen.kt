@@ -6,7 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -36,6 +36,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.krystianrymonlipinski.dicepouch.DicePouchTabRow
 import com.krystianrymonlipinski.dicepouch.DicePouchTopBar
 import com.krystianrymonlipinski.dicepouch.R
 import com.krystianrymonlipinski.dicepouch.model.DiceSetInfo
@@ -72,24 +73,29 @@ fun PouchScreen(
             )
         },
         containerColor = if (setToBeEdited == null) Color.Transparent else Color.LightGray
-    ) {
-        SetsGrid(
-            paddingValues = it,
-            sets = allSetsState,
-            onNewSetClicked = { shouldShowNewSetDialog = true },
-            onSetClicked = onChosenSetChanged,
-            onSetLongPressed = { longPressedSet -> setToBeEdited = longPressedSet }
-        )
+    ) { paddingValues ->
+        Column(modifier = Modifier.padding(paddingValues).fillMaxWidth()) {
+            DicePouchTabRow(
+                selectedTabIndex = 1,
+                onTabClicked = { /* TODO: handle navigation */ }
+            )
+            SetsGrid(
+                sets = allSetsState,
+                onNewSetClicked = { shouldShowNewSetDialog = true },
+                onSetClicked = onChosenSetChanged,
+                onSetLongPressed = { longPressedSet -> setToBeEdited = longPressedSet }
+            )
 
-        if (shouldShowNewSetDialog) {
-            //TODO: define NewDiceSetDialog
+            if (shouldShowNewSetDialog) {
+                //TODO: define NewDiceSetDialog
+            }
         }
+
     }
 }
 
 @Composable
 fun SetsGrid(
-    paddingValues: PaddingValues,
     sets: List<DiceSetInfo>,
     onNewSetClicked: () -> Unit,
     onSetClicked: (DiceSetInfo) -> Unit,
@@ -97,11 +103,7 @@ fun SetsGrid(
 ) {
     LazyVerticalGrid(
         modifier = Modifier
-            .padding(
-                top = paddingValues.calculateTopPadding(),
-                bottom = paddingValues.calculateBottomPadding(),
-                start = 16.dp,
-                end = 16.dp)
+            .padding(top = 16.dp, start = 16.dp, end = 16.dp)
             .fillMaxWidth(),
         columns = GridCells.Adaptive(120.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),

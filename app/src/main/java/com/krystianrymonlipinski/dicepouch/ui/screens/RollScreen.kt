@@ -37,6 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.krystianrymonlipinski.dicepouch.DicePouchTabRow
 import com.krystianrymonlipinski.dicepouch.DicePouchTopBar
 import com.krystianrymonlipinski.dicepouch.MainActivityViewModel
 import com.krystianrymonlipinski.dicepouch.R
@@ -73,48 +74,47 @@ fun RollScreen(
     Scaffold(
         topBar = { DicePouchTopBar(title = screenState.info.name) }
     ) { paddingValues ->
-        Column(modifier = Modifier
-            .padding(
-                top = paddingValues.calculateTopPadding(),
-                bottom = paddingValues.calculateBottomPadding(),
-                start = 16.dp,
-                end = 16.dp)
-            .fillMaxWidth()
-        ) {
-            ChosenSetName(name = screenState.info.name, onEditIconClicked = onEditIconClicked)
-            DiceText()
-            Spacer(modifier = Modifier.height(8.dp))
-            DiceGrid(
-                diceSet = screenState.dice,
-                onDieClicked = { die -> showRollSettingsDialog = die }
+        Column(modifier = Modifier.padding(paddingValues).fillMaxWidth()) {
+            DicePouchTabRow(
+                selectedTabIndex = 0,
+                onTabClicked = { /* TODO: handle navigation */ }
             )
-            Spacer(modifier = Modifier.height(16.dp))
-            ShortcutsText()
-            Spacer(modifier = Modifier.height(8.dp))
-            ShortcutsGrid(
-                shortcutsSet = screenState.shortcuts,
-                onShortcutClicked = { shortcut -> showRollDialog = shortcut.setting }
-            )
+            Column(modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)) {
+                ChosenSetName(name = screenState.info.name, onEditIconClicked = onEditIconClicked)
+                DiceText()
+                Spacer(modifier = Modifier.height(8.dp))
+                DiceGrid(
+                    diceSet = screenState.dice,
+                    onDieClicked = { die -> showRollSettingsDialog = die }
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                ShortcutsText()
+                Spacer(modifier = Modifier.height(8.dp))
+                ShortcutsGrid(
+                    shortcutsSet = screenState.shortcuts,
+                    onShortcutClicked = { shortcut -> showRollDialog = shortcut.setting }
+                )
+            }
+
+            showRollSettingsDialog?.let {
+                RollSettingsDialog(
+                    it,
+                    onDismissDialog = { showRollSettingsDialog = null },
+                    onRollButtonClicked = { rollSettings ->
+                        showRollSettingsDialog = null
+                        showRollDialog = rollSettings
+                    }
+                )
+            }
+            showRollDialog?.let {
+                RollDialog(
+                    setting = it,
+                    onConfirmButtonClicked = { showRollDialog = null }
+                )
+            }
         }
 
-        showRollSettingsDialog?.let {
-            RollSettingsDialog(
-                it,
-                onDismissDialog = { showRollSettingsDialog = null },
-                onRollButtonClicked = { rollSettings ->
-                    showRollSettingsDialog = null
-                    showRollDialog = rollSettings
-                }
-            )
-        }
-        showRollDialog?.let {
-            RollDialog(
-                setting = it,
-                onConfirmButtonClicked = { showRollDialog = null }
-            )
-        }
     }
-
 }
 
 @Composable
