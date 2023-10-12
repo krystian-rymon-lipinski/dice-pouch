@@ -54,11 +54,13 @@ import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
 @Composable
 fun RollRoute(
     viewModel: MainActivityViewModel = hiltViewModel(),
+    onTabClicked: (Int) -> Unit,
     onEditIconClicked: () -> Unit = { }
 ) {
     val screenState by viewModel.diceSetState.collectAsStateWithLifecycle()
     RollScreen(
         screenState = screenState,
+        onTabClicked = onTabClicked,
         onEditIconClicked = onEditIconClicked
     )
 }
@@ -66,6 +68,7 @@ fun RollRoute(
 @Composable
 fun RollScreen(
     screenState: DiceSet = DiceSet(dice = listOf(Die(4), Die(8)), shortcuts = listOf(RollShortcut(name = "Athletics check"))),
+    onTabClicked: (Int) -> Unit = { },
     onEditIconClicked: () -> Unit = { },
 ) {
     var showRollSettingsDialog by rememberSaveable { mutableStateOf<Die?>(null) }
@@ -77,7 +80,7 @@ fun RollScreen(
         Column(modifier = Modifier.padding(paddingValues).fillMaxWidth()) {
             DicePouchTabRow(
                 selectedTabIndex = 0,
-                onTabClicked = { /* TODO: handle navigation */ }
+                onTabClicked = { tabIndex -> if (tabIndex != 0) onTabClicked(tabIndex) }
             )
             Column(modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)) {
                 ChosenSetName(name = screenState.info.name, onEditIconClicked = onEditIconClicked)

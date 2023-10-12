@@ -12,11 +12,13 @@ import androidx.compose.runtime.Composable
 @Composable
 fun DicePouchTopBar(
     title: String,
-    actions: @Composable() (RowScope.() -> Unit) = { }
+    actions: @Composable() (RowScope.() -> Unit) = { },
+    navigationIcon: @Composable () -> Unit = { },
 ) {
     TopAppBar(
         title = { Text(text = title) },
         actions = actions,
+        navigationIcon = navigationIcon,
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             titleContentColor = MaterialTheme.colorScheme.primary,

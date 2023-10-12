@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
@@ -64,11 +65,13 @@ import kotlinx.coroutines.launch
 @Composable
 fun DiceSetEditRoute(
     viewModel: MainActivityViewModel = hiltViewModel(),
+    onUpClicked: () -> Unit
 ) {
     val screenState by viewModel.diceSetState.collectAsStateWithLifecycle()
 
     DiceSetEditScreen(
         screenState = screenState,
+        onUpClicked = onUpClicked,
         onNewDieAdded = { numberOfSides -> viewModel.addNewDieToSet(numberOfSides) },
         onDeleteDieClicked = { die -> viewModel.deleteDieFromSet(die) },
         onNewShortcutAdded = { name, setting -> viewModel.addNewShortcutToSet(name, setting) },
@@ -80,6 +83,7 @@ fun DiceSetEditRoute(
 @Composable
 fun DiceSetEditScreen(
     screenState: DiceSet = DiceSet(DiceSetInfo(0, "A set"), listOf(Die(20), Die(15)), listOf(RollShortcut(name = "Some check"))),
+    onUpClicked: () -> Unit = { },
     onNewDieAdded: (Int) -> Unit = {},
     onDeleteDieClicked: (Die) -> Unit = {},
     onNewShortcutAdded: (String, RollSetting) -> Unit = { _, _ -> /* Nothing by default */},
@@ -97,7 +101,12 @@ fun DiceSetEditScreen(
 
     Scaffold(
         topBar = {
-            DicePouchTopBar(title = stringResource(id = R.string.edit_set_screen_top_bar_text))
+            DicePouchTopBar(
+                title = stringResource(id = R.string.edit_set_screen_top_bar_text),
+                navigationIcon = { IconButton(onClick = onUpClicked ) {
+                    Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "arrow_back")
+                } }
+            )
         }
     ) { paddingValues ->
         Column(modifier = Modifier
@@ -105,7 +114,8 @@ fun DiceSetEditScreen(
                 top = paddingValues.calculateTopPadding(),
                 bottom = paddingValues.calculateBottomPadding(),
                 start = 16.dp,
-                end = 16.dp)
+                end = 16.dp
+            )
             .fillMaxWidth()
         ) {
             DiceCaption(onAddNewDieClicked = { showNewDieDialog = true })

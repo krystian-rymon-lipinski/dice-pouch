@@ -36,15 +36,33 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.krystianrymonlipinski.dicepouch.DicePouchTabRow
 import com.krystianrymonlipinski.dicepouch.DicePouchTopBar
+import com.krystianrymonlipinski.dicepouch.MainActivityViewModel
 import com.krystianrymonlipinski.dicepouch.R
 import com.krystianrymonlipinski.dicepouch.model.DiceSetInfo
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
 
 @Composable
+fun PouchRoute(
+    viewModel: MainActivityViewModel = hiltViewModel(),
+    onTabClicked: (Int) -> Unit,
+    onEditSetClicked: (DiceSetInfo) -> Unit
+) {
+    val screenState by viewModel.allSetsState.collectAsStateWithLifecycle()
+
+    PouchScreen(
+        allSetsState = screenState,
+        onTabClicked = onTabClicked
+    )
+}
+
+@Composable
 fun PouchScreen(
     allSetsState: List<DiceSetInfo> = listOf(DiceSetInfo()),
+    onTabClicked: (Int) -> Unit = { },
     onChosenSetChanged: (DiceSetInfo) -> Unit = { }, /*TODO: pass info to viewmodel */
     onNewSetAdded: (DiceSetInfo) -> Unit = { },
     onEditSetClicked: (DiceSetInfo) -> Unit = { },
@@ -74,10 +92,12 @@ fun PouchScreen(
         },
         containerColor = if (setToBeEdited == null) Color.Transparent else Color.LightGray
     ) { paddingValues ->
-        Column(modifier = Modifier.padding(paddingValues).fillMaxWidth()) {
+        Column(modifier = Modifier
+            .padding(paddingValues)
+            .fillMaxWidth()) {
             DicePouchTabRow(
                 selectedTabIndex = 1,
-                onTabClicked = { /* TODO: handle navigation */ }
+                onTabClicked = { tabIndex -> if (tabIndex != 1) onTabClicked(tabIndex) }
             )
             SetsGrid(
                 sets = allSetsState,
