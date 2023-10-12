@@ -1,17 +1,27 @@
 package com.krystianrymonlipinski.dicepouch.ui.screens
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,6 +36,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.krystianrymonlipinski.dicepouch.DicePouchTopBar
 import com.krystianrymonlipinski.dicepouch.R
 import com.krystianrymonlipinski.dicepouch.model.DiceSetInfo
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
@@ -35,35 +46,63 @@ fun PouchScreen(
     allSetsState: List<DiceSetInfo> = listOf(DiceSetInfo()),
     onChosenSetChanged: (DiceSetInfo) -> Unit = { }, /*TODO: pass info to viewmodel */
     onNewSetAdded: (DiceSetInfo) -> Unit = { },
+    onEditSetClicked: (DiceSetInfo) -> Unit = { },
     onSetDeleted: (DiceSetInfo) -> Unit = { }
 ) {
     var setToBeEdited by rememberSaveable { mutableStateOf<DiceSetInfo?>(null) }
     var shouldShowNewSetDialog by rememberSaveable { mutableStateOf(false) }
 
-    SetsGrid(
-        sets = allSetsState,
-        onNewSetClicked = { shouldShowNewSetDialog = true },
-        onSetClicked = onChosenSetChanged,
-        onSetLongPressed = { longPressedSet -> setToBeEdited = longPressedSet }
-    )
+    Scaffold(
+        modifier = Modifier.conditionalClickable(setToBeEdited != null) {
+            this.clickable { setToBeEdited = null }
+        },
+        topBar = {
+            DicePouchTopBar(
+                title = stringResource(id = R.string.pouch_screen_top_bar_text),
+                actions = {
+                    AnimatedVisibility(visible = setToBeEdited != null) {
+                        IconButton(onClick = { onEditSetClicked(setToBeEdited!!) }) {
+                            Icon(imageVector = Icons.Filled.Edit, contentDescription = "edit_set")
+                        }
+                        IconButton(onClick = { onSetDeleted(setToBeEdited!!) }) {
+                            Icon(imageVector = Icons.Filled.Delete, contentDescription = "delete_set")
+                        }
+                    }
+                }
+            )
+        },
+        containerColor = if (setToBeEdited == null) Color.Transparent else Color.LightGray
+    ) {
+        SetsGrid(
+            paddingValues = it,
+            sets = allSetsState,
+            onNewSetClicked = { shouldShowNewSetDialog = true },
+            onSetClicked = onChosenSetChanged,
+            onSetLongPressed = { longPressedSet -> setToBeEdited = longPressedSet }
+        )
 
-    setToBeEdited?.let {
-        /*TODO: show context icons; gray out main layout; exit edit mode upon clicking on main layout  */
-    }
-
-    if (shouldShowNewSetDialog) {
-        //TODO: define NewDiceSetDialog
+        if (shouldShowNewSetDialog) {
+            //TODO: define NewDiceSetDialog
+        }
     }
 }
 
 @Composable
 fun SetsGrid(
+    paddingValues: PaddingValues,
     sets: List<DiceSetInfo>,
     onNewSetClicked: () -> Unit,
     onSetClicked: (DiceSetInfo) -> Unit,
     onSetLongPressed: (DiceSetInfo) -> Unit
 ) {
     LazyVerticalGrid(
+        modifier = Modifier
+            .padding(
+                top = paddingValues.calculateTopPadding(),
+                bottom = paddingValues.calculateBottomPadding(),
+                start = 16.dp,
+                end = 16.dp)
+            .fillMaxWidth(),
         columns = GridCells.Adaptive(120.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -134,6 +173,10 @@ fun AddNewSetGridElement(onClicked: () -> Unit) {
         }
     }
 }
+
+@Composable
+fun Modifier.conditionalClickable(condition: Boolean, modifier: @Composable Modifier.() -> Modifier) =
+    then(if (condition) modifier.invoke(this) else this)
 
 
 

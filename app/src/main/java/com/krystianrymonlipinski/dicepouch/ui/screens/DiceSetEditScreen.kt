@@ -23,6 +23,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -45,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.krystianrymonlipinski.dicepouch.DicePouchTopBar
 import com.krystianrymonlipinski.dicepouch.MainActivityViewModel
 import com.krystianrymonlipinski.dicepouch.R
 import com.krystianrymonlipinski.dicepouch.model.DiceSet
@@ -93,71 +95,81 @@ fun DiceSetEditScreen(
     val snackBarHostState = remember { SnackbarHostState() }
     val snackBarMessage = stringResource(id = R.string.no_dice_snackbar_message)
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(start = 16.dp, end = 16.dp, top = 8.dp)
-    ) {
-        DiceCaption(onAddNewDieClicked = { showNewDieDialog = true })
-        Spacer(modifier = Modifier.height(8.dp))
-        EditableDiceGrid(
-            diceSet = screenState.dice,
-            onDeleteDieClicked = { dieToBeDeleted ->
-                if (screenState.shortcuts.any { it.setting.die == dieToBeDeleted }) showDeleteDieDialog = dieToBeDeleted
-                else onDeleteDieClicked(dieToBeDeleted)
-            }
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        ShortcutsCaption(onAddShortcutClicked = {
-            if (screenState.dice.isNotEmpty()) showNewShortcutDialog = true
-            else scope.launch { snackBarHostState.showSnackbar(
-                message = snackBarMessage,
-                duration = SnackbarDuration.Short
-            ) }
-        })
-        Spacer(modifier = Modifier.height(8.dp))
-        EditableShortcutsGrid(
-            screenState.shortcuts,
-            onShortcutClicked = { shortcut -> showUpdateShortcutDialog = shortcut },
-            onDeleteShortcutClicked = onDeleteShortcutClicked
-        )
-    }
+    Scaffold(
+        topBar = {
+            DicePouchTopBar(title = stringResource(id = R.string.edit_set_screen_top_bar_text))
+        }
+    ) { paddingValues ->
+        Column(modifier = Modifier
+            .padding(
+                top = paddingValues.calculateTopPadding(),
+                bottom = paddingValues.calculateBottomPadding(),
+                start = 16.dp,
+                end = 16.dp)
+            .fillMaxWidth()
+        ) {
+            DiceCaption(onAddNewDieClicked = { showNewDieDialog = true })
+            Spacer(modifier = Modifier.height(8.dp))
+            EditableDiceGrid(
+                diceSet = screenState.dice,
+                onDeleteDieClicked = { dieToBeDeleted ->
+                    if (screenState.shortcuts.any { it.setting.die == dieToBeDeleted }) showDeleteDieDialog = dieToBeDeleted
+                    else onDeleteDieClicked(dieToBeDeleted)
+                }
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            ShortcutsCaption(onAddShortcutClicked = {
+                if (screenState.dice.isNotEmpty()) showNewShortcutDialog = true
+                else scope.launch { snackBarHostState.showSnackbar(
+                    message = snackBarMessage,
+                    duration = SnackbarDuration.Short
+                ) }
+            })
+            Spacer(modifier = Modifier.height(8.dp))
+            EditableShortcutsGrid(
+                screenState.shortcuts,
+                onShortcutClicked = { shortcut -> showUpdateShortcutDialog = shortcut },
+                onDeleteShortcutClicked = onDeleteShortcutClicked
+            )
+        }
 
-    if (showNewDieDialog) {
-        NewDieDialog(
-            onDialogDismissed = { showNewDieDialog = false },
-            onNewDieAdded = { numberOfSides ->
-                showNewDieDialog = false
-                onNewDieAdded(numberOfSides)
-            }
-        )
-    }
+        if (showNewDieDialog) {
+            NewDieDialog(
+                onDialogDismissed = { showNewDieDialog = false },
+                onNewDieAdded = { numberOfSides ->
+                    showNewDieDialog = false
+                    onNewDieAdded(numberOfSides)
+                }
+            )
+        }
 
-    showDeleteDieDialog?.let { dieToBeDeleted ->
-        DeleteDieAlertDialog(
-            onDialogDismissed = { showDeleteDieDialog = null },
-            onDeleteButtonClicked = {
-                onDeleteDieClicked(dieToBeDeleted)
-                showDeleteDieDialog = null
-            }
-        )
-    }
+        showDeleteDieDialog?.let { dieToBeDeleted ->
+            DeleteDieAlertDialog(
+                onDialogDismissed = { showDeleteDieDialog = null },
+                onDeleteButtonClicked = {
+                    onDeleteDieClicked(dieToBeDeleted)
+                    showDeleteDieDialog = null
+                }
+            )
+        }
 
-    if (showNewShortcutDialog || showUpdateShortcutDialog != null) {
-        RollShortcutDialog(
-            shortcut = showUpdateShortcutDialog,
-            diceInSet = screenState.dice,
-            onDialogDismissed = {
-                showNewShortcutDialog = false
-                showUpdateShortcutDialog = null
-            },
-            onSaveShortcutClicked = { shortcut ->
-                if (showNewShortcutDialog) onNewShortcutAdded(shortcut.name, shortcut.setting)
-                else onShortcutUpdated(shortcut)
+        if (showNewShortcutDialog || showUpdateShortcutDialog != null) {
+            RollShortcutDialog(
+                shortcut = showUpdateShortcutDialog,
+                diceInSet = screenState.dice,
+                onDialogDismissed = {
+                    showNewShortcutDialog = false
+                    showUpdateShortcutDialog = null
+                },
+                onSaveShortcutClicked = { shortcut ->
+                    if (showNewShortcutDialog) onNewShortcutAdded(shortcut.name, shortcut.setting)
+                    else onShortcutUpdated(shortcut)
 
-                showNewShortcutDialog = false
-                showUpdateShortcutDialog = null
-            }
-        )
+                    showNewShortcutDialog = false
+                    showUpdateShortcutDialog = null
+                }
+            )
+        }
     }
 }
 
@@ -283,7 +295,9 @@ fun DeletableShortcutCard(
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(4.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
