@@ -23,4 +23,6 @@
     <string name="delete_die_dialog_message">Die chosen to be deleted is a base of at least one
         shortcut. Deleting it will result with them gone as well. Do you wish to proceed?</string> <!-- TODO: improve popup message -->
 
+    <string name="plus_sign">+</string>
+
 </resources>
