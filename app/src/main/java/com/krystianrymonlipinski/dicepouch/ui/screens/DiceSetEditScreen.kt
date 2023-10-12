@@ -348,7 +348,7 @@ fun RowWithCaptionAndPlusIcon(
             )
         )
         IconButton(onClick = onPlusIconClicked) {
-            Icon(
+            Icon( //TODO: improve all icon buttons; for their selected state is not highlighted; also use icons, not images
                 imageVector = Icons.Filled.Add,
                 contentDescription = "add_icon",
                 tint = MaterialTheme.colorScheme.primary

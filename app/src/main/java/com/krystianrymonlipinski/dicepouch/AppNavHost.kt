@@ -22,8 +22,8 @@ fun AppNavHost(navController: NavHostController) {
             RollRoute(
                 onTabClicked = { tabIndex -> if (tabIndex == 1) {
                     navController.navigate(ROUTE_POUCH_SCREEN)
-                } },
-                onEditIconClicked = { navController.navigate(ROUTE_DICE_SET_EDIT) })
+                } }
+            )
         }
         composable(route = ROUTE_POUCH_SCREEN) {
             PouchRoute(
