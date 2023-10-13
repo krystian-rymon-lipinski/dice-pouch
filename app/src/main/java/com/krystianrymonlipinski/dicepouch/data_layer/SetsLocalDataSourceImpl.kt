@@ -44,6 +44,7 @@ class SetsLocalDataSourceImpl @Inject constructor(
 
     private fun convertToEntity(set: DiceSetInfo) : SetEntity {
         return SetEntity(
+            id = set.id,
             name = set.name,
             diceSideColorArgb = set.diceColor.toArgb(),
             diceNumberColorArgb = set.numbersColor.toArgb()
@@ -52,6 +53,7 @@ class SetsLocalDataSourceImpl @Inject constructor(
 
     private fun convertFromEntity(entity: SetEntity) : DiceSetInfo {
         return DiceSetInfo(
+            id = entity.id,
             name = entity.name,
             diceColor = Color(entity.diceSideColorArgb),
             numbersColor = Color(entity.diceNumberColorArgb)

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -56,7 +57,11 @@ fun PouchRoute(
 
     PouchScreen(
         allSetsState = screenState,
-        onTabClicked = onTabClicked
+        onTabClicked = onTabClicked,
+        onNewSetAdded = { set -> viewModel.addNewSet(set.name, set.diceColor, set.numbersColor) },
+        onChosenSetChanged = { /*TODO: handle change in viewmodel */ },
+        onEditSetClicked = onEditSetClicked,
+        onSetDeleted = { set -> viewModel.deleteSet(set) }
     )
 }
 
@@ -64,7 +69,7 @@ fun PouchRoute(
 fun PouchScreen(
     allSetsState: List<DiceSetInfo> = listOf(DiceSetInfo()),
     onTabClicked: (Int) -> Unit = { },
-    onChosenSetChanged: (DiceSetInfo) -> Unit = { }, /*TODO: pass info to viewmodel */
+    onChosenSetChanged: (DiceSetInfo) -> Unit = { },
     onNewSetAdded: (DiceSetInfo) -> Unit = { },
     onEditSetClicked: (DiceSetInfo) -> Unit = { },
     onSetDeleted: (DiceSetInfo) -> Unit = { }
@@ -81,10 +86,18 @@ fun PouchScreen(
                 title = stringResource(id = R.string.pouch_screen_top_bar_text),
                 actions = {
                     AnimatedVisibility(visible = setToBeEdited != null) {
-                        IconButton(onClick = { onEditSetClicked(setToBeEdited!!) }) {
+                        IconButton(onClick = {
+                            onEditSetClicked(setToBeEdited!!)
+                            setToBeEdited = null
+                        }) {
                             Icon(imageVector = Icons.Filled.Edit, contentDescription = "edit_set")
                         }
-                        IconButton(onClick = { onSetDeleted(setToBeEdited!!) }) {
+                    }
+                    AnimatedVisibility(visible = setToBeEdited != null) {
+                        IconButton(onClick = {
+                            onSetDeleted(setToBeEdited!!)
+                            setToBeEdited = null
+                        }) {
                             Icon(imageVector = Icons.Filled.Delete, contentDescription = "delete_set")
                         }
                     }
@@ -110,7 +123,10 @@ fun PouchScreen(
             if (shouldShowNewSetDialog) {
                 NewSetDialog(
                     onDialogDismissed = { shouldShowNewSetDialog = false },
-                    onNewSetAdded = { newSet -> onNewSetAdded(newSet) }
+                    onNewSetAdded = { newSet ->
+                        onNewSetAdded(newSet)
+                        shouldShowNewSetDialog = false
+                    }
                 )
             }
         }
@@ -128,7 +144,7 @@ fun SetsGrid(
     LazyVerticalGrid(
         modifier = Modifier
             .padding(top = 16.dp, start = 16.dp, end = 16.dp)
-            .fillMaxWidth(),
+            .fillMaxSize(),
         columns = GridCells.Adaptive(120.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
