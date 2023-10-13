@@ -1,16 +1,20 @@
 package com.krystianrymonlipinski.dicepouch.ui.dialogs
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -78,36 +82,55 @@ fun NewSetDialogContent(
     ) {
         NameInputField(currentName = setState.name, onNameChanged = onNameChanged)
         Spacer(modifier = Modifier.height(24.dp))
-        RowWithColorPicker(
-            caption = stringResource(id = R.string.dice_sides_color_colon),
-            currentColor = setState.diceColor,
-            onColorPickerRequested = { onColorPickerRequested(ColorType.DICE) }
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        RowWithColorPicker(
-            caption = stringResource(id = R.string.dice_numbers_color_colon),
-            currentColor = setState.numbersColor,
-            onColorPickerRequested = { onColorPickerRequested(ColorType.NUMBERS) }
-        )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            SetPreview(setState)
+            Column {
+                ColorControlButton(
+                    currentColor = setState.diceColor,
+                    onColorPickerRequested = { onColorPickerRequested(ColorType.DICE) }
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                ColorControlButton(
+                    currentColor = setState.numbersColor,
+                    onColorPickerRequested = { onColorPickerRequested(ColorType.NUMBERS) }
+                )
+            }
+
+        }
     }
 }
 
 @Composable
-fun RowWithColorPicker(
-    caption: String,
+fun SetPreview(diceSetInfo: DiceSetInfo) {
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth(0.66f)
+            .aspectRatio(1f),
+        shape = CircleShape,
+        color = diceSetInfo.diceColor,
+    ) {
+        Box(contentAlignment = Alignment.Center) {
+            Text(
+                text = diceSetInfo.name,
+                color = diceSetInfo.numbersColor,
+                style = MaterialTheme.typography.titleMedium
+            )
+        }
+
+    }
+}
+
+@Composable
+fun ColorControlButton(
     currentColor: Color,
-    onColorPickerRequested: () -> Unit,
+    onColorPickerRequested: () -> Unit
 ) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Text( //TODO: replace plain texts with a die image and some arrows pointing to buttons with appropriate color
-            modifier = Modifier.weight(1f),
-            text = caption
-        )
+    Column {
         FilledTonalButton(
             onClick = onColorPickerRequested,
             modifier = Modifier
                 .padding(horizontal = 16.dp)
-                .height(32.dp),
+                .aspectRatio(1f),
             shape = MaterialTheme.shapes.extraSmall,
             colors = ButtonDefaults.buttonColors(containerColor = currentColor),
             border = BorderStroke(width = 2.dp, color = MaterialTheme.colorScheme.primary),
