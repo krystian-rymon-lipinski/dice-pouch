@@ -43,6 +43,7 @@ import com.krystianrymonlipinski.dicepouch.DicePouchTopBar
 import com.krystianrymonlipinski.dicepouch.MainActivityViewModel
 import com.krystianrymonlipinski.dicepouch.R
 import com.krystianrymonlipinski.dicepouch.model.DiceSetInfo
+import com.krystianrymonlipinski.dicepouch.ui.dialogs.NewSetDialog
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
 
 @Composable
@@ -107,7 +108,10 @@ fun PouchScreen(
             )
 
             if (shouldShowNewSetDialog) {
-                //TODO: define NewDiceSetDialog
+                NewSetDialog(
+                    onDialogDismissed = { shouldShowNewSetDialog = false },
+                    onNewSetAdded = { newSet -> onNewSetAdded(newSet) }
+                )
             }
         }
 

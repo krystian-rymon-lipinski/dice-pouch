@@ -16,7 +16,7 @@
 
     <string name="edit_set_screen_top_bar_text">Edit set</string>
 
-    <string name="btn_add_new_die">Add</string>
+    <string name="btn_dialog_add">Add</string>
     <string name="sides_caption">sides</string>
 
     <string name="new_shortcut">New shortcut</string>
@@ -28,6 +28,8 @@
     <string name="delete_die_dialog_message">Die chosen to be deleted is a base of at least one
         shortcut. Deleting it will result with them gone as well. Do you wish to proceed?</string> <!-- TODO: improve popup message -->
 
+    <string name="dice_sides_color_colon">Dice sides color:</string>
+    <string name="dice_numbers_color_colon">Dice numbers color:</string>
 
     <string name="pouch_screen_top_bar_text">Pouch</string>
     <string name="plus_sign">+</string>
