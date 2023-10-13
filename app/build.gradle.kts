@@ -10,12 +10,12 @@ plugins {
 
 android {
     namespace = "com.krystianrymonlipinski.dicepouch"
-    compileSdk = 33 //TODO: bump up to API 34
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.krystianrymonlipinski.dicepouch"
         minSdk = 26
-        targetSdk = 33
+        targetSdk = 33 //TODO: bump up to API 34
         versionCode = 1
         versionName = "1.0"
 
@@ -105,6 +105,8 @@ dependencies {
 
     implementation("androidx.room:room-ktx:$roomVersion")
     kapt("androidx.room:room-compiler:$roomVersion")
+
+    implementation("com.github.skydoves:colorpicker-compose:1.0.5") //TODO: handle transient dependencies
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs> {

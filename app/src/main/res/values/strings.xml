@@ -20,7 +20,7 @@
     <string name="sides_caption">sides</string>
 
     <string name="new_shortcut">New shortcut</string>
-    <string name="btn_save">Save</string>
+    <string name="btn_dialog_save">Save</string>
 
     <string name="no_dice_snackbar_message">Creating shortcut needs a die</string> <!-- TODO: improve snackbar message -->
     <string name="btn_yes">Yes</string>

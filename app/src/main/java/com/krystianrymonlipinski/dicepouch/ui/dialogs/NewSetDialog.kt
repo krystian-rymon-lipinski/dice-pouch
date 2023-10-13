@@ -58,7 +58,9 @@ fun NewSetDialog(
                 currentSetState =
                     if (type == ColorType.DICE) currentSetState.changeDiceColor(newColor)
                     else currentSetState.changeNumbersColor(newColor)
-            }
+                showColorPicker = null
+            },
+            onDialogDismissed = { showColorPicker = null }
         )
     }
 }
@@ -97,7 +99,7 @@ fun RowWithColorPicker(
     onColorPickerRequested: () -> Unit,
 ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(
+        Text( //TODO: replace plain texts with a die image and some arrows pointing to buttons with appropriate color
             modifier = Modifier.weight(1f),
             text = caption
         )

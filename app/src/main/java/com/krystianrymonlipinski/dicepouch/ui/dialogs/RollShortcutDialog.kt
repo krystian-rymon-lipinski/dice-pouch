@@ -54,7 +54,7 @@ fun RollShortcutDialog(
     AlertDialog(
         onDismissRequest = onDialogDismissed,
         confirmButton = { CenteredDialogConfirmButton(
-            text = stringResource(id = R.string.btn_save),
+            text = stringResource(id = R.string.btn_dialog_save),
             onClick = { onSaveShortcutClicked(shortcutState) },
             isEnabled = shortcutState.name.isNotBlank()
         )},
