@@ -51,7 +51,7 @@ class MainActivityViewModel @Inject constructor(
         }
     }
 
-    fun deleteSet(set: DiceSetInfo) {
+    fun deleteSet(set: DiceSetInfo) { //TODO: prevent deleting if there's only one set
         viewModelScope.launch {
             setsLocalDataSource.deleteDiceSet(set)
         }

@@ -1,7 +1,10 @@
 package com.krystianrymonlipinski.dicepouch.ui.screens
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,8 +16,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.CardDefaults
@@ -31,6 +34,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -45,12 +49,14 @@ import com.krystianrymonlipinski.dicepouch.MainActivityViewModel
 import com.krystianrymonlipinski.dicepouch.R
 import com.krystianrymonlipinski.dicepouch.model.DiceSetInfo
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.NewSetDialog
+import com.krystianrymonlipinski.dicepouch.ui.dialogs.conditionalBorder
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
 
 @Composable
 fun PouchRoute(
     viewModel: MainActivityViewModel = hiltViewModel(),
     onTabClicked: (Int) -> Unit,
+    onBackStackPopped: () -> Unit,
     onEditSetClicked: (DiceSetInfo) -> Unit
 ) {
     val screenState by viewModel.allSetsState.collectAsStateWithLifecycle()
@@ -58,6 +64,7 @@ fun PouchRoute(
     PouchScreen(
         allSetsState = screenState,
         onTabClicked = onTabClicked,
+        onBackStackPopped = onBackStackPopped,
         onNewSetAdded = { set -> viewModel.addNewSet(set.name, set.diceColor, set.numbersColor) },
         onChosenSetChanged = { /*TODO: handle change in viewmodel */ },
         onEditSetClicked = onEditSetClicked,
@@ -68,43 +75,64 @@ fun PouchRoute(
 @Composable
 fun PouchScreen(
     allSetsState: List<DiceSetInfo> = listOf(DiceSetInfo()),
+    onBackStackPopped: () -> Unit = { },
     onTabClicked: (Int) -> Unit = { },
     onChosenSetChanged: (DiceSetInfo) -> Unit = { },
     onNewSetAdded: (DiceSetInfo) -> Unit = { },
     onEditSetClicked: (DiceSetInfo) -> Unit = { },
     onSetDeleted: (DiceSetInfo) -> Unit = { }
 ) {
-    var setToBeEdited by rememberSaveable { mutableStateOf<DiceSetInfo?>(null) }
+    var setInEditMode by rememberSaveable { mutableStateOf<DiceSetInfo?>(null) }
     var shouldShowNewSetDialog by rememberSaveable { mutableStateOf(false) }
 
+    BackHandler {
+        if (setInEditMode != null) setInEditMode = null
+        else onBackStackPopped()
+    }
+
     Scaffold(
-        modifier = Modifier.conditionalClickable(setToBeEdited != null) {
-            this.clickable { setToBeEdited = null }
-        },
         topBar = {
             DicePouchTopBar(
                 title = stringResource(id = R.string.pouch_screen_top_bar_text),
-                actions = {
-                    AnimatedVisibility(visible = setToBeEdited != null) {
-                        IconButton(onClick = {
-                            onEditSetClicked(setToBeEdited!!)
-                            setToBeEdited = null
-                        }) {
-                            Icon(imageVector = Icons.Filled.Edit, contentDescription = "edit_set")
+                navigationIcon = {
+                    AnimatedVisibility(visible = setInEditMode != null) {
+                        IconButton(onClick = { setInEditMode = null }) {
+                            Icon(
+                                imageVector = Icons.Filled.ArrowBack,
+                                contentDescription = "arrow_back",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
                         }
                     }
-                    AnimatedVisibility(visible = setToBeEdited != null) {
+                },
+                actions = {
+                    AnimatedVisibility(visible = setInEditMode != null) {
                         IconButton(onClick = {
-                            onSetDeleted(setToBeEdited!!)
-                            setToBeEdited = null
+                            onEditSetClicked(setInEditMode!!)
+                            setInEditMode = null
                         }) {
-                            Icon(imageVector = Icons.Filled.Delete, contentDescription = "delete_set")
+                            Icon(
+                                imageVector = Icons.Filled.Edit,
+                                contentDescription = "edit_set",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
+                    AnimatedVisibility(visible = setInEditMode != null) {
+                        IconButton(onClick = {
+                            onSetDeleted(setInEditMode!!)
+                            setInEditMode = null
+                        }) {
+                            Icon(
+                                imageVector = Icons.Filled.Delete,
+                                contentDescription = "delete_set",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
                         }
                     }
                 }
             )
         },
-        containerColor = if (setToBeEdited == null) Color.Transparent else Color.LightGray
     ) { paddingValues ->
         Column(modifier = Modifier
             .padding(paddingValues)
@@ -115,9 +143,11 @@ fun PouchScreen(
             )
             SetsGrid(
                 sets = allSetsState,
+                currentSet = allSetsState.getOrNull(0),
+                setInEditMode = setInEditMode,
                 onNewSetClicked = { shouldShowNewSetDialog = true },
                 onSetClicked = onChosenSetChanged,
-                onSetLongPressed = { longPressedSet -> setToBeEdited = longPressedSet }
+                onSetLongPressed = { longPressedSet -> setInEditMode = longPressedSet }
             )
 
             if (shouldShowNewSetDialog) {
@@ -130,13 +160,14 @@ fun PouchScreen(
                 )
             }
         }
-
     }
 }
 
 @Composable
 fun SetsGrid(
     sets: List<DiceSetInfo>,
+    currentSet: DiceSetInfo?,
+    setInEditMode: DiceSetInfo?,
     onNewSetClicked: () -> Unit,
     onSetClicked: (DiceSetInfo) -> Unit,
     onSetLongPressed: (DiceSetInfo) -> Unit
@@ -152,11 +183,17 @@ fun SetsGrid(
         items(count = sets.size) { index ->
             DiceSetGridElement(
                 diceSetInfo = sets[index],
-                onSetClicked = onSetClicked,
+                isCurrentSet = currentSet?.id == sets[index].id,
+                isHighlighted = setInEditMode?.let { it.id == sets[index].id } ?: true,
+                isClickable = setInEditMode == null,
+                onSetClicked = { setClicked -> onSetClicked(setClicked) },
                 onSetLongPressed = onSetLongPressed
             )
         }
-        item { AddNewSetGridElement(onClicked = onNewSetClicked) }
+        item { AddNewSetGridElement(
+            onClicked = onNewSetClicked,
+            isEnabled = setInEditMode == null
+        ) }
     }
 }
 
@@ -164,25 +201,42 @@ fun SetsGrid(
 @Composable
 fun DiceSetGridElement(
     diceSetInfo: DiceSetInfo,
+    isCurrentSet: Boolean,
+    isHighlighted: Boolean,
+    isClickable: Boolean,
     onSetClicked: (DiceSetInfo) -> Unit,
     onSetLongPressed: (DiceSetInfo) -> Unit
 ) {
     val haptics = LocalHapticFeedback.current
+    val alpha by animateFloatAsState(
+        targetValue = if (isHighlighted) 1f else 0.38f,
+        label = "alpha_animation"
+    )
 
     ElevatedCard(
-        Modifier.combinedClickable(
-            onClick = { onSetClicked(diceSetInfo) },
-            onLongClick = {
-                haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-                onSetLongPressed(diceSetInfo)
-            }
-        ),
-        shape = CircleShape,
+        modifier = Modifier
+            .alpha(alpha)
+            .aspectRatio(1f)
+            .combinedClickable(
+                enabled = isClickable,
+                onClick = { onSetClicked(diceSetInfo) },
+                onLongClick = {
+                    haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                    onSetLongPressed(diceSetInfo)
+                })
+            .conditionalBorder(isCurrentSet) {
+                this.border(
+                    width = 4.dp,
+                    color = MaterialTheme.colorScheme.primary,
+                    shape = MaterialTheme.shapes.extraLarge
+                )
+            },
+        shape = MaterialTheme.shapes.extraLarge,
         colors = CardDefaults.cardColors(containerColor = diceSetInfo.diceColor),
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Box(
-            modifier = Modifier.aspectRatio(1f),
+            modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
             Text(
@@ -196,15 +250,26 @@ fun DiceSetGridElement(
 }
 
 @Composable
-fun AddNewSetGridElement(onClicked: () -> Unit) {
+fun AddNewSetGridElement(
+    onClicked: () -> Unit,
+    isEnabled: Boolean
+) {
+    val alpha by animateFloatAsState(
+        targetValue = if (isEnabled) 1f else 0.38f,
+        label = "alpha_animation"
+    )
+
     ElevatedCard(
-        modifier = Modifier.clickable { onClicked() },
-        shape = CircleShape,
+        modifier = Modifier
+            .alpha(alpha)
+            .clickable(onClick = onClicked),
+        shape = MaterialTheme.shapes.extraLarge,
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Box(
-            modifier = Modifier.aspectRatio(1f),
+            modifier = Modifier
+                .aspectRatio(1f),
             contentAlignment = Alignment.Center
         ) {
             Text(
@@ -215,11 +280,6 @@ fun AddNewSetGridElement(onClicked: () -> Unit) {
         }
     }
 }
-
-@Composable
-fun Modifier.conditionalClickable(condition: Boolean, modifier: @Composable Modifier.() -> Modifier) =
-    then(if (condition) modifier.invoke(this) else this)
-
 
 
 @Preview(showBackground = true, widthDp = 320, heightDp = 640)

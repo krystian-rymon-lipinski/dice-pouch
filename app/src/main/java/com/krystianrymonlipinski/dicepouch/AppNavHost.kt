@@ -30,6 +30,7 @@ fun AppNavHost(navController: NavHostController) {
                 onTabClicked = { tabIndex -> if (tabIndex == 0) {
                     navController.navigate(ROUTE_ROLL_SCREEN)
                 } },
+                onBackStackPopped = { navController.popBackStack() },
                 onEditSetClicked = {
                     navController.navigate(ROUTE_DICE_SET_EDIT)
                 }
@@ -37,7 +38,7 @@ fun AppNavHost(navController: NavHostController) {
         }
         composable(route = ROUTE_DICE_SET_EDIT) {
             DiceSetEditRoute(
-                onUpClicked = { navController.navigateUp() }
+                onUpClicked = { navController.popBackStack() }
             )
         }
     }
