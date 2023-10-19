@@ -28,8 +28,8 @@ class SetsLocalDataSourceImpl @Inject constructor(
         }
     }
 
-    override fun retrieveSetWithName(name: String): Flow<DiceSet> {
-        return setDao.retrieveSetWithName(name).map { entity ->
+    override fun retrieveSetWithId(id: Int): Flow<DiceSet> {
+        return setDao.retrieveSetWithId(id).map { entity ->
             convertFromEntityWithDice(entity)
         }
     }

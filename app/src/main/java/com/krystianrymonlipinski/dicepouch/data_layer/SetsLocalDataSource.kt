@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 interface SetsLocalDataSource {
 
     fun retrieveAllSetsInfo() : Flow<List<DiceSetInfo>>
-    fun retrieveSetWithName(name: String) : Flow<DiceSet>
+    fun retrieveSetWithId(id: Int) : Flow<DiceSet>
     suspend fun addDiceSet(set: DiceSetInfo)
     suspend fun deleteDiceSet(set: DiceSetInfo)
 }

@@ -22,7 +22,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.anyString
+import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.Captor
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
@@ -101,10 +101,10 @@ class SetsLocalDataSourceImplTest {
                 )))
         )
 
-        whenever(setDao.retrieveSetWithName(anyString())).thenReturn(flowOf(setWithDice))
+        whenever(setDao.retrieveSetWithId(anyInt())).thenReturn(flowOf(setWithDice))
 
-        val retrievedSet = testObj.retrieveSetWithName("set_name").take(1).single()
-        verify(setDao).retrieveSetWithName("set_name")
+        val retrievedSet = testObj.retrieveSetWithId(4).take(1).single()
+        verify(setDao).retrieveSetWithId(4)
         assertEquals(setToBeRetrieved, retrievedSet)
     }
 }

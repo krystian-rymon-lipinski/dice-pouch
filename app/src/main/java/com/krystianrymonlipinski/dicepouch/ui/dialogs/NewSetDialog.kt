@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilledTonalButton
@@ -106,7 +105,7 @@ fun SetPreview(diceSetInfo: DiceSetInfo) {
         modifier = Modifier
             .fillMaxWidth(0.66f)
             .aspectRatio(1f),
-        shape = CircleShape,
+        shape = MaterialTheme.shapes.extraLarge,
         color = diceSetInfo.diceColor,
     ) {
         Box(contentAlignment = Alignment.Center) {

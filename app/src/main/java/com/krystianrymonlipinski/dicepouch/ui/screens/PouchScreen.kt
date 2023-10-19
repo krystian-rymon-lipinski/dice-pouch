@@ -48,6 +48,7 @@ import com.krystianrymonlipinski.dicepouch.DicePouchTopBar
 import com.krystianrymonlipinski.dicepouch.MainActivityViewModel
 import com.krystianrymonlipinski.dicepouch.R
 import com.krystianrymonlipinski.dicepouch.model.DiceSetInfo
+import com.krystianrymonlipinski.dicepouch.model.PouchScreenState
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.NewSetDialog
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.conditionalBorder
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
@@ -62,11 +63,11 @@ fun PouchRoute(
     val screenState by viewModel.allSetsState.collectAsStateWithLifecycle()
 
     PouchScreen(
-        allSetsState = screenState,
+        screenState = screenState,
         onTabClicked = onTabClicked,
         onBackStackPopped = onBackStackPopped,
         onNewSetAdded = { set -> viewModel.addNewSet(set.name, set.diceColor, set.numbersColor) },
-        onChosenSetChanged = { /*TODO: handle change in viewmodel */ },
+        onChosenSetChanged = { set -> viewModel.changeChosenSet(set.id) },
         onEditSetClicked = onEditSetClicked,
         onSetDeleted = { set -> viewModel.deleteSet(set) }
     )
@@ -74,7 +75,7 @@ fun PouchRoute(
 
 @Composable
 fun PouchScreen(
-    allSetsState: List<DiceSetInfo> = listOf(DiceSetInfo()),
+    screenState: PouchScreenState = PouchScreenState(listOf(DiceSetInfo()), null),
     onBackStackPopped: () -> Unit = { },
     onTabClicked: (Int) -> Unit = { },
     onChosenSetChanged: (DiceSetInfo) -> Unit = { },
@@ -142,8 +143,7 @@ fun PouchScreen(
                 onTabClicked = { tabIndex -> if (tabIndex != 1) onTabClicked(tabIndex) }
             )
             SetsGrid(
-                sets = allSetsState,
-                currentSet = allSetsState.getOrNull(0),
+                screenState = screenState,
                 setInEditMode = setInEditMode,
                 onNewSetClicked = { shouldShowNewSetDialog = true },
                 onSetClicked = onChosenSetChanged,
@@ -165,8 +165,7 @@ fun PouchScreen(
 
 @Composable
 fun SetsGrid(
-    sets: List<DiceSetInfo>,
-    currentSet: DiceSetInfo?,
+    screenState: PouchScreenState,
     setInEditMode: DiceSetInfo?,
     onNewSetClicked: () -> Unit,
     onSetClicked: (DiceSetInfo) -> Unit,
@@ -180,11 +179,11 @@ fun SetsGrid(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        items(count = sets.size) { index ->
+        items(count = screenState.allSets.size) { index ->
             DiceSetGridElement(
-                diceSetInfo = sets[index],
-                isCurrentSet = currentSet?.id == sets[index].id,
-                isHighlighted = setInEditMode?.let { it.id == sets[index].id } ?: true,
+                diceSetInfo = screenState.allSets[index],
+                isCurrentSet = screenState.currentlyChosenSetId == screenState.allSets[index].id,
+                isHighlighted = setInEditMode?.let { it.id == screenState.allSets[index].id } ?: true,
                 isClickable = setInEditMode == null,
                 onSetClicked = { setClicked -> onSetClicked(setClicked) },
                 onSetLongPressed = onSetLongPressed

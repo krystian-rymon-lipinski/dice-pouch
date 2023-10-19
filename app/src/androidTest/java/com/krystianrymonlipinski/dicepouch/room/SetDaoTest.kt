@@ -87,7 +87,7 @@ class SetDaoTest : BaseDaoTest() {
     fun retrieveSet_withChosenName() = runTest {
         val setup = createBasicDatabaseSetup()
         insertBasicDatabaseSetup(setup)
-        val retrievedSet = setDao.retrieveSetWithName(setup.set.name).take(1).single()
+        val retrievedSet = setDao.retrieveSetWithId(setup.set.id).take(1).single()
 
         assertEquals("first_set", retrievedSet.set.name)
         assertEquals(2, retrievedSet.diceWithShortcuts.size)

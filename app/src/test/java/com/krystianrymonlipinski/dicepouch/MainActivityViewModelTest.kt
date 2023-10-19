@@ -3,6 +3,7 @@ package com.krystianrymonlipinski.dicepouch
 import androidx.compose.ui.graphics.Color
 import com.krystianrymonlipinski.dicepouch.data_layer.DiceLocalDataSourceImpl
 import com.krystianrymonlipinski.dicepouch.data_layer.SetsLocalDataSource
+import com.krystianrymonlipinski.dicepouch.data_layer.SettingsLocalDataSourceImpl
 import com.krystianrymonlipinski.dicepouch.data_layer.ShortcutsLocalDataSourceImpl
 import com.krystianrymonlipinski.dicepouch.model.DiceSet
 import com.krystianrymonlipinski.dicepouch.model.DiceSetInfo
@@ -40,6 +41,8 @@ class MainActivityViewModelTest {
     lateinit var diceLocalDataSourceImpl: DiceLocalDataSourceImpl
     @Mock
     lateinit var shortcutsLocalDataSourceImpl: ShortcutsLocalDataSourceImpl
+    @Mock
+    lateinit var settingsLocalDataSourceImpl: SettingsLocalDataSourceImpl
 
     @Captor
     lateinit var setCaptor: ArgumentCaptor<DiceSetInfo>
@@ -52,7 +55,8 @@ class MainActivityViewModelTest {
     fun setUp() {
         val testDispatcher = UnconfinedTestDispatcher()
         Dispatchers.setMain(testDispatcher)
-        testObj = MainActivityViewModel(setsLocalDataSource, diceLocalDataSourceImpl, shortcutsLocalDataSourceImpl)
+        testObj = MainActivityViewModel(setsLocalDataSource, diceLocalDataSourceImpl,
+            shortcutsLocalDataSourceImpl, settingsLocalDataSourceImpl)
     }
 
     @Test
@@ -61,7 +65,8 @@ class MainActivityViewModelTest {
         val setToEmit = DiceSet(info = DiceSetInfo(id = 10, name = "a_name"), dice = listOf(die),
                 shortcuts = listOf(RollShortcut(name = "sh", setting = RollSetting(die = die))))
         val setsSource = FakeSetsLocalDataSource()
-        val testObj2 = MainActivityViewModel(setsSource, diceLocalDataSourceImpl, shortcutsLocalDataSourceImpl)
+        val testObj2 = MainActivityViewModel(setsSource, diceLocalDataSourceImpl,
+            shortcutsLocalDataSourceImpl, settingsLocalDataSourceImpl)
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             testObj2.diceSetState.collect { /* Collector (even an empty one) needed for .stateIn operator to work properly */ }
         }
@@ -78,7 +83,8 @@ class MainActivityViewModelTest {
             DiceSetInfo(3, "wrrr", Color.Black, Color.White)
         )
         val setsSource = FakeSetsLocalDataSource()
-        val testObj2 = MainActivityViewModel(setsSource, diceLocalDataSourceImpl, shortcutsLocalDataSourceImpl)
+        val testObj2 = MainActivityViewModel(setsSource, diceLocalDataSourceImpl,
+            shortcutsLocalDataSourceImpl, settingsLocalDataSourceImpl)
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             testObj2.allSetsState.collect { /* Collector (even an empty one) needed for .stateIn operator to work properly */ }
         }
@@ -204,7 +210,7 @@ class MainActivityViewModelTest {
         suspend fun emitSets(value: List<DiceSetInfo>) { allSetsFlow.emit(value) }
         suspend fun emitSet(value: DiceSet) { currentSetFlow.emit(value) }
         override fun retrieveAllSetsInfo() = allSetsFlow
-        override fun retrieveSetWithName(name: String) = currentSetFlow
+        override fun retrieveSetWithId(id: Int) = currentSetFlow
 
         override suspend fun addDiceSet(set: DiceSetInfo) { /* Do nothing */ }
         override suspend fun deleteDiceSet(set: DiceSetInfo) { /* Do nothing */ }
