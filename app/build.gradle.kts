@@ -107,6 +107,8 @@ dependencies {
     kapt("androidx.room:room-compiler:$roomVersion")
 
     implementation("com.github.skydoves:colorpicker-compose:1.0.5") //TODO: handle transient dependencies
+
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs> {
