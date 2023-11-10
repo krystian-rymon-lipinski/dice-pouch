@@ -30,6 +30,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,9 +48,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.krystianrymonlipinski.dicepouch.CurrentSetViewModel
 import com.krystianrymonlipinski.dicepouch.DicePouchTopBar
-import com.krystianrymonlipinski.dicepouch.MainActivityViewModel
 import com.krystianrymonlipinski.dicepouch.R
+import com.krystianrymonlipinski.dicepouch.model.ChosenSetScreenState
 import com.krystianrymonlipinski.dicepouch.model.DiceSet
 import com.krystianrymonlipinski.dicepouch.model.DiceSetInfo
 import com.krystianrymonlipinski.dicepouch.model.Die
@@ -64,10 +66,13 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun DiceSetEditRoute(
-    viewModel: MainActivityViewModel = hiltViewModel(),
+    viewModel: CurrentSetViewModel = hiltViewModel(),
     onUpClicked: () -> Unit
 ) {
-    val screenState by viewModel.diceSetState.collectAsStateWithLifecycle()
+    val screenState by viewModel.chosenSetScreenState.collectAsStateWithLifecycle()
+    LaunchedEffect(key1 = Unit) {
+        viewModel.setCurrentSet()
+    }
 
     DiceSetEditScreen(
         screenState = screenState,
@@ -82,7 +87,9 @@ fun DiceSetEditRoute(
 
 @Composable
 fun DiceSetEditScreen(
-    screenState: DiceSet = DiceSet(DiceSetInfo(0, "A set"), listOf(Die(20), Die(15)), listOf(RollShortcut(name = "Some check"))),
+    screenState: ChosenSetScreenState = ChosenSetScreenState(
+        chosenSet = DiceSet(DiceSetInfo(0, "A set"), listOf(Die(20), Die(15)), listOf(RollShortcut(name = "Some check"))),
+    ),
     onUpClicked: () -> Unit = { },
     onNewDieAdded: (Int) -> Unit = {},
     onDeleteDieClicked: (Die) -> Unit = {},
@@ -90,97 +97,102 @@ fun DiceSetEditScreen(
     onShortcutUpdated: (RollShortcut) -> Unit = {},
     onDeleteShortcutClicked: (RollShortcut) -> Unit = {}
 ) {
-    var showNewDieDialog by rememberSaveable { mutableStateOf(false) }
-    var showNewShortcutDialog by rememberSaveable { mutableStateOf(false) }
-    var showUpdateShortcutDialog by rememberSaveable { mutableStateOf<RollShortcut?>(null) }
-    var showDeleteDieDialog by rememberSaveable { mutableStateOf<Die?>(null) }
 
-    val scope = rememberCoroutineScope()
-    val snackBarHostState = remember { SnackbarHostState() }
-    val snackBarMessage = stringResource(id = R.string.no_dice_snackbar_message)
+    screenState.chosenSet?.let { chosenSet ->
 
-    Scaffold(
-        topBar = {
-            DicePouchTopBar(
-                title = stringResource(id = R.string.edit_set_screen_top_bar_text),
-                navigationIcon = { IconButton(onClick = onUpClicked ) {
-                    Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "arrow_back")
-                } }
-            )
-        }
-    ) { paddingValues ->
-        Column(modifier = Modifier
-            .padding(
-                top = paddingValues.calculateTopPadding(),
-                bottom = paddingValues.calculateBottomPadding(),
-                start = 16.dp,
-                end = 16.dp
-            )
-            .fillMaxWidth()
-        ) {
-            DiceCaption(onAddNewDieClicked = { showNewDieDialog = true })
-            Spacer(modifier = Modifier.height(8.dp))
-            EditableDiceGrid(
-                diceSet = screenState.dice,
-                onDeleteDieClicked = { dieToBeDeleted ->
-                    if (screenState.shortcuts.any { it.setting.die == dieToBeDeleted }) showDeleteDieDialog = dieToBeDeleted
-                    else onDeleteDieClicked(dieToBeDeleted)
-                }
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            ShortcutsCaption(onAddShortcutClicked = {
-                if (screenState.dice.isNotEmpty()) showNewShortcutDialog = true
-                else scope.launch { snackBarHostState.showSnackbar(
-                    message = snackBarMessage,
-                    duration = SnackbarDuration.Short
-                ) }
-            })
-            Spacer(modifier = Modifier.height(8.dp))
-            EditableShortcutsGrid(
-                screenState.shortcuts,
-                onShortcutClicked = { shortcut -> showUpdateShortcutDialog = shortcut },
-                onDeleteShortcutClicked = onDeleteShortcutClicked
-            )
-        }
+        var showNewDieDialog by rememberSaveable { mutableStateOf(false) }
+        var showNewShortcutDialog by rememberSaveable { mutableStateOf(false) }
+        var showUpdateShortcutDialog by rememberSaveable { mutableStateOf<RollShortcut?>(null) }
+        var showDeleteDieDialog by rememberSaveable { mutableStateOf<Die?>(null) }
 
-        if (showNewDieDialog) {
-            NewDieDialog(
-                onDialogDismissed = { showNewDieDialog = false },
-                onNewDieAdded = { numberOfSides ->
-                    showNewDieDialog = false
-                    onNewDieAdded(numberOfSides)
-                }
-            )
-        }
+        val scope = rememberCoroutineScope()
+        val snackBarHostState = remember { SnackbarHostState() }
+        val snackBarMessage = stringResource(id = R.string.no_dice_snackbar_message)
 
-        showDeleteDieDialog?.let { dieToBeDeleted ->
-            DeleteDieAlertDialog(
-                onDialogDismissed = { showDeleteDieDialog = null },
-                onDeleteButtonClicked = {
-                    onDeleteDieClicked(dieToBeDeleted)
-                    showDeleteDieDialog = null
-                }
-            )
-        }
+        Scaffold(
+            topBar = {
+                DicePouchTopBar(
+                    title = stringResource(id = R.string.edit_set_screen_top_bar_text),
+                    navigationIcon = { IconButton(onClick = onUpClicked ) {
+                        Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "arrow_back")
+                    } }
+                )
+            }
+        ) { paddingValues ->
+            Column(modifier = Modifier
+                .padding(
+                    top = paddingValues.calculateTopPadding(),
+                    bottom = paddingValues.calculateBottomPadding(),
+                    start = 16.dp,
+                    end = 16.dp
+                )
+                .fillMaxWidth()
+            ) {
+                DiceCaption(onAddNewDieClicked = { showNewDieDialog = true })
+                Spacer(modifier = Modifier.height(8.dp))
+                EditableDiceGrid(
+                    diceSet = chosenSet.dice,
+                    onDeleteDieClicked = { dieToBeDeleted ->
+                        if (chosenSet.shortcuts.any { it.setting.die == dieToBeDeleted }) showDeleteDieDialog = dieToBeDeleted
+                        else onDeleteDieClicked(dieToBeDeleted)
+                    }
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                ShortcutsCaption(onAddShortcutClicked = {
+                    if (chosenSet.dice.isNotEmpty()) showNewShortcutDialog = true
+                    else scope.launch { snackBarHostState.showSnackbar(
+                        message = snackBarMessage,
+                        duration = SnackbarDuration.Short
+                    ) }
+                })
+                Spacer(modifier = Modifier.height(8.dp))
+                EditableShortcutsGrid(
+                    chosenSet.shortcuts,
+                    onShortcutClicked = { shortcut -> showUpdateShortcutDialog = shortcut },
+                    onDeleteShortcutClicked = onDeleteShortcutClicked
+                )
+            }
 
-        if (showNewShortcutDialog || showUpdateShortcutDialog != null) {
-            RollShortcutDialog(
-                shortcut = showUpdateShortcutDialog,
-                diceInSet = screenState.dice,
-                onDialogDismissed = {
-                    showNewShortcutDialog = false
-                    showUpdateShortcutDialog = null
-                },
-                onSaveShortcutClicked = { shortcut ->
-                    if (showNewShortcutDialog) onNewShortcutAdded(shortcut.name, shortcut.setting)
-                    else onShortcutUpdated(shortcut)
+            if (showNewDieDialog) {
+                NewDieDialog(
+                    onDialogDismissed = { showNewDieDialog = false },
+                    onNewDieAdded = { numberOfSides ->
+                        showNewDieDialog = false
+                        onNewDieAdded(numberOfSides)
+                    }
+                )
+            }
 
-                    showNewShortcutDialog = false
-                    showUpdateShortcutDialog = null
-                }
-            )
+            showDeleteDieDialog?.let { dieToBeDeleted ->
+                DeleteDieAlertDialog(
+                    onDialogDismissed = { showDeleteDieDialog = null },
+                    onDeleteButtonClicked = {
+                        onDeleteDieClicked(dieToBeDeleted)
+                        showDeleteDieDialog = null
+                    }
+                )
+            }
+
+            if (showNewShortcutDialog || showUpdateShortcutDialog != null) {
+                RollShortcutDialog(
+                    shortcut = showUpdateShortcutDialog,
+                    diceInSet = chosenSet.dice,
+                    onDialogDismissed = {
+                        showNewShortcutDialog = false
+                        showUpdateShortcutDialog = null
+                    },
+                    onSaveShortcutClicked = { shortcut ->
+                        if (showNewShortcutDialog) onNewShortcutAdded(shortcut.name, shortcut.setting)
+                        else onShortcutUpdated(shortcut)
+
+                        showNewShortcutDialog = false
+                        showUpdateShortcutDialog = null
+                    }
+                )
+            }
         }
     }
+
 }
 
 @Composable

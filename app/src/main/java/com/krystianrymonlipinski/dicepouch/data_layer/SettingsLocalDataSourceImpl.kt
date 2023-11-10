@@ -12,7 +12,7 @@ class SettingsLocalDataSourceImpl @Inject constructor(
     private val currentSetDataStore: DataStore<Preferences>
 ) : SettingsLocalDataSource {
 
-    override fun retrieveCurrentSetName() : Flow<Int?> {
+    override fun retrieveCurrentSetId() : Flow<Int?> {
         return currentSetDataStore.data.map { preferences ->
             preferences[CURRENT_SET_NAME_KEY]
         }

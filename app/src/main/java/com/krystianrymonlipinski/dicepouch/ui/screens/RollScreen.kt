@@ -18,6 +18,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -32,10 +33,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.krystianrymonlipinski.dicepouch.CurrentSetViewModel
 import com.krystianrymonlipinski.dicepouch.DicePouchTabRow
 import com.krystianrymonlipinski.dicepouch.DicePouchTopBar
-import com.krystianrymonlipinski.dicepouch.MainActivityViewModel
 import com.krystianrymonlipinski.dicepouch.R
+import com.krystianrymonlipinski.dicepouch.model.ChosenSetScreenState
 import com.krystianrymonlipinski.dicepouch.model.DiceSet
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
@@ -48,10 +50,14 @@ import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
 
 @Composable
 fun RollRoute(
-    viewModel: MainActivityViewModel = hiltViewModel(),
+    viewModel: CurrentSetViewModel = hiltViewModel(),
     onTabClicked: (Int) -> Unit
 ) {
-    val screenState by viewModel.diceSetState.collectAsStateWithLifecycle()
+    val screenState by viewModel.chosenSetScreenState.collectAsStateWithLifecycle()
+    LaunchedEffect(key1 = Unit) {
+        viewModel.setCurrentSet()
+    }
+
     RollScreen(
         screenState = screenState,
         onTabClicked = onTabClicked
@@ -60,60 +66,64 @@ fun RollRoute(
 
 @Composable
 fun RollScreen(
-    screenState: DiceSet = DiceSet(dice = listOf(Die(4), Die(8)), shortcuts = listOf(RollShortcut(name = "Athletics check"))),
+    screenState: ChosenSetScreenState = ChosenSetScreenState(
+        chosenSet = DiceSet(dice = listOf(Die(4), Die(8)), shortcuts = listOf(RollShortcut(name = "Athletics check"))),
+    ),
     onTabClicked: (Int) -> Unit = { }
 ) {
-    var showRollSettingsDialog by rememberSaveable { mutableStateOf<Die?>(null) }
-    var showRollDialog by rememberSaveable { mutableStateOf<RollSetting?>(null) }
+    screenState.chosenSet?.let { chosenSet ->
+        var showRollSettingsDialog by rememberSaveable { mutableStateOf<Die?>(null) }
+        var showRollDialog by rememberSaveable { mutableStateOf<RollSetting?>(null) }
 
-    Scaffold(
-        topBar = { DicePouchTopBar(title = screenState.info.name) }
-    ) { paddingValues ->
-        Column(modifier = Modifier.padding(paddingValues).fillMaxWidth()) {
-            DicePouchTabRow(
-                selectedTabIndex = 0,
-                onTabClicked = { tabIndex -> if (tabIndex != 0) onTabClicked(tabIndex) }
-            )
-            Column(modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)) {
-                ChosenSetName(name = screenState.info.name)
-                DiceText()
-                Spacer(modifier = Modifier.height(8.dp))
-                DiceGrid(
-                    diceSet = screenState.dice,
-                    onDieClicked = { die -> showRollSettingsDialog = die }
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                ShortcutsText()
-                Spacer(modifier = Modifier.height(8.dp))
-                ShortcutsGrid(
-                    shortcutsSet = screenState.shortcuts,
-                    onShortcutClicked = { shortcut -> showRollDialog = shortcut.setting }
-                )
-            }
 
-            showRollSettingsDialog?.let {
-                RollSettingsDialog(
-                    it,
-                    onDismissDialog = { showRollSettingsDialog = null },
-                    onRollButtonClicked = { rollSettings ->
-                        showRollSettingsDialog = null
-                        showRollDialog = rollSettings
-                    }
+        Scaffold(
+            topBar = { DicePouchTopBar(title = chosenSet.info.name) }
+        ) { paddingValues ->
+            Column(modifier = Modifier.padding(paddingValues).fillMaxWidth()) {
+                DicePouchTabRow(
+                    selectedTabIndex = 0,
+                    onTabClicked = { tabIndex -> if (tabIndex != 0) onTabClicked(tabIndex) }
                 )
-            }
-            showRollDialog?.let {
-                RollDialog(
-                    setting = it,
-                    onConfirmButtonClicked = { showRollDialog = null }
-                )
+                Column(modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)) {
+                    ChosenSetName(name = chosenSet.info.name)
+                    DiceText()
+                    Spacer(modifier = Modifier.height(8.dp))
+                    DiceGrid(
+                        diceSet = chosenSet.dice,
+                        onDieClicked = { die -> showRollSettingsDialog = die }
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    ShortcutsText()
+                    Spacer(modifier = Modifier.height(8.dp))
+                    ShortcutsGrid(
+                        shortcutsSet = chosenSet.shortcuts,
+                        onShortcutClicked = { shortcut -> showRollDialog = shortcut.setting }
+                    )
+                }
+
+                showRollSettingsDialog?.let {
+                    RollSettingsDialog(
+                        it,
+                        onDismissDialog = { showRollSettingsDialog = null },
+                        onRollButtonClicked = { rollSettings ->
+                            showRollSettingsDialog = null
+                            showRollDialog = rollSettings
+                        }
+                    )
+                }
+                showRollDialog?.let {
+                    RollDialog(
+                        setting = it,
+                        onConfirmButtonClicked = { showRollDialog = null }
+                    )
+                }
             }
         }
-
     }
 }
 
 @Composable
-fun ChosenSetName(name: String, ) {
+fun ChosenSetName(name: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()

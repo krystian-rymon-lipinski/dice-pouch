@@ -4,6 +4,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface SettingsLocalDataSource {
 
-    fun retrieveCurrentSetName() : Flow<Int?>
+    fun retrieveCurrentSetId() : Flow<Int?>
     suspend fun changeCurrentSet(chosenId: Int)
 }

@@ -11,6 +11,7 @@ import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.krystianrymonlipinski.dicepouch.BaseAndroidTest
+import com.krystianrymonlipinski.dicepouch.model.ChosenSetScreenState
 import com.krystianrymonlipinski.dicepouch.model.DiceSet
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
@@ -37,10 +38,12 @@ class DiceSetEditScreenTest : BaseAndroidTest() {
     fun clickDeleteDie_whenDieHasShortcuts_shouldShowPopup_toCommunicateThatShortcutsWillBeDeletedToo() {
         val die = Die(20)
         composeTestRule.apply {
-            setContent { DicePouchTheme { DiceSetEditScreen(DiceSet(
-                dice = listOf(die),
-                shortcuts = listOf(RollShortcut(name = "a_name", setting = RollSetting(die = die)))
-            )) } }
+            setContent { DicePouchTheme { DiceSetEditScreen(ChosenSetScreenState(
+                isLoadingCompleted = true,
+                chosenSet = DiceSet(
+                    dice = listOf(die),
+                    shortcuts = listOf(RollShortcut(name = "a_name", setting = RollSetting(die = die)))
+            ))) } }
 
             onAllNodesWithContentDescription("delete_die_icon")[0].performClick()
             onNode(isDialog()).assertIsDisplayed()
@@ -51,7 +54,10 @@ class DiceSetEditScreenTest : BaseAndroidTest() {
     @Test
     fun clickDeleteDie_whenDieHasNoShortcuts_shouldNotShowPopup() {
         composeTestRule.apply {
-            setContent { DicePouchTheme { DiceSetEditScreen(DiceSet(dice = listOf(Die(20)))) } }
+            setContent { DicePouchTheme { DiceSetEditScreen(ChosenSetScreenState(
+                isLoadingCompleted = true,
+                chosenSet = DiceSet(dice = listOf(Die(20)))
+            )) } }
 
             onAllNodesWithContentDescription("delete_die_icon")[0].performClick()
             onNode(isDialog()).assertDoesNotExist()
@@ -64,9 +70,11 @@ class DiceSetEditScreenTest : BaseAndroidTest() {
 
         composeTestRule.apply {
             setContent {
-                DicePouchTheme { DiceSetEditScreen(screenState = DiceSet(
-                    dice = listOf(die)))
-                }
+                DicePouchTheme { DiceSetEditScreen(ChosenSetScreenState(
+                    isLoadingCompleted = true,
+                    chosenSet = DiceSet(
+                        dice = listOf(die)))
+                ) }
             }
 
             onAllNodesWithContentDescription("add_icon")[1].performClick()
@@ -81,7 +89,9 @@ class DiceSetEditScreenTest : BaseAndroidTest() {
     //TODO: introduce scaffold for the snackbar
     fun clickNewShortcut_whenNoDice_shouldPreventShowingDialog() {
         composeTestRule.apply {
-            setContent { DicePouchTheme { DiceSetEditScreen(screenState = DiceSet()) } }
+            setContent { DicePouchTheme { DiceSetEditScreen(screenState = ChosenSetScreenState(
+                chosenSet = DiceSet()
+            )) } }
 
             onAllNodesWithContentDescription("add_icon")[1].performClick()
             onNode(isDialog()).assertDoesNotExist()
@@ -98,9 +108,12 @@ class DiceSetEditScreenTest : BaseAndroidTest() {
 
         composeTestRule.apply {
             setContent {
-                DicePouchTheme { DiceSetEditScreen(screenState = DiceSet(
-                    dice = listOf(die), shortcuts = listOf(shortcut)))
-                }
+                DicePouchTheme { DiceSetEditScreen(ChosenSetScreenState(
+                    isLoadingCompleted = true,
+                    chosenSet = DiceSet(
+                        dice = listOf(die), shortcuts = listOf(shortcut)
+                    )
+                ) ) }
             }
             onNodeWithText(text = "a_shortcut", useUnmergedTree = true).performClick()
 

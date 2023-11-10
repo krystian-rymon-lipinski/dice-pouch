@@ -84,7 +84,7 @@ class SetDaoTest : BaseDaoTest() {
     }
 
     @Test
-    fun retrieveSet_withChosenName() = runTest {
+    fun retrieveSet_withChosenId() = runTest {
         val setup = createBasicDatabaseSetup()
         insertBasicDatabaseSetup(setup)
         val retrievedSet = setDao.retrieveSetWithId(setup.set.id).take(1).single()
