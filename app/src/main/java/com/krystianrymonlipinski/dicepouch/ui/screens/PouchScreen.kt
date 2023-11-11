@@ -49,6 +49,7 @@ import com.krystianrymonlipinski.dicepouch.MainActivityViewModel
 import com.krystianrymonlipinski.dicepouch.R
 import com.krystianrymonlipinski.dicepouch.model.DiceSetInfo
 import com.krystianrymonlipinski.dicepouch.model.PouchScreenState
+import com.krystianrymonlipinski.dicepouch.room.AppDatabase
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.NewSetDialog
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.conditionalBorder
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
@@ -182,7 +183,8 @@ fun SetsGrid(
         items(count = screenState.allSets.size) { index ->
             DiceSetGridElement(
                 diceSetInfo = screenState.allSets[index],
-                isCurrentSet = screenState.currentlyChosenSetId == screenState.allSets[index].id,
+                isCurrentSet = (screenState.currentlyChosenSetId ?: AppDatabase.DEFAULT_SET_ID)
+                        == screenState.allSets[index].id,
                 isHighlighted = setInEditMode?.let { it.id == screenState.allSets[index].id } ?: true,
                 isClickable = setInEditMode == null,
                 onSetClicked = { setClicked -> onSetClicked(setClicked) },
