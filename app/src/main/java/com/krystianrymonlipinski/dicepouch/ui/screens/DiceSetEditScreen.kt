@@ -67,11 +67,12 @@ import kotlinx.coroutines.launch
 @Composable
 fun DiceSetEditRoute(
     viewModel: CurrentSetViewModel = hiltViewModel(),
+    chosenSetId: Int,
     onUpClicked: () -> Unit
 ) {
     val screenState by viewModel.chosenSetScreenState.collectAsStateWithLifecycle()
     LaunchedEffect(key1 = Unit) {
-        viewModel.setCurrentSet()
+        viewModel.setCurrentSet(chosenSetId)
     }
 
     DiceSetEditScreen(

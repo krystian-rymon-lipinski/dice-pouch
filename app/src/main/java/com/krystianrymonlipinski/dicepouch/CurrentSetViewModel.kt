@@ -27,17 +27,19 @@ class CurrentSetViewModel @Inject constructor(
 
 
     private val currentSetId: MutableStateFlow<Int?> = MutableStateFlow(null)
-    val chosenSetScreenState: MutableStateFlow<ChosenSetScreenState> = MutableStateFlow(ChosenSetScreenState())
+    val chosenSetScreenState: MutableStateFlow<ChosenSetScreenState> = MutableStateFlow(ChosenSetScreenState()) //TODO: make chosen set nullable
 
-    fun setCurrentSet() {
+    fun setCurrentSet(chosenSetId: Int? = null) {
         viewModelScope.launch {
-            currentSetId.value = settingsLocalDataSource.retrieveCurrentSetId()
-                .take(1).singleOrNull() ?: 1 // 1 is the ID for the default set when installing the app
+            currentSetId.value = (chosenSetId ?:
+                settingsLocalDataSource.retrieveCurrentSetId().take(1).singleOrNull() ?: 1)
+                /* 1 is the ID for the default set when installing the app */
             .also { setId ->
                 val savedSet = setsLocalDataSource.retrieveSetWithId(setId)
                     .take(1).singleOrNull()
                 savedSet?.let { set ->
                     chosenSetScreenState.value = chosenSetScreenState.value.setChosenSet(set)
+                    //TODO: fix refreshing changes to the set
                 }
             }
 

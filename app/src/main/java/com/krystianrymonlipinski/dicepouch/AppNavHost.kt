@@ -5,8 +5,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.krystianrymonlipinski.dicepouch.ui.screens.DiceSetEditRoute
 import com.krystianrymonlipinski.dicepouch.ui.screens.PouchRoute
 import com.krystianrymonlipinski.dicepouch.ui.screens.RollRoute
@@ -31,13 +33,17 @@ fun AppNavHost(navController: NavHostController) {
                     navController.navigate(ROUTE_ROLL_SCREEN)
                 } },
                 onBackStackPopped = { navController.popBackStack() },
-                onEditSetClicked = {
-                    navController.navigate(ROUTE_DICE_SET_EDIT)
+                onEditSetClicked = { setInfo ->
+                    navController.navigate("$ROUTE_DICE_SET_EDIT/${setInfo.id}")
                 }
             )
         }
-        composable(route = ROUTE_DICE_SET_EDIT) {
+        composable(
+            route = "$ROUTE_DICE_SET_EDIT/{setId}",
+            arguments = listOf(navArgument(name = "setId") { type = NavType.IntType })
+        ) { backStackEntry ->
             DiceSetEditRoute(
+                chosenSetId = backStackEntry.arguments?.getInt("setId") ?: 0,
                 onUpClicked = { navController.popBackStack() }
             )
         }
