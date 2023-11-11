@@ -16,10 +16,7 @@ interface SetDao {
 
     @Transaction
     @Query("SELECT * FROM ${AppDatabase.SETS_TABLE_NAME} WHERE ${AppDatabase.SET_TABLE_COLUMN_ID} = :id")
-    fun retrieveSetWithId(id: Int) : Flow<SetWithDice>
-
-    //TODO: ensure that all names are unique,
-    // either by uniqueness of a column or an impossibility of adding another with the same name
+    fun retrieveSetWithId(id: Int) : Flow<SetWithDice?>
 
     @Insert
     fun add(newSet: SetEntity)

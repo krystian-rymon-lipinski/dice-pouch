@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -99,101 +100,117 @@ fun DiceSetEditScreen(
     onDeleteShortcutClicked: (RollShortcut) -> Unit = {}
 ) {
 
-    screenState.chosenSet?.let { chosenSet ->
+    var showNewDieDialog by rememberSaveable { mutableStateOf(false) }
+    var showNewShortcutDialog by rememberSaveable { mutableStateOf(false) }
+    var showUpdateShortcutDialog by rememberSaveable { mutableStateOf<RollShortcut?>(null) }
+    var showDeleteDieDialog by rememberSaveable { mutableStateOf<Die?>(null) }
 
-        var showNewDieDialog by rememberSaveable { mutableStateOf(false) }
-        var showNewShortcutDialog by rememberSaveable { mutableStateOf(false) }
-        var showUpdateShortcutDialog by rememberSaveable { mutableStateOf<RollShortcut?>(null) }
-        var showDeleteDieDialog by rememberSaveable { mutableStateOf<Die?>(null) }
+    val scope = rememberCoroutineScope()
+    val snackBarHostState = remember { SnackbarHostState() }
+    val snackBarMessage = stringResource(id = R.string.no_dice_snackbar_message)
 
-        val scope = rememberCoroutineScope()
-        val snackBarHostState = remember { SnackbarHostState() }
-        val snackBarMessage = stringResource(id = R.string.no_dice_snackbar_message)
-
-        Scaffold(
-            topBar = {
-                DicePouchTopBar(
-                    title = stringResource(id = R.string.edit_set_screen_top_bar_text),
-                    navigationIcon = { IconButton(onClick = onUpClicked ) {
-                        Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "arrow_back")
-                    } }
-                )
-            }
-        ) { paddingValues ->
-            Column(modifier = Modifier
-                .padding(
-                    top = paddingValues.calculateTopPadding(),
-                    bottom = paddingValues.calculateBottomPadding(),
-                    start = 16.dp,
-                    end = 16.dp
-                )
-                .fillMaxWidth()
-            ) {
-                DiceCaption(onAddNewDieClicked = { showNewDieDialog = true })
-                Spacer(modifier = Modifier.height(8.dp))
-                EditableDiceGrid(
-                    diceSet = chosenSet.dice,
-                    onDeleteDieClicked = { dieToBeDeleted ->
-                        if (chosenSet.shortcuts.any { it.setting.die == dieToBeDeleted }) showDeleteDieDialog = dieToBeDeleted
-                        else onDeleteDieClicked(dieToBeDeleted)
-                    }
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                ShortcutsCaption(onAddShortcutClicked = {
-                    if (chosenSet.dice.isNotEmpty()) showNewShortcutDialog = true
+    Scaffold(
+        topBar = { DicePouchTopBar(
+            title = stringResource(id = R.string.edit_set_screen_top_bar_text),
+            navigationIcon = { IconButton(onClick = onUpClicked ) {
+                Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "arrow_back")
+            } }
+        ) }
+    ) { paddingValues ->
+        screenState.chosenSet?.let { diceSet ->
+            ChosenSetElementsLayout(
+                paddingValues = paddingValues,
+                chosenSet = diceSet,
+                onAddNewDieClicked = { showNewDieDialog = true },
+                onDeleteDieClicked = { dieToBeDeleted ->
+                    if (diceSet.shortcuts.any { it.setting.die == dieToBeDeleted }) showDeleteDieDialog = dieToBeDeleted
+                    else onDeleteDieClicked(dieToBeDeleted) },
+                onAddShortcutClicked = {
+                    if (diceSet.dice.isNotEmpty()) showNewShortcutDialog = true
                     else scope.launch { snackBarHostState.showSnackbar(
                         message = snackBarMessage,
                         duration = SnackbarDuration.Short
                     ) }
-                })
-                Spacer(modifier = Modifier.height(8.dp))
-                EditableShortcutsGrid(
-                    chosenSet.shortcuts,
-                    onShortcutClicked = { shortcut -> showUpdateShortcutDialog = shortcut },
-                    onDeleteShortcutClicked = onDeleteShortcutClicked
-                )
-            }
+                },
+                onShortcutClicked = { shortcutClicked -> showUpdateShortcutDialog = shortcutClicked},
+                onDeleteShortcutClicked = onDeleteShortcutClicked
+            )
+        }
 
-            if (showNewDieDialog) {
-                NewDieDialog(
-                    onDialogDismissed = { showNewDieDialog = false },
-                    onNewDieAdded = { numberOfSides ->
-                        showNewDieDialog = false
-                        onNewDieAdded(numberOfSides)
-                    }
-                )
-            }
+        if (showNewDieDialog) {
+            NewDieDialog(
+                onDialogDismissed = { showNewDieDialog = false },
+                onNewDieAdded = { numberOfSides ->
+                    showNewDieDialog = false
+                    onNewDieAdded(numberOfSides)
+                }
+            )
+        }
 
-            showDeleteDieDialog?.let { dieToBeDeleted ->
-                DeleteDieAlertDialog(
-                    onDialogDismissed = { showDeleteDieDialog = null },
-                    onDeleteButtonClicked = {
-                        onDeleteDieClicked(dieToBeDeleted)
-                        showDeleteDieDialog = null
-                    }
-                )
-            }
+        showDeleteDieDialog?.let { dieToBeDeleted ->
+            DeleteDieAlertDialog(
+                onDialogDismissed = { showDeleteDieDialog = null },
+                onDeleteButtonClicked = {
+                    onDeleteDieClicked(dieToBeDeleted)
+                    showDeleteDieDialog = null
+                }
+            )
+        }
 
-            if (showNewShortcutDialog || showUpdateShortcutDialog != null) {
-                RollShortcutDialog(
-                    shortcut = showUpdateShortcutDialog,
-                    diceInSet = chosenSet.dice,
-                    onDialogDismissed = {
-                        showNewShortcutDialog = false
-                        showUpdateShortcutDialog = null
-                    },
-                    onSaveShortcutClicked = { shortcut ->
-                        if (showNewShortcutDialog) onNewShortcutAdded(shortcut.name, shortcut.setting)
-                        else onShortcutUpdated(shortcut)
+        if (showNewShortcutDialog || showUpdateShortcutDialog != null) {
+            RollShortcutDialog(
+                shortcut = showUpdateShortcutDialog,
+                diceInSet = screenState.chosenSet?.dice ?: emptyList(),
+                onDialogDismissed = {
+                    showNewShortcutDialog = false
+                    showUpdateShortcutDialog = null
+                },
+                onSaveShortcutClicked = { shortcut ->
+                    if (showNewShortcutDialog) onNewShortcutAdded(shortcut.name, shortcut.setting)
+                    else onShortcutUpdated(shortcut)
 
-                        showNewShortcutDialog = false
-                        showUpdateShortcutDialog = null
-                    }
-                )
-            }
+                    showNewShortcutDialog = false
+                    showUpdateShortcutDialog = null
+                }
+            )
         }
     }
+}
 
+@Composable
+fun ChosenSetElementsLayout(
+    paddingValues: PaddingValues,
+    chosenSet: DiceSet,
+    onAddNewDieClicked: () -> Unit,
+    onDeleteDieClicked: (Die) -> Unit,
+    onAddShortcutClicked: () -> Unit,
+    onShortcutClicked: (RollShortcut) -> Unit,
+    onDeleteShortcutClicked: (RollShortcut) -> Unit
+) {
+    Column(modifier = Modifier
+        .padding(
+            top = paddingValues.calculateTopPadding(),
+            bottom = paddingValues.calculateBottomPadding(),
+            start = 16.dp,
+            end = 16.dp
+        )
+        .fillMaxWidth()
+    ) {
+        DiceCaption(onAddNewDieClicked = onAddNewDieClicked)
+        Spacer(modifier = Modifier.height(8.dp))
+        EditableDiceGrid(
+            diceSet = chosenSet.dice,
+            onDeleteDieClicked = onDeleteDieClicked
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        ShortcutsCaption(onAddShortcutClicked = onAddShortcutClicked)
+        Spacer(modifier = Modifier.height(8.dp))
+        EditableShortcutsGrid(
+            chosenSet.shortcuts,
+            onShortcutClicked = onShortcutClicked,
+            onDeleteShortcutClicked = onDeleteShortcutClicked
+        )
+    }
 }
 
 @Composable

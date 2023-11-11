@@ -71,54 +71,82 @@ fun RollScreen(
     ),
     onTabClicked: (Int) -> Unit = { }
 ) {
-    screenState.chosenSet?.let { chosenSet ->
-        var showRollSettingsDialog by rememberSaveable { mutableStateOf<Die?>(null) }
-        var showRollDialog by rememberSaveable { mutableStateOf<RollSetting?>(null) }
+    var showRollSettingsDialog by rememberSaveable { mutableStateOf<Die?>(null) }
+    var showRollDialog by rememberSaveable { mutableStateOf<RollSetting?>(null) }
 
 
-        Scaffold(
-            topBar = { DicePouchTopBar(title = chosenSet.info.name) }
-        ) { paddingValues ->
-            Column(modifier = Modifier.padding(paddingValues).fillMaxWidth()) {
-                DicePouchTabRow(
-                    selectedTabIndex = 0,
-                    onTabClicked = { tabIndex -> if (tabIndex != 0) onTabClicked(tabIndex) }
+    Scaffold(
+        topBar = { DicePouchTopBar(title = screenState.chosenSet?.info?.name ?: "No set chosen") }
+    ) { paddingValues ->
+        Column(modifier = Modifier
+            .padding(paddingValues)
+            .fillMaxSize()
+        ) {
+            DicePouchTabRow(
+                selectedTabIndex = 0,
+                onTabClicked = { tabIndex -> if (tabIndex != 0) onTabClicked(tabIndex) }
+            )
+            screenState.chosenSet?.let { chosenSet -> ChosenSetElementsLayout(
+                chosenSet = chosenSet,
+                onDieClicked = { die -> showRollSettingsDialog = die },
+                onShortcutClicked = { shortcut -> showRollDialog = shortcut.setting }
+            ) } ?: NoSetChosenCaption()
+
+            showRollSettingsDialog?.let {
+                RollSettingsDialog(
+                    it,
+                    onDismissDialog = { showRollSettingsDialog = null },
+                    onRollButtonClicked = { rollSettings ->
+                        showRollSettingsDialog = null
+                        showRollDialog = rollSettings
+                    }
                 )
-                Column(modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)) {
-                    ChosenSetName(name = chosenSet.info.name)
-                    DiceText()
-                    Spacer(modifier = Modifier.height(8.dp))
-                    DiceGrid(
-                        diceSet = chosenSet.dice,
-                        onDieClicked = { die -> showRollSettingsDialog = die }
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    ShortcutsText()
-                    Spacer(modifier = Modifier.height(8.dp))
-                    ShortcutsGrid(
-                        shortcutsSet = chosenSet.shortcuts,
-                        onShortcutClicked = { shortcut -> showRollDialog = shortcut.setting }
-                    )
-                }
-
-                showRollSettingsDialog?.let {
-                    RollSettingsDialog(
-                        it,
-                        onDismissDialog = { showRollSettingsDialog = null },
-                        onRollButtonClicked = { rollSettings ->
-                            showRollSettingsDialog = null
-                            showRollDialog = rollSettings
-                        }
-                    )
-                }
-                showRollDialog?.let {
-                    RollDialog(
-                        setting = it,
-                        onConfirmButtonClicked = { showRollDialog = null }
-                    )
-                }
+            }
+            showRollDialog?.let {
+                RollDialog(
+                    setting = it,
+                    onConfirmButtonClicked = { showRollDialog = null }
+                )
             }
         }
+    }
+}
+
+@Composable
+fun ChosenSetElementsLayout(
+    chosenSet: DiceSet,
+    onDieClicked: (Die) -> Unit,
+    onShortcutClicked: (RollShortcut) -> Unit
+) {
+    Column(modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)) {
+        ChosenSetName(name = chosenSet.info.name)
+        DiceText()
+        Spacer(modifier = Modifier.height(8.dp))
+        DiceGrid(
+            diceSet = chosenSet.dice,
+            onDieClicked = onDieClicked
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        ShortcutsText()
+        Spacer(modifier = Modifier.height(8.dp))
+        ShortcutsGrid(
+            shortcutsSet = chosenSet.shortcuts,
+            onShortcutClicked = onShortcutClicked
+        )
+    }
+}
+
+@Composable
+fun NoSetChosenCaption() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = stringResource(id = R.string.no_set_chosen),
+            color = MaterialTheme.colorScheme.primary,
+            style = MaterialTheme.typography.headlineSmall
+        )
     }
 }
 
@@ -238,8 +266,20 @@ fun ShortcutCard(
 
 @Preview(showBackground = true, widthDp = 320, heightDp = 640)
 @Composable
-fun RollScreenPreview() {
+fun RollScreenPreview_WhenSetChosen() {
     DicePouchTheme {
         RollScreen()
+    }
+}
+
+@Preview(showBackground = true, widthDp = 320, heightDp = 640)
+@Composable
+fun RollScreenPreview_WhenNoSetChosen() {
+    DicePouchTheme {
+        RollScreen(screenState = ChosenSetScreenState(
+            isLoadingCompleted = true,
+            chosenSet = null
+        )
+        )
     }
 }

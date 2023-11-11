@@ -28,7 +28,7 @@ class SetsLocalDataSourceImpl @Inject constructor(
         }
     }
 
-    override fun retrieveSetWithId(id: Int): Flow<DiceSet> {
+    override fun retrieveSetWithId(id: Int): Flow<DiceSet?> {
         return setDao.retrieveSetWithId(id).map { entity ->
             convertFromEntityWithDice(entity)
         }
@@ -61,20 +61,25 @@ class SetsLocalDataSourceImpl @Inject constructor(
     }
 
 
-    private fun convertFromEntityWithDice(entity: SetWithDice) : DiceSet {
-        return DiceSet(
-            info = DiceSetInfo(id = entity.set.id, name = entity.set.name,
-                diceColor = Color(entity.set.diceSideColorArgb), numbersColor = Color(entity.set.diceNumberColorArgb)),
-            dice = entity.diceWithShortcuts.map { convertToDieFromEntity(it.die) },
-            shortcuts = entity.diceWithShortcuts.flatMap { dieWithShortcuts ->
-                dieWithShortcuts.shortcuts.map { shortcut ->
-                    convertToShortcutFromRelatedEntities(
-                        shortcut = shortcut,
-                        dieEntity = dieWithShortcuts.die
-                    )
+    private fun convertFromEntityWithDice(entity: SetWithDice?) : DiceSet? {
+        return entity?.let { entityToConvert ->
+            DiceSet(
+                info = DiceSetInfo(
+                    id = entityToConvert.set.id,
+                    name = entityToConvert.set.name,
+                    diceColor = Color(entityToConvert.set.diceSideColorArgb),
+                    numbersColor = Color(entityToConvert.set.diceNumberColorArgb)),
+                dice = entityToConvert.diceWithShortcuts.map { convertToDieFromEntity(it.die) },
+                shortcuts = entityToConvert.diceWithShortcuts.flatMap { dieWithShortcuts ->
+                    dieWithShortcuts.shortcuts.map { shortcut ->
+                        convertToShortcutFromRelatedEntities(
+                            shortcut = shortcut,
+                            dieEntity = dieWithShortcuts.die
+                        )
+                    }
                 }
-            }
-        )
+            )
+        }
     }
 
     private fun convertToDieFromEntity(dieEntity: DieEntity) : Die {

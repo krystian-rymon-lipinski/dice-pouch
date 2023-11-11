@@ -9,7 +9,7 @@ data class ChosenSetScreenState(
         return copy(isLoadingCompleted = true)
     }
 
-    fun setChosenSet(chosenSet: DiceSet) : ChosenSetScreenState {
+    fun setChosenSet(chosenSet: DiceSet?) : ChosenSetScreenState {
         return copy(chosenSet = chosenSet)
     }
 }
