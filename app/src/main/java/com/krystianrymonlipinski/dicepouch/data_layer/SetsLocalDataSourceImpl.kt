@@ -73,7 +73,6 @@ class SetsLocalDataSourceImpl @Inject constructor(
                         dieEntity = dieWithShortcuts.die
                     )
                 }
-
             }
         )
     }
