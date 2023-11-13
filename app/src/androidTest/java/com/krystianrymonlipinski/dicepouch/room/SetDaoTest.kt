@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.fail
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -89,9 +90,12 @@ class SetDaoTest : BaseDaoTest() {
         insertBasicDatabaseSetup(setup)
         val retrievedSet = setDao.retrieveSetWithId(setup.set.id).take(1).single()
 
-        assertEquals("first_set", retrievedSet.set.name)
-        assertEquals(2, retrievedSet.diceWithShortcuts.size)
-        assertEquals(3, retrievedSet.diceWithShortcuts.flatMap { it.shortcuts }.size)
+        retrievedSet?.let { set ->
+            assertEquals("first_set", set.set.name)
+            assertEquals(2, set.diceWithShortcuts.size)
+            assertEquals(3, set.diceWithShortcuts.flatMap { it.shortcuts }.size)
+        } ?: fail()
+
     }
 
 

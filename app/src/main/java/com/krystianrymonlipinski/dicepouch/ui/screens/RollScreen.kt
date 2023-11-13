@@ -43,6 +43,8 @@ import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
 import com.krystianrymonlipinski.dicepouch.model.RollShortcut
 import com.krystianrymonlipinski.dicepouch.ui.components.DieImage
+import com.krystianrymonlipinski.dicepouch.ui.components.NoDiceCaption
+import com.krystianrymonlipinski.dicepouch.ui.components.NoShortcutsCaption
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollDialog
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollSettingsDialog
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
@@ -122,17 +124,16 @@ fun ChosenSetElementsLayout(
         ChosenSetName(name = chosenSet.info.name)
         DiceText()
         Spacer(modifier = Modifier.height(8.dp))
-        DiceGrid(
-            diceSet = chosenSet.dice,
-            onDieClicked = onDieClicked
-        )
+
+        if (chosenSet.dice.isEmpty()) NoDiceCaption()
+        else DiceGrid(diceSet = chosenSet.dice, onDieClicked = onDieClicked)
+
         Spacer(modifier = Modifier.height(16.dp))
         ShortcutsText()
+
         Spacer(modifier = Modifier.height(8.dp))
-        ShortcutsGrid(
-            shortcutsSet = chosenSet.shortcuts,
-            onShortcutClicked = onShortcutClicked
-        )
+        if (chosenSet.shortcuts.isEmpty()) NoShortcutsCaption()
+        else ShortcutsGrid(shortcutsSet = chosenSet.shortcuts, onShortcutClicked = onShortcutClicked)
     }
 }
 
@@ -279,7 +280,17 @@ fun RollScreenPreview_WhenNoSetChosen() {
         RollScreen(screenState = ChosenSetScreenState(
             isLoadingCompleted = true,
             chosenSet = null
-        )
-        )
+        ))
+    }
+}
+
+@Preview(showBackground = true, widthDp = 320, heightDp = 640)
+@Composable
+fun RollScreenPreview_WhenSetChosen_WithNoDiceAndShortcuts() {
+    DicePouchTheme {
+        RollScreen(screenState = ChosenSetScreenState(
+            isLoadingCompleted = true,
+            chosenSet = DiceSet(dice = emptyList(), shortcuts = emptyList())
+        ))
     }
 }

@@ -59,6 +59,8 @@ import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
 import com.krystianrymonlipinski.dicepouch.model.RollShortcut
 import com.krystianrymonlipinski.dicepouch.ui.components.DieImage
+import com.krystianrymonlipinski.dicepouch.ui.components.NoDiceCaption
+import com.krystianrymonlipinski.dicepouch.ui.components.NoShortcutsCaption
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.NewDieDialog
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollShortcutDialog
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
@@ -197,16 +199,21 @@ fun ChosenSetElementsLayout(
         .fillMaxWidth()
     ) {
         DiceCaption(onAddNewDieClicked = onAddNewDieClicked)
+
         Spacer(modifier = Modifier.height(8.dp))
-        EditableDiceGrid(
+        if (chosenSet.dice.isEmpty()) NoDiceCaption()
+        else EditableDiceGrid(
             diceSet = chosenSet.dice,
             onDeleteDieClicked = onDeleteDieClicked
         )
+
         Spacer(modifier = Modifier.height(8.dp))
         ShortcutsCaption(onAddShortcutClicked = onAddShortcutClicked)
+
         Spacer(modifier = Modifier.height(8.dp))
-        EditableShortcutsGrid(
-            chosenSet.shortcuts,
+        if (chosenSet.shortcuts.isEmpty()) NoShortcutsCaption()
+        else EditableShortcutsGrid(
+            shortcuts = chosenSet.shortcuts,
             onShortcutClicked = onShortcutClicked,
             onDeleteShortcutClicked = onDeleteShortcutClicked
         )
