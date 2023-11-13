@@ -35,7 +35,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.krystianrymonlipinski.dicepouch.CurrentSetViewModel
 import com.krystianrymonlipinski.dicepouch.DicePouchTabRow
-import com.krystianrymonlipinski.dicepouch.DicePouchTopBar
 import com.krystianrymonlipinski.dicepouch.R
 import com.krystianrymonlipinski.dicepouch.model.ChosenSetScreenState
 import com.krystianrymonlipinski.dicepouch.model.DiceSet
@@ -77,9 +76,7 @@ fun RollScreen(
     var showRollDialog by rememberSaveable { mutableStateOf<RollSetting?>(null) }
 
 
-    Scaffold(
-        topBar = { DicePouchTopBar(title = screenState.chosenSet?.info?.name ?: "No set chosen") }
-    ) { paddingValues ->
+    Scaffold { paddingValues ->
         Column(modifier = Modifier
             .padding(paddingValues)
             .fillMaxSize()

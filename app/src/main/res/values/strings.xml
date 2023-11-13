@@ -16,7 +16,6 @@
     <string name="btn_roll_cancel">Cancel</string>
     <string name="btn_roll_confirm_with_result">%d, got it!</string>
 
-    <string name="edit_set_screen_top_bar_text">Edit set</string>
     <string name="no_set_chosen">No dice set chosen</string>
 
     <string name="btn_dialog_add">Add</string>

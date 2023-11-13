@@ -93,47 +93,43 @@ fun PouchScreen(
     }
 
     Scaffold(
-        topBar = {
+        topBar = { AnimatedVisibility(visible = setInEditMode != null) {
             DicePouchTopBar(
-                title = stringResource(id = R.string.pouch_screen_top_bar_text),
+                title = setInEditMode?.name ?: "",
                 navigationIcon = {
-                    AnimatedVisibility(visible = setInEditMode != null) {
-                        IconButton(onClick = { setInEditMode = null }) {
-                            Icon(
-                                imageVector = Icons.Filled.ArrowBack,
-                                contentDescription = "arrow_back",
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                        }
+                    IconButton(onClick = { setInEditMode = null }) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = "arrow_back",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
                     }
                 },
                 actions = {
-                    AnimatedVisibility(visible = setInEditMode != null) {
-                        IconButton(onClick = {
-                            onEditSetClicked(setInEditMode!!)
-                            setInEditMode = null
-                        }) {
-                            Icon(
-                                imageVector = Icons.Filled.Edit,
-                                contentDescription = "edit_set",
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                        }
+                    IconButton(onClick = {
+                        onEditSetClicked(setInEditMode!!)
+                        setInEditMode = null
+                    }) {
+                        Icon(
+                            imageVector = Icons.Filled.Edit,
+                            contentDescription = "edit_set",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
                     }
-                    AnimatedVisibility(visible = setInEditMode != null) {
-                        IconButton(onClick = {
-                            onSetDeleted(setInEditMode!!)
-                            setInEditMode = null
-                        }) {
-                            Icon(
-                                imageVector = Icons.Filled.Delete,
-                                contentDescription = "delete_set",
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                        }
+                    IconButton(onClick = {
+                        onSetDeleted(setInEditMode!!)
+                        setInEditMode = null
+                    }) {
+                        Icon(
+                            imageVector = Icons.Filled.Delete,
+                            contentDescription = "delete_set",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
                     }
                 }
             )
+        }
+
         },
     ) { paddingValues ->
         Column(modifier = Modifier

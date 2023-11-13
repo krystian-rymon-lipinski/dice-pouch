@@ -113,9 +113,13 @@ fun DiceSetEditScreen(
 
     Scaffold(
         topBar = { DicePouchTopBar(
-            title = stringResource(id = R.string.edit_set_screen_top_bar_text),
+            title = screenState.chosenSet?.info?.name ?: "",
             navigationIcon = { IconButton(onClick = onUpClicked ) {
-                Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "arrow_back")
+                Icon(
+                    imageVector = Icons.Filled.ArrowBack,
+                    contentDescription = "arrow_back",
+                    tint = MaterialTheme.colorScheme.primary
+                )
             } }
         ) }
     ) { paddingValues ->
