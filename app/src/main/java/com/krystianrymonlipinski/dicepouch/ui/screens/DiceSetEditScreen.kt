@@ -27,6 +27,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -112,6 +113,7 @@ fun DiceSetEditScreen(
     val snackBarMessage = stringResource(id = R.string.no_dice_snackbar_message)
 
     Scaffold(
+        snackbarHost = { SnackbarHost(snackBarHostState) },
         topBar = { DicePouchTopBar(
             title = screenState.chosenSet?.info?.name ?: "",
             navigationIcon = { IconButton(onClick = onUpClicked ) {
@@ -133,10 +135,14 @@ fun DiceSetEditScreen(
                     else onDeleteDieClicked(dieToBeDeleted) },
                 onAddShortcutClicked = {
                     if (diceSet.dice.isNotEmpty()) showNewShortcutDialog = true
-                    else scope.launch { snackBarHostState.showSnackbar(
-                        message = snackBarMessage,
-                        duration = SnackbarDuration.Short
-                    ) }
+                    else scope.launch {
+                        if (snackBarHostState.currentSnackbarData == null) {
+                            snackBarHostState.showSnackbar(
+                                message = snackBarMessage,
+                                duration = SnackbarDuration.Short
+                            )
+                        }
+                    }
                 },
                 onShortcutClicked = { shortcutClicked -> showUpdateShortcutDialog = shortcutClicked},
                 onDeleteShortcutClicked = onDeleteShortcutClicked
