@@ -25,7 +25,7 @@ abstract class AppDatabase : RoomDatabase() {
 
 
     companion object {
-        const val DEFAULT_SET_ID = 1
+        const val DEFAULT_SET_ID = 1 /* ID for the default set provided when installing the app */
         private const val DEFAULT_SET_NAME = "Basic set"
 
         val databaseCallback: Callback = object : Callback() {

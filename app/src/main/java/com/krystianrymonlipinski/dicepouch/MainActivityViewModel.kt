@@ -28,8 +28,6 @@ class MainActivityViewModel @Inject constructor(
             initialValue = null
         )
 
-
-
     val allSetsState: StateFlow<PouchScreenState> = combine(
         setsLocalDataSource.retrieveAllSetsInfo(),
         currentSetId
