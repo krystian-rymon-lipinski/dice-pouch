@@ -1,10 +1,11 @@
-package com.krystianrymonlipinski.dicepouch
+package com.krystianrymonlipinski.dicepouch.ui
 
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
+import com.krystianrymonlipinski.dicepouch.R
 
 @Composable
 fun DicePouchTabRow(

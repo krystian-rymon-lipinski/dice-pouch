@@ -1,4 +1,4 @@
-package com.krystianrymonlipinski.dicepouch
+package com.krystianrymonlipinski.dicepouch.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

@@ -50,8 +50,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.krystianrymonlipinski.dicepouch.CurrentSetViewModel
-import com.krystianrymonlipinski.dicepouch.DicePouchTopBar
+import com.krystianrymonlipinski.dicepouch.viewmodels.CurrentSetViewModel
+import com.krystianrymonlipinski.dicepouch.ui.DicePouchTopBar
 import com.krystianrymonlipinski.dicepouch.R
 import com.krystianrymonlipinski.dicepouch.model.ChosenSetScreenState
 import com.krystianrymonlipinski.dicepouch.model.DiceSet

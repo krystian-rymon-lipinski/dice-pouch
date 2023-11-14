@@ -1,4 +1,4 @@
-package com.krystianrymonlipinski.dicepouch
+package com.krystianrymonlipinski.dicepouch.viewmodels
 
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel

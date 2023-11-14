@@ -43,9 +43,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.krystianrymonlipinski.dicepouch.DicePouchTabRow
-import com.krystianrymonlipinski.dicepouch.DicePouchTopBar
-import com.krystianrymonlipinski.dicepouch.PouchViewModel
+import com.krystianrymonlipinski.dicepouch.ui.DicePouchTabRow
+import com.krystianrymonlipinski.dicepouch.ui.DicePouchTopBar
+import com.krystianrymonlipinski.dicepouch.viewmodels.PouchViewModel
 import com.krystianrymonlipinski.dicepouch.R
 import com.krystianrymonlipinski.dicepouch.model.DiceSetInfo
 import com.krystianrymonlipinski.dicepouch.model.PouchScreenState

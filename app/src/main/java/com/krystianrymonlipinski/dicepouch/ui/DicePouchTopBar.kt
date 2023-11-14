@@ -1,4 +1,4 @@
-package com.krystianrymonlipinski.dicepouch
+package com.krystianrymonlipinski.dicepouch.ui
 
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material3.ExperimentalMaterial3Api

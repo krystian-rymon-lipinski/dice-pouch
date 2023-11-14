@@ -33,8 +33,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.krystianrymonlipinski.dicepouch.CurrentSetViewModel
-import com.krystianrymonlipinski.dicepouch.DicePouchTabRow
+import com.krystianrymonlipinski.dicepouch.viewmodels.CurrentSetViewModel
+import com.krystianrymonlipinski.dicepouch.ui.DicePouchTabRow
 import com.krystianrymonlipinski.dicepouch.R
 import com.krystianrymonlipinski.dicepouch.model.ChosenSetScreenState
 import com.krystianrymonlipinski.dicepouch.model.DiceSet
