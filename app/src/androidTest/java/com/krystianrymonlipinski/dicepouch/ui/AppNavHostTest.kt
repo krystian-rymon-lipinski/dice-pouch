@@ -31,7 +31,7 @@ class AppNavHostTest {
 
     @Test
     fun appNavigation_startDestination() {
-        checkIfRollScreenOn()
+        checkIfTableScreenOn()
     }
 
     @Test
@@ -43,13 +43,13 @@ class AppNavHostTest {
             activityRule.scenario.onActivity {
                 it.onBackPressedDispatcher.onBackPressed()
             }
-            checkIfRollScreenOn()
+            checkIfTableScreenOn()
 
             onNodeWithText("Pouch").performClick()
             checkIfPouchScreenOn()
 
             onNodeWithText("Table").performClick()
-            checkIfRollScreenOn()
+            checkIfTableScreenOn()
         }
     }
 
@@ -92,7 +92,7 @@ class AppNavHostTest {
         }
     }
 
-    private fun checkIfRollScreenOn() {
+    private fun checkIfTableScreenOn() {
         composeTestRule.apply {
             onNodeWithText("Table")
                 .assertIsDisplayed()

@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MainActivityViewModel @Inject constructor(
+class PouchViewModel @Inject constructor(
     private val setsLocalDataSource: SetsLocalDataSource,
     private val settingsLocalDataSource: SettingsLocalDataSource
 ) : ViewModel() {

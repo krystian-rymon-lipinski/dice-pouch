@@ -45,7 +45,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.krystianrymonlipinski.dicepouch.DicePouchTabRow
 import com.krystianrymonlipinski.dicepouch.DicePouchTopBar
-import com.krystianrymonlipinski.dicepouch.MainActivityViewModel
+import com.krystianrymonlipinski.dicepouch.PouchViewModel
 import com.krystianrymonlipinski.dicepouch.R
 import com.krystianrymonlipinski.dicepouch.model.DiceSetInfo
 import com.krystianrymonlipinski.dicepouch.model.PouchScreenState
@@ -56,7 +56,7 @@ import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
 
 @Composable
 fun PouchRoute(
-    viewModel: MainActivityViewModel = hiltViewModel(),
+    viewModel: PouchViewModel = hiltViewModel(),
     onTabClicked: (Int) -> Unit,
     onBackStackPopped: () -> Unit,
     onEditSetClicked: (DiceSetInfo) -> Unit

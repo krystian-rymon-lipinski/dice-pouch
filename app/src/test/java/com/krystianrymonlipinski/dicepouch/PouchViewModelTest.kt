@@ -28,9 +28,9 @@ import org.mockito.kotlin.verify
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(MockitoJUnitRunner::class)
-class MainActivityViewModelTest {
+class PouchViewModelTest {
 
-    private lateinit var testObj: MainActivityViewModel
+    private lateinit var testObj: PouchViewModel
 
     @Mock
     lateinit var setsLocalDataSource: SetsLocalDataSource
@@ -45,7 +45,7 @@ class MainActivityViewModelTest {
     fun setUp() {
         val testDispatcher = UnconfinedTestDispatcher()
         Dispatchers.setMain(testDispatcher)
-        testObj = MainActivityViewModel(setsLocalDataSource, settingsLocalDataSourceImpl)
+        testObj = PouchViewModel(setsLocalDataSource, settingsLocalDataSourceImpl)
     }
 
 
@@ -57,7 +57,7 @@ class MainActivityViewModelTest {
             DiceSetInfo(3, "wrrr", Color.Black, Color.White)
         )
         val setsSource = FakeSetsLocalDataSource()
-        val testObj2 = MainActivityViewModel(setsSource, FakeSettingsLocalDataSource())
+        val testObj2 = PouchViewModel(setsSource, FakeSettingsLocalDataSource())
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             testObj2.allSetsState.collect { /* Collector (even an empty one) needed for .stateIn operator to work properly */ }
         }
@@ -70,7 +70,7 @@ class MainActivityViewModelTest {
     @Test
     fun detectSetIdStreamChange() = runTest {
         val settingsSource = FakeSettingsLocalDataSource()
-        val testObj2 = MainActivityViewModel(FakeSetsLocalDataSource(), settingsSource)
+        val testObj2 = PouchViewModel(FakeSetsLocalDataSource(), settingsSource)
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             testObj2.allSetsState.collect { }
         }
