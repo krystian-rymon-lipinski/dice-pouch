@@ -24,7 +24,7 @@ open class BaseDaoTest {
 
 
     protected fun createBasicDatabaseSetup() = SetWithDice(
-        set = SetEntity(name = "first_set", diceSideColorArgb = 12, diceNumberColorArgb = 2),
+        set = SetEntity(id = 1, name = "first_set", diceSideColorArgb = 12, diceNumberColorArgb = 2),
         diceWithShortcuts = listOf(
             DieWithShortcuts(
                 die = DieEntity(
