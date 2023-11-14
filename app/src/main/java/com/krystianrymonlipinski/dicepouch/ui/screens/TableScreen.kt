@@ -50,7 +50,7 @@ import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
 
 
 @Composable
-fun RollRoute(
+fun TableRoute(
     viewModel: CurrentSetViewModel = hiltViewModel(),
     onTabClicked: (Int) -> Unit
 ) {
@@ -59,14 +59,14 @@ fun RollRoute(
         viewModel.setCurrentSet()
     }
 
-    RollScreen(
+    TableScreen(
         screenState = screenState,
         onTabClicked = onTabClicked
     )
 }
 
 @Composable
-fun RollScreen(
+fun TableScreen(
     screenState: ChosenSetScreenState = ChosenSetScreenState(
         chosenSet = DiceSet(dice = listOf(Die(4), Die(8)), shortcuts = listOf(RollShortcut(name = "Athletics check"))),
     ),
@@ -266,7 +266,7 @@ fun ShortcutCard(
 @Composable
 fun RollScreenPreview_WhenSetChosen() {
     DicePouchTheme {
-        RollScreen()
+        TableScreen()
     }
 }
 
@@ -274,7 +274,7 @@ fun RollScreenPreview_WhenSetChosen() {
 @Composable
 fun RollScreenPreview_WhenNoSetChosen() {
     DicePouchTheme {
-        RollScreen(screenState = ChosenSetScreenState(
+        TableScreen(screenState = ChosenSetScreenState(
             isLoadingCompleted = true,
             chosenSet = null
         ))
@@ -285,7 +285,7 @@ fun RollScreenPreview_WhenNoSetChosen() {
 @Composable
 fun RollScreenPreview_WhenSetChosen_WithNoDiceAndShortcuts() {
     DicePouchTheme {
-        RollScreen(screenState = ChosenSetScreenState(
+        TableScreen(screenState = ChosenSetScreenState(
             isLoadingCompleted = true,
             chosenSet = DiceSet(dice = emptyList(), shortcuts = emptyList())
         ))

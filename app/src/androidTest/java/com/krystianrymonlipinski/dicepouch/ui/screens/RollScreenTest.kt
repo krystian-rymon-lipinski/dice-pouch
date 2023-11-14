@@ -25,7 +25,7 @@ class RollScreenTest : BaseAndroidTest() {
     fun setUp() {
         composeTestRule.setContent {
             DicePouchTheme {
-                RollScreen(screenState = ChosenSetScreenState(
+                TableScreen(screenState = ChosenSetScreenState(
                     isLoadingCompleted = true,
                     chosenSet = DiceSet(
                         DiceSetInfo(0, "A set"),

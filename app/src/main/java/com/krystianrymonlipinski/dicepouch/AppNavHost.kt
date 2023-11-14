@@ -11,7 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.krystianrymonlipinski.dicepouch.ui.screens.DiceSetEditRoute
 import com.krystianrymonlipinski.dicepouch.ui.screens.PouchRoute
-import com.krystianrymonlipinski.dicepouch.ui.screens.RollRoute
+import com.krystianrymonlipinski.dicepouch.ui.screens.TableRoute
 
 @Composable
 fun AppNavHost(navController: NavHostController) {
@@ -21,7 +21,7 @@ fun AppNavHost(navController: NavHostController) {
         modifier = Modifier.background(MaterialTheme.colorScheme.background)
     ) {
         composable(route = ROUTE_ROLL_SCREEN) {
-            RollRoute(
+            TableRoute(
                 onTabClicked = { tabIndex -> if (tabIndex == 1) {
                     navController.navigate(ROUTE_POUCH_SCREEN)
                 } }
