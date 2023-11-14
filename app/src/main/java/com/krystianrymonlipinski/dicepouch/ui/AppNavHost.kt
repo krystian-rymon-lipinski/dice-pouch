@@ -1,0 +1,55 @@
+package com.krystianrymonlipinski.dicepouch.ui
+
+import androidx.compose.foundation.background
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import com.krystianrymonlipinski.dicepouch.ui.screens.DiceSetEditRoute
+import com.krystianrymonlipinski.dicepouch.ui.screens.PouchRoute
+import com.krystianrymonlipinski.dicepouch.ui.screens.TableRoute
+
+@Composable
+fun AppNavHost(navController: NavHostController) {
+    NavHost(
+        navController = navController,
+        startDestination = ROUTE_ROLL_SCREEN,
+        modifier = Modifier.background(MaterialTheme.colorScheme.background)
+    ) {
+        composable(route = ROUTE_ROLL_SCREEN) {
+            TableRoute(
+                onTabClicked = { tabIndex -> if (tabIndex == 1) {
+                    navController.navigate(ROUTE_POUCH_SCREEN)
+                } }
+            )
+        }
+        composable(route = ROUTE_POUCH_SCREEN) {
+            PouchRoute(
+                onTabClicked = { tabIndex -> if (tabIndex == 0) {
+                    navController.navigate(ROUTE_ROLL_SCREEN)
+                } },
+                onBackStackPopped = { navController.popBackStack() },
+                onEditSetClicked = { setInfo ->
+                    navController.navigate("$ROUTE_DICE_SET_EDIT/${setInfo.id}")
+                }
+            )
+        }
+        composable(
+            route = "$ROUTE_DICE_SET_EDIT/{setId}",
+            arguments = listOf(navArgument(name = "setId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            DiceSetEditRoute(
+                chosenSetId = backStackEntry.arguments?.getInt("setId") ?: 0,
+                onUpClicked = { navController.popBackStack() }
+            )
+        }
+    }
+}
+
+const val ROUTE_ROLL_SCREEN = "roll_screen_route"
+const val ROUTE_POUCH_SCREEN = "pouch_screen_route"
+const val ROUTE_DICE_SET_EDIT = "dice_set_edit_route"

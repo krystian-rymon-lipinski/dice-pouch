@@ -1,16 +1,19 @@
 package com.krystianrymonlipinski.dicepouch
 
 import androidx.compose.ui.graphics.Color
-import com.krystianrymonlipinski.dicepouch.data_layer.DiceLocalDataSource
 import com.krystianrymonlipinski.dicepouch.data_layer.DiceLocalDataSourceImpl
+import com.krystianrymonlipinski.dicepouch.data_layer.SetsLocalDataSource
+import com.krystianrymonlipinski.dicepouch.data_layer.SettingsLocalDataSourceImpl
 import com.krystianrymonlipinski.dicepouch.data_layer.ShortcutsLocalDataSourceImpl
+import com.krystianrymonlipinski.dicepouch.model.ChosenSetScreenState
+import com.krystianrymonlipinski.dicepouch.model.DiceSet
+import com.krystianrymonlipinski.dicepouch.model.DiceSetInfo
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
 import com.krystianrymonlipinski.dicepouch.model.RollShortcut
+import com.krystianrymonlipinski.dicepouch.viewmodels.CurrentSetViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -21,6 +24,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.Captor
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
@@ -30,72 +34,69 @@ import org.mockito.kotlin.whenever
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(MockitoJUnitRunner::class)
-class MainActivityViewModelTest {
+class CurrentSetViewModelTest {
 
-    private lateinit var testObj: MainActivityViewModel
+    private lateinit var testObj: CurrentSetViewModel
 
+    @Mock
+    lateinit var setsLocalDataSource: SetsLocalDataSource
     @Mock
     lateinit var diceLocalDataSourceImpl: DiceLocalDataSourceImpl
     @Mock
     lateinit var shortcutsLocalDataSourceImpl: ShortcutsLocalDataSourceImpl
+    @Mock
+    lateinit var settingsLocalDataSourceImpl: SettingsLocalDataSourceImpl
 
     @Captor
     lateinit var dieCaptor: ArgumentCaptor<Die>
     @Captor
     lateinit var shortcutCaptor: ArgumentCaptor<RollShortcut>
 
+
     @Before
     fun setUp() {
         val testDispatcher = UnconfinedTestDispatcher()
         Dispatchers.setMain(testDispatcher)
-
-        whenever(diceLocalDataSourceImpl.getDiceStream()).thenReturn(flowOf(emptyList()))
-        testObj = MainActivityViewModel(diceLocalDataSourceImpl, shortcutsLocalDataSourceImpl)
+        testObj = CurrentSetViewModel(setsLocalDataSource, diceLocalDataSourceImpl,
+            shortcutsLocalDataSourceImpl, settingsLocalDataSourceImpl)
     }
 
     @Test
-    fun detectDiceStreamChange() = runTest {
-        val diceToEmit = listOf(Die(sides = 6, timestampId = 1L))
-        val diceSource = FakeDiceLocalDataSource()
-        val testObj2 = MainActivityViewModel(diceSource, shortcutsLocalDataSourceImpl)
+    fun detectCurrentSetStreamChange() = runTest {
+        val die = Die(sides = 20)
+        val setToEmit = DiceSet(
+            info = DiceSetInfo(id = 10, name = "a_name"),
+            dice = listOf(die),
+            shortcuts = listOf(RollShortcut(name = "sh", setting = RollSetting(die = die)))
+        )
+        whenever(setsLocalDataSource.retrieveSetWithId(anyInt())).thenReturn(flowOf(setToEmit))
+
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
-            testObj2.diceSetState.collect { /* Collector (even an empty one) needed for .stateIn operator to work properly */ }
+            testObj.chosenSetScreenState.collect { /* Collector (even an empty one) needed for .stateIn operator to work properly */ }
         }
 
-        assertEquals(emptyList<Die>(), testObj2.diceSetState.value.dice)
-        diceSource.emitDice(diceToEmit)
-        assertEquals(diceToEmit, testObj2.diceSetState.value.dice)
-    }
-
-    @Test
-    fun detectShortcutsStreamChange() = runTest {
-        val shortcutsToEmit = listOf(RollShortcut(name = "a_name", setting = RollSetting(die = Die(20))))
-        val shortcutsSource = FakeDiceLocalDataSource()
-        val testObj2 = MainActivityViewModel(shortcutsSource, shortcutsLocalDataSourceImpl)
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
-            testObj2.diceSetState.collect { /* Collector (even an empty one) needed for .stateIn operator to work properly */ }
-        }
-
-        assertEquals(emptyList<RollShortcut>(), testObj2.diceSetState.value.shortcuts)
-        shortcutsSource.emitShortcuts(shortcutsToEmit)
-        assertEquals(shortcutsToEmit, testObj2.diceSetState.value.shortcuts)
+        assertEquals(null, testObj.chosenSetScreenState.value.chosenSet)
+        testObj.setCurrentSet(1)
+        assertEquals(setToEmit, testObj.chosenSetScreenState.value.chosenSet)
     }
 
     @Test
     fun addNewDie() = runTest {
         val dieToBeAdded = Die(sides = 6, sideColor = Color.White, numberColor = Color.Black)
+        testObj.chosenSetScreenState.value = ChosenSetScreenState(true, DiceSet())
 
         testObj.addNewDieToSet(numberOfSides = 6)
-        verify(diceLocalDataSourceImpl).addNewDieToSet(capture(dieCaptor))
+        verify(diceLocalDataSourceImpl).addNewDieToSet(anyInt(), capture(dieCaptor))
         assertEqualsDie_withoutTimestampId(dieToBeAdded, dieCaptor.value)
     }
 
     @Test
     fun deleteDie() = runTest {
         val dieToBeDeleted = Die(sides = 8, sideColor = Color.White, numberColor = Color.Black)
-        testObj.deleteDieFromSet(die = dieToBeDeleted)
+        testObj.chosenSetScreenState.value = ChosenSetScreenState(true, DiceSet())
 
-        verify(diceLocalDataSourceImpl).deleteDieFromSet(capture(dieCaptor))
+        testObj.deleteDieFromSet(die = dieToBeDeleted)
+        verify(diceLocalDataSourceImpl).deleteDieFromSet(anyInt(), capture(dieCaptor))
         assertEqualsDie_withoutTimestampId(dieToBeDeleted, dieCaptor.value)
     }
 
@@ -169,19 +170,6 @@ class MainActivityViewModelTest {
     private fun assertEqualsRollShortcut_withoutTimestampId(assumedShortcut: RollShortcut, capturedShortcut: RollShortcut) {
         assertEquals(assumedShortcut.name, capturedShortcut.name)
         assertEqualsShortcutSetting(assumedShortcut.setting, capturedShortcut.setting)
-    }
-
-    private class FakeDiceLocalDataSource : DiceLocalDataSource {
-        private val diceFlow = MutableStateFlow(emptyList<Die>())
-        private val shortcutsFlow = MutableStateFlow(emptyList<RollShortcut>())
-
-        suspend fun emitDice(value: List<Die>) = diceFlow.emit(value)
-        suspend fun emitShortcuts(value: List<RollShortcut>) = shortcutsFlow.emit(value)
-        override fun getDiceStream() = diceFlow
-        override fun getShortcutsStream(): Flow<List<RollShortcut>> = shortcutsFlow
-
-        override suspend fun addNewDieToSet(die: Die) { /* Do nothing */ }
-        override suspend fun deleteDieFromSet(die: Die) { /* Do nothing */ }
     }
 
 }

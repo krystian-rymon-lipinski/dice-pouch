@@ -224,7 +224,8 @@ fun DiceSum(setting: RollSetting, throws: List<Int?>, isCurrentTry: Boolean, cur
     }
 }
 
-@Composable
+
+@Composable //TODO: clean up all conditional modifiers
 fun Modifier.conditionalBorder(condition: Boolean, modifier: @Composable Modifier.() -> Modifier) =
     then(if (condition) modifier.invoke(this) else this)
 

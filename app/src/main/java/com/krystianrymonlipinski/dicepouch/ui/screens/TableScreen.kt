@@ -1,6 +1,5 @@
 package com.krystianrymonlipinski.dicepouch.ui.screens
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,21 +12,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -36,82 +33,127 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.krystianrymonlipinski.dicepouch.MainActivityViewModel
+import com.krystianrymonlipinski.dicepouch.viewmodels.CurrentSetViewModel
+import com.krystianrymonlipinski.dicepouch.ui.DicePouchTabRow
 import com.krystianrymonlipinski.dicepouch.R
+import com.krystianrymonlipinski.dicepouch.model.ChosenSetScreenState
 import com.krystianrymonlipinski.dicepouch.model.DiceSet
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
 import com.krystianrymonlipinski.dicepouch.model.RollShortcut
 import com.krystianrymonlipinski.dicepouch.ui.components.DieImage
+import com.krystianrymonlipinski.dicepouch.ui.components.NoDiceCaption
+import com.krystianrymonlipinski.dicepouch.ui.components.NoShortcutsCaption
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollDialog
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollSettingsDialog
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
 
 
 @Composable
-fun RollRoute(
-    viewModel: MainActivityViewModel = hiltViewModel(),
-    onEditIconClicked: () -> Unit = { }
+fun TableRoute(
+    viewModel: CurrentSetViewModel = hiltViewModel(),
+    onTabClicked: (Int) -> Unit
 ) {
-    val screenState by viewModel.diceSetState.collectAsStateWithLifecycle()
-    RollScreen(
+    val screenState by viewModel.chosenSetScreenState.collectAsStateWithLifecycle()
+    LaunchedEffect(key1 = Unit) {
+        viewModel.setCurrentSet()
+    }
+
+    TableScreen(
         screenState = screenState,
-        onEditIconClicked = onEditIconClicked
+        onTabClicked = onTabClicked
     )
 }
 
 @Composable
-fun RollScreen(
-    screenState: DiceSet = DiceSet(dice = listOf(Die(4), Die(8)), shortcuts = listOf(RollShortcut(name = "Athletics check"))),
-    onEditIconClicked: () -> Unit = { },
+fun TableScreen(
+    screenState: ChosenSetScreenState = ChosenSetScreenState(
+        chosenSet = DiceSet(dice = listOf(Die(4), Die(8)), shortcuts = listOf(RollShortcut(name = "Athletics check"))),
+    ),
+    onTabClicked: (Int) -> Unit = { }
 ) {
     var showRollSettingsDialog by rememberSaveable { mutableStateOf<Die?>(null) }
     var showRollDialog by rememberSaveable { mutableStateOf<RollSetting?>(null) }
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(horizontal = 16.dp)) {
-        ChosenSetName(name = screenState.name, onEditIconClicked = onEditIconClicked)
+
+    Scaffold { paddingValues ->
+        Column(modifier = Modifier
+            .padding(paddingValues)
+            .fillMaxSize()
+        ) {
+            DicePouchTabRow(
+                selectedTabIndex = 0,
+                onTabClicked = { tabIndex -> if (tabIndex != 0) onTabClicked(tabIndex) }
+            )
+            screenState.chosenSet?.let { chosenSet -> ChosenSetElementsLayout(
+                chosenSet = chosenSet,
+                onDieClicked = { die -> showRollSettingsDialog = die },
+                onShortcutClicked = { shortcut -> showRollDialog = shortcut.setting }
+            ) } ?: NoSetChosenCaption()
+
+            showRollSettingsDialog?.let {
+                RollSettingsDialog(
+                    it,
+                    onDismissDialog = { showRollSettingsDialog = null },
+                    onRollButtonClicked = { rollSettings ->
+                        showRollSettingsDialog = null
+                        showRollDialog = rollSettings
+                    }
+                )
+            }
+            showRollDialog?.let {
+                RollDialog(
+                    setting = it,
+                    onConfirmButtonClicked = { showRollDialog = null }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun ChosenSetElementsLayout(
+    chosenSet: DiceSet,
+    onDieClicked: (Die) -> Unit,
+    onShortcutClicked: (RollShortcut) -> Unit
+) {
+    Column(modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)) {
+        ChosenSetName(name = chosenSet.info.name)
         DiceText()
         Spacer(modifier = Modifier.height(8.dp))
-        DiceGrid(
-            diceSet = screenState.dice,
-            onDieClicked = { die -> showRollSettingsDialog = die }
-        )
+
+        if (chosenSet.dice.isEmpty()) NoDiceCaption()
+        else DiceGrid(diceSet = chosenSet.dice, onDieClicked = onDieClicked)
+
         Spacer(modifier = Modifier.height(16.dp))
         ShortcutsText()
-        Spacer(modifier = Modifier.height(8.dp))
-        ShortcutsGrid(
-            shortcutsSet = screenState.shortcuts,
-            onShortcutClicked = { shortcut -> showRollDialog = shortcut.setting }
-        )
-    }
 
-    showRollSettingsDialog?.let {
-        RollSettingsDialog(
-            it,
-            onDismissDialog = { showRollSettingsDialog = null },
-            onRollButtonClicked = { rollSettings ->
-                showRollSettingsDialog = null
-                showRollDialog = rollSettings
-            }
-        )
+        Spacer(modifier = Modifier.height(8.dp))
+        if (chosenSet.shortcuts.isEmpty()) NoShortcutsCaption()
+        else ShortcutsGrid(shortcutsSet = chosenSet.shortcuts, onShortcutClicked = onShortcutClicked)
     }
-    showRollDialog?.let {
-        RollDialog(
-            setting = it,
-            onConfirmButtonClicked = { showRollDialog = null }
+}
+
+@Composable
+fun NoSetChosenCaption() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = stringResource(id = R.string.no_set_chosen),
+            color = MaterialTheme.colorScheme.primary,
+            style = MaterialTheme.typography.headlineSmall
         )
     }
 }
 
 @Composable
-fun ChosenSetName(
-    name: String,
-    onEditIconClicked: () -> Unit
-) {
+fun ChosenSetName(name: String) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -124,13 +166,6 @@ fun ChosenSetName(
                 fontWeight = FontWeight.Bold
             )
         )
-        IconButton(onClick = onEditIconClicked) {
-            Image( //TODO: improve all icon buttons; for their selected state is not highlighted; also use icons, not images
-                imageVector = Icons.Filled.Edit,
-                contentDescription = "edit_set_icon",
-                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
-            )
-        }
     }
 }
 
@@ -229,8 +264,30 @@ fun ShortcutCard(
 
 @Preview(showBackground = true, widthDp = 320, heightDp = 640)
 @Composable
-fun RollScreenPreview() {
+fun RollScreenPreview_WhenSetChosen() {
     DicePouchTheme {
-        RollScreen()
+        TableScreen()
+    }
+}
+
+@Preview(showBackground = true, widthDp = 320, heightDp = 640)
+@Composable
+fun RollScreenPreview_WhenNoSetChosen() {
+    DicePouchTheme {
+        TableScreen(screenState = ChosenSetScreenState(
+            isLoadingCompleted = true,
+            chosenSet = null
+        ))
+    }
+}
+
+@Preview(showBackground = true, widthDp = 320, heightDp = 640)
+@Composable
+fun RollScreenPreview_WhenSetChosen_WithNoDiceAndShortcuts() {
+    DicePouchTheme {
+        TableScreen(screenState = ChosenSetScreenState(
+            isLoadingCompleted = true,
+            chosenSet = DiceSet(dice = emptyList(), shortcuts = emptyList())
+        ))
     }
 }

@@ -1,5 +1,6 @@
 package com.krystianrymonlipinski.dicepouch.model
 
+import androidx.compose.ui.graphics.Color
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -15,6 +16,13 @@ class DiceSetTest {
     @Before
     fun setUp() {
         testObj = DiceSet()
+    }
+
+    @Test
+    fun changeInfo() {
+        val newInfo = DiceSetInfo(name = "b_name", numbersColor = Color.LightGray)
+        testObj = testObj.changeInfo(newInfo = newInfo)
+        assertEquals(newInfo, testObj.info)
     }
 
     @Test
@@ -36,12 +44,6 @@ class DiceSetTest {
 
         assertEquals(1, testObj.dice.size)
         assertEquals(dieToRemain, testObj.dice[0])
-    }
-
-    @Test
-    fun changeName() {
-        testObj = testObj.changeName("new_name")
-        assertEquals("new_name", testObj.name)
     }
 
     @Test

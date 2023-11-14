@@ -1,26 +1,39 @@
 <resources>
     <string name="app_name">Dice Pouch</string>
 
+    <string name="tab_table">Table</string>
+    <string name="tab_pouch">Pouch</string>
+
     <string name="dice_caption">Dice</string>
     <string name="shortcuts_caption">Shortcuts</string>
 
     <string name="roll_setting_dice_number">dice</string>
     <string name="roll_setting_modifier">mod</string>
     <string name="btn_roll">Roll</string>
+    <string name="no_dice_added">No dice added</string>
+    <string name="no_shortcuts_added">No shortcuts added</string>
 
     <string name="btn_roll_cancel">Cancel</string>
     <string name="btn_roll_confirm_with_result">%d, got it!</string>
 
-    <string name="btn_add_new_die">Add</string>
+    <string name="no_set_chosen">No dice set chosen</string>
+
+    <string name="btn_dialog_add">Add</string>
     <string name="sides_caption">sides</string>
 
     <string name="new_shortcut">New shortcut</string>
-    <string name="btn_save">Save</string>
+    <string name="btn_dialog_save">Save</string>
 
     <string name="no_dice_snackbar_message">Creating shortcut needs a die</string> <!-- TODO: improve snackbar message -->
     <string name="btn_yes">Yes</string>
     <string name="btn_no">No</string>
     <string name="delete_die_dialog_message">Die chosen to be deleted is a base of at least one
         shortcut. Deleting it will result with them gone as well. Do you wish to proceed?</string> <!-- TODO: improve popup message -->
+
+    <string name="dice_sides_color_colon">Dice sides color:</string>
+    <string name="dice_numbers_color_colon">Dice numbers color:</string>
+
+    <string name="pouch_screen_top_bar_text">Pouch</string>
+    <string name="plus_sign">+</string>
 
 </resources>

@@ -37,7 +37,7 @@ fun NewDieDialog(
         properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true),
         onDismissRequest = onDialogDismissed,
         confirmButton = { CenteredDialogConfirmButton(
-                text = stringResource(id = R.string.btn_add_new_die),
+                text = stringResource(id = R.string.btn_dialog_add),
                 onClick = { onNewDieAdded(currentSidesNumber) }
         ) },
         text = { NewDieDialogContent(

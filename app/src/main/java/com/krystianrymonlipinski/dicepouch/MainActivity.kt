@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.navigation.compose.rememberNavController
+import com.krystianrymonlipinski.dicepouch.ui.AppNavHost
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
 import dagger.hilt.android.AndroidEntryPoint
 
