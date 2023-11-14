@@ -23,6 +23,11 @@ fun DicePouchTabRow(
             onClick = { if (selectedTabIndex != TAB_POUCH) onTabClicked(TAB_POUCH) },
             text = { Text(text = stringResource(id = R.string.tab_pouch)) }
         )
+        Tab(
+            selected = selectedTabIndex == TAB_SETTINGS,
+            onClick = { if (selectedTabIndex != TAB_SETTINGS) onTabClicked(TAB_SETTINGS) },
+            text = { Text(text = stringResource(id = R.string.tab_settings)) }
+        )
     }
 }
 
