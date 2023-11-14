@@ -14,14 +14,18 @@ fun DicePouchTabRow(
 ) {
     TabRow(selectedTabIndex = selectedTabIndex) {
         Tab(
-            selected = selectedTabIndex == 0,
-            onClick = { onTabClicked(0) },
+            selected = selectedTabIndex == TAB_TABLE,
+            onClick = { if (selectedTabIndex != TAB_TABLE) onTabClicked(TAB_TABLE) },
             text = { Text(text = stringResource(R.string.tab_table)) }
         )
         Tab(
-            selected = selectedTabIndex == 1,
-            onClick = { onTabClicked(1) },
+            selected = selectedTabIndex == TAB_POUCH,
+            onClick = { if (selectedTabIndex != TAB_POUCH) onTabClicked(TAB_POUCH) },
             text = { Text(text = stringResource(id = R.string.tab_pouch)) }
         )
     }
 }
+
+const val TAB_TABLE = 0
+const val TAB_POUCH = 1
+const val TAB_SETTINGS = 2

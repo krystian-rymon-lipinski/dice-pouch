@@ -50,6 +50,7 @@ import com.krystianrymonlipinski.dicepouch.R
 import com.krystianrymonlipinski.dicepouch.model.DiceSetInfo
 import com.krystianrymonlipinski.dicepouch.model.PouchScreenState
 import com.krystianrymonlipinski.dicepouch.room.AppDatabase
+import com.krystianrymonlipinski.dicepouch.ui.TAB_POUCH
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.NewSetDialog
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.conditionalBorder
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
@@ -136,8 +137,8 @@ fun PouchScreen(
             .padding(paddingValues)
             .fillMaxWidth()) {
             DicePouchTabRow(
-                selectedTabIndex = 1,
-                onTabClicked = { tabIndex -> if (tabIndex != 1) onTabClicked(tabIndex) }
+                selectedTabIndex = TAB_POUCH,
+                onTabClicked = { tabIndex -> onTabClicked(tabIndex) }
             )
             SetsGrid(
                 screenState = screenState,

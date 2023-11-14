@@ -41,6 +41,7 @@ import com.krystianrymonlipinski.dicepouch.model.DiceSet
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
 import com.krystianrymonlipinski.dicepouch.model.RollShortcut
+import com.krystianrymonlipinski.dicepouch.ui.TAB_TABLE
 import com.krystianrymonlipinski.dicepouch.ui.components.DieImage
 import com.krystianrymonlipinski.dicepouch.ui.components.NoDiceCaption
 import com.krystianrymonlipinski.dicepouch.ui.components.NoShortcutsCaption
@@ -82,8 +83,8 @@ fun TableScreen(
             .fillMaxSize()
         ) {
             DicePouchTabRow(
-                selectedTabIndex = 0,
-                onTabClicked = { tabIndex -> if (tabIndex != 0) onTabClicked(tabIndex) }
+                selectedTabIndex = TAB_TABLE,
+                onTabClicked = { tabIndex -> onTabClicked(tabIndex) }
             )
             screenState.chosenSet?.let { chosenSet -> ChosenSetElementsLayout(
                 chosenSet = chosenSet,
