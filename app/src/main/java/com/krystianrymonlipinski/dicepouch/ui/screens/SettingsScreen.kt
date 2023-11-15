@@ -21,11 +21,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.krystianrymonlipinski.dicepouch.R
+import com.krystianrymonlipinski.dicepouch.model.AppSetting
 import com.krystianrymonlipinski.dicepouch.ui.DicePouchTabRow
 import com.krystianrymonlipinski.dicepouch.ui.TAB_SETTINGS
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
@@ -41,8 +43,13 @@ fun SettingsRoute(
 
 @Composable
 fun SettingsScreen(
-    onTabClicked: (Int) -> Unit = {}
+    onTabClicked: (Int) -> Unit = {},
+    appSetting: AppSetting = AppSetting(),
+    onSettingsChanged: (AppSetting) -> Unit = {}
 ) {
+
+    var savedSettings by rememberSaveable { mutableStateOf(appSetting) }
+
     Scaffold { paddingValues ->
         Column(modifier = Modifier
             .fillMaxSize()
@@ -51,13 +58,38 @@ fun SettingsScreen(
                 selectedTabIndex = TAB_SETTINGS,
                 onTabClicked = { tabIndex -> onTabClicked(tabIndex) }
             )
-            SettingsElementsLayout()
+            SettingsElementsLayout(
+                savedSettings = savedSettings,
+                onSoundSettingSwitched = { isOn ->
+                    savedSettings = savedSettings.setIsSoundOn(isOn)
+                    onSettingsChanged(savedSettings)
+                },
+                onThrowTimeChange = { newValue -> savedSettings = savedSettings.setSingleThrowTimeMillis(newValue) },
+                onThrowTimeChangeFinished = { onSettingsChanged(savedSettings) },
+                onThrowDelayTimeChange = { newValue -> savedSettings = savedSettings.setDelayBetweenThrowTimeMillis(newValue) },
+                onThrowDelayTimeChangeFinished = { onSettingsChanged(savedSettings) },
+                onAutocloseSettingChanged = { isOn ->
+                    savedSettings = savedSettings.setIsRollPopupAutodismissOn(isOn)
+                    onSettingsChanged(savedSettings)
+                },
+                onPopupDismissTimeChange = { newValue -> savedSettings = savedSettings.setRollPopupAutodismissTimeMillis(newValue) },
+                onPopupDismissTimeChangeFinished = { onSettingsChanged(savedSettings) }
+            )
         }
     }
 }
 
 @Composable
 fun SettingsElementsLayout(
+    savedSettings: AppSetting,
+    onSoundSettingSwitched: (Boolean) -> Unit,
+    onThrowTimeChange: (Int) -> Unit,
+    onThrowTimeChangeFinished: () -> Unit,
+    onThrowDelayTimeChange: (Int) -> Unit,
+    onThrowDelayTimeChangeFinished: () -> Unit,
+    onAutocloseSettingChanged: (Boolean) -> Unit,
+    onPopupDismissTimeChange: (Int) -> Unit,
+    onPopupDismissTimeChangeFinished: () -> Unit
 ) {
     Column(
         modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)
@@ -71,15 +103,32 @@ fun SettingsElementsLayout(
             thickness = 2.dp,
             color = MaterialTheme.colorScheme.secondary
         )
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-        RollSoundSettingRow()
-        Spacer(modifier = Modifier.height(8.dp))
-        RollTimeSettingColumn()
-        Spacer(modifier = Modifier.height(8.dp))
-        ThrowDelaySettingRow()
-        Spacer(modifier = Modifier.height(8.dp))
-        RollPopupClosingSettingRow()
+        RollSoundSettingRow(
+            isSoundOn = savedSettings.isSoundOn,
+            onSoundSettingSwitched = onSoundSettingSwitched
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        SingleThrowTimeSettingColumn(
+            singleThrowTimeMillis = savedSettings.singleThrowTimeMillis,
+            onThrowTimeChange = onThrowTimeChange,
+            onThrowTimeChangeFinished = onThrowTimeChangeFinished
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        ThrowDelaySettingRow(
+            throwDelayTimeMillis = savedSettings.delayBetweenThrowsTimeMillis,
+            onThrowDelayTimeChange = onThrowDelayTimeChange,
+            onThrowDelayTimeChangeFinished = onThrowDelayTimeChangeFinished
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        RollPopupClosingSettingRow(
+            isPopupAutocloseOn = savedSettings.isRollPopupAutodismissOn,
+            onAutocloseSettingChanged = onAutocloseSettingChanged,
+            popupDismissTimeMillis = savedSettings.rollPopupAutodismissTimeMillis,
+            onPopupDismissTimeChange = onPopupDismissTimeChange,
+            onPopupDismissTimeChangeFinished = onPopupDismissTimeChangeFinished
+        )
     }
 }
 
@@ -93,7 +142,10 @@ fun RollingSettingsCaption() {
 }
 
 @Composable
-fun RollSoundSettingRow() {
+fun RollSoundSettingRow(
+    isSoundOn: Boolean,
+    onSoundSettingSwitched: (Boolean) -> Unit
+) {
     Row(
         modifier = Modifier.fillMaxWidth(1f),
         verticalAlignment = Alignment.CenterVertically
@@ -104,22 +156,26 @@ fun RollSoundSettingRow() {
             style = MaterialTheme.typography.bodyMedium
                 .copy(fontWeight = FontWeight.Bold)
         )
-        Switch(checked = false, onCheckedChange = { })
+        Switch(checked = isSoundOn, onCheckedChange = onSoundSettingSwitched)
     }
 }
 
 @Composable
-fun RollTimeSettingColumn() {
+fun SingleThrowTimeSettingColumn(
+    singleThrowTimeMillis: Int,
+    onThrowTimeChange: (Int) -> Unit,
+    onThrowTimeChangeFinished: () -> Unit
+) {
     Column(modifier = Modifier.fillMaxWidth(1f)) {
         Text(
-            text = stringResource(id = R.string.setting_time_caption, DEFAULT_ROLL_TIME_MILLIS.toInt()),
+            text = stringResource(id = R.string.setting_time_caption, singleThrowTimeMillis),
             style = MaterialTheme.typography.bodyMedium
                 .copy(fontWeight = FontWeight.Bold)
         )
         Slider(
-            value = DEFAULT_ROLL_TIME_MILLIS,
-            onValueChange = { },
-            onValueChangeFinished = { },
+            value = singleThrowTimeMillis.toFloat(),
+            onValueChange = { newValue -> onThrowTimeChange(newValue.toInt()) },
+            onValueChangeFinished = onThrowTimeChangeFinished,
             valueRange = MIN_ROLL_TIME_MILLIS.rangeTo(MAX_ROLL_TIME_MILLIS),
             steps = ROLL_TIME_STEPS_NUMBER
         )
@@ -127,17 +183,21 @@ fun RollTimeSettingColumn() {
 }
 
 @Composable
-fun ThrowDelaySettingRow() {
+fun ThrowDelaySettingRow(
+    throwDelayTimeMillis: Int,
+    onThrowDelayTimeChange: (Int) -> Unit,
+    onThrowDelayTimeChangeFinished: () -> Unit
+) {
     Column(modifier = Modifier.fillMaxWidth(1f)) {
         Text(
-            text = stringResource(id = R.string.setting_throw_delay_caption, DEFAULT_THROW_DELAY_TIME_MILLIS.toInt()),
+            text = stringResource(id = R.string.setting_throw_delay_caption, throwDelayTimeMillis),
             style = MaterialTheme.typography.bodyMedium
                 .copy(fontWeight = FontWeight.Bold)
         )
         Slider(
-            value = DEFAULT_THROW_DELAY_TIME_MILLIS,
-            onValueChange = { },
-            onValueChangeFinished = { },
+            value = throwDelayTimeMillis.toFloat(),
+            onValueChange = { newValue -> onThrowDelayTimeChange(newValue.toInt()) },
+            onValueChangeFinished = onThrowDelayTimeChangeFinished,
             valueRange = MIN_THROW_DELAY_TIME_MILLIS.rangeTo(MAX_THROW_DELAY_TIME_MILLIS),
             steps = THROW_DELAY_STEPS_NUMBER
         )
@@ -145,9 +205,13 @@ fun ThrowDelaySettingRow() {
 }
 
 @Composable
-fun RollPopupClosingSettingRow() {
-    var automaticPopupCloseChecked by rememberSaveable { mutableStateOf(false) }
-
+fun RollPopupClosingSettingRow(
+    isPopupAutocloseOn: Boolean,
+    onAutocloseSettingChanged: (Boolean) -> Unit,
+    popupDismissTimeMillis: Int,
+    onPopupDismissTimeChange: (Int) -> Unit,
+    onPopupDismissTimeChangeFinished: () -> Unit
+) {
     Column(modifier = Modifier.fillMaxWidth(1f)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
            Text(
@@ -156,20 +220,24 @@ fun RollPopupClosingSettingRow() {
                style = MaterialTheme.typography.bodyMedium
                    .copy(fontWeight = FontWeight.Bold)
            )
-           Switch(checked = false, onCheckedChange = { automaticPopupCloseChecked = it })
+           Switch(
+               modifier = Modifier.testTag("popup_autodismiss_switch"),
+               checked = isPopupAutocloseOn,
+               onCheckedChange = onAutocloseSettingChanged
+           )
         }
         Spacer(modifier = Modifier.height(2.dp))
 
-        AnimatedVisibility(visible = automaticPopupCloseChecked) {
+        AnimatedVisibility(visible = isPopupAutocloseOn) {
             Column {
                 Text(
-                    text = stringResource(id = R.string.setting_roll_popup_dismiss_time, DEFAULT_POPUP_DISMISS_TIME_MILLIS.toInt()),
+                    text = stringResource(id = R.string.setting_roll_popup_dismiss_time, popupDismissTimeMillis),
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Slider(
-                    value = DEFAULT_POPUP_DISMISS_TIME_MILLIS,
-                    onValueChange = { },
-                    onValueChangeFinished = { },
+                    value = popupDismissTimeMillis.toFloat(),
+                    onValueChange = { newValue -> onPopupDismissTimeChange(newValue.toInt()) },
+                    onValueChangeFinished = onPopupDismissTimeChangeFinished,
                     valueRange = MIN_POPUP_DISMISS_TIME_MILLIS.rangeTo(MAX_POPUP_DISMISS_TIME_MILLIS),
                     steps = POPUP_DISMISS_TIME_STEPS_NUMBER
                 )
