@@ -3,6 +3,7 @@
 
     <string name="tab_table">Table</string>
     <string name="tab_pouch">Pouch</string>
+    <string name="tab_settings">Settings</string>
 
     <string name="dice_caption">Dice</string>
     <string name="shortcuts_caption">Shortcuts</string>
@@ -35,5 +36,14 @@
 
     <string name="pouch_screen_top_bar_text">Pouch</string>
     <string name="plus_sign">+</string>
+
+    <!-- SettingsScreen -->
+    <string name="tab_bar_title">Settings</string>
+    <string name="rolling_dice_caption">Rolling dice</string>
+    <string name="setting_sound_caption">Sound</string>
+    <string name="setting_time_caption">Single throw time: %d ms</string>
+    <string name="setting_throw_delay_caption">Delay between throws: %d ms</string>
+    <string name="setting_roll_popup_automatic_dismiss">Automatic roll popup dismiss</string>
+    <string name="setting_roll_popup_dismiss_time">After: %d ms</string>
 
 </resources>
