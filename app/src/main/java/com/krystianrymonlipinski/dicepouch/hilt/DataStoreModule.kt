@@ -3,7 +3,7 @@ package com.krystianrymonlipinski.dicepouch.hilt
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import com.krystianrymonlipinski.dicepouch.data_store.currentSetDataStore
+import com.krystianrymonlipinski.dicepouch.data_store.appSettingsDataStore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,8 +17,8 @@ object DataStoreModule {
 
     @ViewModelScoped
     @Provides
-    fun provideCurrentSetDataStore(@ApplicationContext context: Context) : DataStore<Preferences> {
-        return context.currentSetDataStore
+    fun provideAppSettingsDataStore(@ApplicationContext context: Context) : DataStore<Preferences> {
+        return context.appSettingsDataStore
     }
 
 }

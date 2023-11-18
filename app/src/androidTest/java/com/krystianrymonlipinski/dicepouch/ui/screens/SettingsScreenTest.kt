@@ -5,7 +5,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.krystianrymonlipinski.dicepouch.BaseAndroidTest
-import com.krystianrymonlipinski.dicepouch.model.AppSetting
+import com.krystianrymonlipinski.dicepouch.model.RollingSettings
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
 import org.junit.Before
 import org.junit.Test
@@ -16,7 +16,7 @@ class SettingsScreenTest : BaseAndroidTest() {
     fun setUp() {
         composeTestRule.setContent {
             DicePouchTheme {
-                SettingsScreen(appSetting = AppSetting())
+                SettingsScreen(settingsScreenState = RollingSettings())
             }
         }
     }

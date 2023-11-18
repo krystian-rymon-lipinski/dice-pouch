@@ -4,7 +4,7 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class AppSetting(
+data class RollingSettings(
     val isSoundOn: Boolean = false,
     val singleThrowTimeMillis: Int = 1000,
     val delayBetweenThrowsTimeMillis: Int = 500,
@@ -12,23 +12,23 @@ data class AppSetting(
     val rollPopupAutodismissTimeMillis: Int = 500
 ) : Parcelable {
 
-    fun setIsSoundOn(isOn: Boolean) : AppSetting {
+    fun setIsSoundOn(isOn: Boolean) : RollingSettings {
         return copy(isSoundOn = isOn)
     }
 
-    fun setSingleThrowTimeMillis(timeMillis: Int) : AppSetting {
+    fun setSingleThrowTimeMillis(timeMillis: Int) : RollingSettings {
         return copy(singleThrowTimeMillis = timeMillis)
     }
 
-    fun setDelayBetweenThrowTimeMillis(timeMillis: Int) : AppSetting {
+    fun setDelayBetweenThrowTimeMillis(timeMillis: Int) : RollingSettings {
         return copy(delayBetweenThrowsTimeMillis = timeMillis)
     }
 
-    fun setIsRollPopupAutodismissOn(isOn: Boolean) : AppSetting {
+    fun setIsRollPopupAutodismissOn(isOn: Boolean) : RollingSettings {
         return copy(isRollPopupAutodismissOn = isOn)
     }
 
-    fun setRollPopupAutodismissTimeMillis(timeMillis: Int) : AppSetting {
+    fun setRollPopupAutodismissTimeMillis(timeMillis: Int) : RollingSettings {
         return copy(rollPopupAutodismissTimeMillis = timeMillis)
     }
 }

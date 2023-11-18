@@ -26,29 +26,39 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.krystianrymonlipinski.dicepouch.R
-import com.krystianrymonlipinski.dicepouch.model.AppSetting
+import com.krystianrymonlipinski.dicepouch.model.RollingSettings
 import com.krystianrymonlipinski.dicepouch.ui.DicePouchTabRow
 import com.krystianrymonlipinski.dicepouch.ui.TAB_SETTINGS
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
+import com.krystianrymonlipinski.dicepouch.viewmodels.SettingsViewModel
 
 @Composable
 fun SettingsRoute(
+    settingsViewModel: SettingsViewModel = hiltViewModel(),
     onTabClicked: (Int) -> Unit
 ) {
+    val settingsScreenState by settingsViewModel.rollingSettingsStream.collectAsStateWithLifecycle()
+
     SettingsScreen(
-        onTabClicked = onTabClicked
+        onTabClicked = onTabClicked,
+        settingsScreenState = settingsScreenState,
+        onSettingsChanged = { newSettings ->
+            settingsViewModel.saveSettings(newSettings)
+        }
     )
 }
 
 @Composable
 fun SettingsScreen(
     onTabClicked: (Int) -> Unit = {},
-    appSetting: AppSetting = AppSetting(),
-    onSettingsChanged: (AppSetting) -> Unit = {}
+    settingsScreenState: RollingSettings = RollingSettings(),
+    onSettingsChanged: (RollingSettings) -> Unit = {}
 ) {
 
-    var savedSettings by rememberSaveable { mutableStateOf(appSetting) }
+    var savedSettings by rememberSaveable { mutableStateOf(settingsScreenState) }
 
     Scaffold { paddingValues ->
         Column(modifier = Modifier
@@ -81,7 +91,7 @@ fun SettingsScreen(
 
 @Composable
 fun SettingsElementsLayout(
-    savedSettings: AppSetting,
+    savedSettings: RollingSettings,
     onSoundSettingSwitched: (Boolean) -> Unit,
     onThrowTimeChange: (Int) -> Unit,
     onThrowTimeChangeFinished: () -> Unit,
@@ -269,7 +279,3 @@ private const val MIN_POPUP_DISMISS_TIME_MILLIS = 200f
 private const val MAX_POPUP_DISMISS_TIME_MILLIS = 3000f
 private const val POPUP_DISMISS_TIME_STEP_MILLIS = 10f
 private const val POPUP_DISMISS_TIME_STEPS_NUMBER = ((MAX_POPUP_DISMISS_TIME_MILLIS - MIN_POPUP_DISMISS_TIME_MILLIS) / POPUP_DISMISS_TIME_STEP_MILLIS).toInt() - 1
-
-private const val DEFAULT_ROLL_TIME_MILLIS = 1000f
-private const val DEFAULT_THROW_DELAY_TIME_MILLIS = 500f
-private const val DEFAULT_POPUP_DISMISS_TIME_MILLIS = 1000f

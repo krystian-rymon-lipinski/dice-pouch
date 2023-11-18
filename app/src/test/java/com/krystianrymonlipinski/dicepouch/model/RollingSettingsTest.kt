@@ -5,13 +5,13 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
-class AppSettingTest {
+class RollingSettingsTest {
 
-    lateinit var testObj: AppSetting
+    lateinit var testObj: RollingSettings
 
     @Before
     fun setUp() {
-        testObj = AppSetting(
+        testObj = RollingSettings(
             isSoundOn = false,
             singleThrowTimeMillis = 1000,
             delayBetweenThrowsTimeMillis = 500,
