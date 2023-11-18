@@ -6,6 +6,7 @@ import com.krystianrymonlipinski.dicepouch.data_layer.SettingsLocalDataSource
 import com.krystianrymonlipinski.dicepouch.data_layer.SettingsLocalDataSourceImpl
 import com.krystianrymonlipinski.dicepouch.model.DiceSet
 import com.krystianrymonlipinski.dicepouch.model.DiceSetInfo
+import com.krystianrymonlipinski.dicepouch.model.RollingSettings
 import com.krystianrymonlipinski.dicepouch.viewmodels.PouchViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -120,6 +121,8 @@ class PouchViewModelTest {
         override fun retrieveCurrentSetId(): Flow<Int?> = setIdFlow
 
         override suspend fun changeCurrentSet(chosenId: Int) { /* Do nothing */ }
+        override fun retrieveRollingSettings(): Flow<RollingSettings> = flowOf(RollingSettings())
+        override suspend fun saveRollingSettings(rollingSettings: RollingSettings) { /* Do nothing */ }
     }
 
 }

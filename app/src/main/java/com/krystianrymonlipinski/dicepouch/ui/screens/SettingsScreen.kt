@@ -27,7 +27,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.krystianrymonlipinski.dicepouch.R
 import com.krystianrymonlipinski.dicepouch.model.RollingSettings
 import com.krystianrymonlipinski.dicepouch.ui.DicePouchTabRow
@@ -40,11 +39,10 @@ fun SettingsRoute(
     settingsViewModel: SettingsViewModel = hiltViewModel(),
     onTabClicked: (Int) -> Unit
 ) {
-    val settingsScreenState by settingsViewModel.rollingSettingsStream.collectAsStateWithLifecycle()
 
     SettingsScreen(
-        onTabClicked = onTabClicked,
-        settingsScreenState = settingsScreenState,
+        onTabClicked = { tabIndex -> onTabClicked(tabIndex) },
+        settingsScreenState = settingsViewModel.retrieveSettings(),
         onSettingsChanged = { newSettings ->
             settingsViewModel.saveSettings(newSettings)
         }
@@ -58,7 +56,7 @@ fun SettingsScreen(
     onSettingsChanged: (RollingSettings) -> Unit = {}
 ) {
 
-    var savedSettings by rememberSaveable { mutableStateOf(settingsScreenState) }
+    var currentSettings by rememberSaveable { mutableStateOf(settingsScreenState) }
 
     Scaffold { paddingValues ->
         Column(modifier = Modifier
@@ -69,21 +67,21 @@ fun SettingsScreen(
                 onTabClicked = { tabIndex -> onTabClicked(tabIndex) }
             )
             SettingsElementsLayout(
-                savedSettings = savedSettings,
+                savedSettings = currentSettings,
                 onSoundSettingSwitched = { isOn ->
-                    savedSettings = savedSettings.setIsSoundOn(isOn)
-                    onSettingsChanged(savedSettings)
+                    currentSettings = currentSettings.setIsSoundOn(isOn)
+                    onSettingsChanged(currentSettings)
                 },
-                onThrowTimeChange = { newValue -> savedSettings = savedSettings.setSingleThrowTimeMillis(newValue) },
-                onThrowTimeChangeFinished = { onSettingsChanged(savedSettings) },
-                onThrowDelayTimeChange = { newValue -> savedSettings = savedSettings.setDelayBetweenThrowTimeMillis(newValue) },
-                onThrowDelayTimeChangeFinished = { onSettingsChanged(savedSettings) },
+                onThrowTimeChange = { newValue -> currentSettings = currentSettings.setSingleThrowTimeMillis(newValue) },
+                onThrowTimeChangeFinished = { onSettingsChanged(currentSettings) },
+                onThrowDelayTimeChange = { newValue -> currentSettings = currentSettings.setDelayBetweenThrowTimeMillis(newValue) },
+                onThrowDelayTimeChangeFinished = { onSettingsChanged(currentSettings) },
                 onAutocloseSettingChanged = { isOn ->
-                    savedSettings = savedSettings.setIsRollPopupAutodismissOn(isOn)
-                    onSettingsChanged(savedSettings)
+                    currentSettings = currentSettings.setIsRollPopupAutodismissOn(isOn)
+                    onSettingsChanged(currentSettings)
                 },
-                onPopupDismissTimeChange = { newValue -> savedSettings = savedSettings.setRollPopupAutodismissTimeMillis(newValue) },
-                onPopupDismissTimeChangeFinished = { onSettingsChanged(savedSettings) }
+                onPopupDismissTimeChange = { newValue -> currentSettings = currentSettings.setRollPopupAutodismissTimeMillis(newValue) },
+                onPopupDismissTimeChangeFinished = { onSettingsChanged(currentSettings) }
             )
         }
     }

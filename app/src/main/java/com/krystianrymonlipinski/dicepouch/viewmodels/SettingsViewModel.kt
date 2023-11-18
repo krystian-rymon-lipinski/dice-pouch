@@ -5,10 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.krystianrymonlipinski.dicepouch.data_layer.SettingsLocalDataSource
 import com.krystianrymonlipinski.dicepouch.model.RollingSettings
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.single
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -16,17 +15,18 @@ class SettingsViewModel @Inject constructor(
     private val settingsLocalDataSource: SettingsLocalDataSource
 ) : ViewModel() {
 
-    val rollingSettingsStream = settingsLocalDataSource.retrieveRollingSettings()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = RollingSettings()
-        )
 
-    fun saveSettings(rollingSettings: RollingSettings) {
+    fun saveSettings(settings: RollingSettings) {
         viewModelScope.launch {
-            Timber.d("HERE; view mode save settings")
-            settingsLocalDataSource.saveRollingSettings(rollingSettings)
+            settingsLocalDataSource.saveRollingSettings(settings)
         }
+    }
+
+    fun retrieveSettings() : RollingSettings {
+        var settings = RollingSettings()
+        viewModelScope.launch {
+            settings = settingsLocalDataSource.retrieveRollingSettings().take(1).single()
+        }
+        return settings
     }
 }
