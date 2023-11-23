@@ -19,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -37,21 +38,28 @@ import com.krystianrymonlipinski.dicepouch.R
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
 import com.krystianrymonlipinski.dicepouch.model.RollState
+import com.krystianrymonlipinski.dicepouch.model.RollingSettings
 import com.krystianrymonlipinski.dicepouch.model.TryState
 import com.krystianrymonlipinski.dicepouch.ui.components.DieImage
 import com.krystianrymonlipinski.dicepouch.ui.components.CenteredDialogConfirmButton
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 @Composable
 fun RollDialog(
     setting: RollSetting = RollSetting(Die(6), 2, 2),
+    rollingSettings: RollingSettings = RollingSettings(),
     onConfirmButtonClicked: () -> Unit = {},
 ) {
     val dialogStateHolder = rememberRollDialogStateHolder(setting)
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedRollProcess(
         currentState = dialogStateHolder.rollState,
+        rollingSettings = rollingSettings,
         onNewRandomValue = { newValue -> dialogStateHolder.updateRandomizer(newValue) },
         onSingleThrowFinished = {
             dialogStateHolder.addThrowResult()
@@ -64,6 +72,13 @@ fun RollDialog(
         },
         onRollFinished = {
             dialogStateHolder.markChosenTry()
+            if (rollingSettings.isRollPopupAutodismissOn) {
+                coroutineScope.launch(Dispatchers.Main) {
+                    delay(rollingSettings.rollPopupAutodismissTimeMillis.toLong())
+                    onConfirmButtonClicked()
+                }
+
+            }
         }
     )
 

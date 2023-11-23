@@ -10,11 +10,14 @@ import com.krystianrymonlipinski.dicepouch.model.ChosenSetScreenState
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
 import com.krystianrymonlipinski.dicepouch.model.RollShortcut
+import com.krystianrymonlipinski.dicepouch.model.RollingSettings
 import com.krystianrymonlipinski.dicepouch.room.AppDatabase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.flow.singleOrNull
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -30,6 +33,11 @@ class CurrentSetViewModel @Inject constructor(
 
     private val currentSetId: MutableStateFlow<Int?> = MutableStateFlow(null)
     val chosenSetScreenState: MutableStateFlow<ChosenSetScreenState> = MutableStateFlow(ChosenSetScreenState())
+    val rollingSettingsState = settingsLocalDataSource.retrieveRollingSettings().stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = RollingSettings()
+    )
 
     fun setCurrentSet(chosenSetId: Int? = null) {
         viewModelScope.launch {

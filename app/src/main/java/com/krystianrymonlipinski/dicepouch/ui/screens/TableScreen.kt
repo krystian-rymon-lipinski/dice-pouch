@@ -41,6 +41,7 @@ import com.krystianrymonlipinski.dicepouch.model.DiceSet
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
 import com.krystianrymonlipinski.dicepouch.model.RollShortcut
+import com.krystianrymonlipinski.dicepouch.model.RollingSettings
 import com.krystianrymonlipinski.dicepouch.ui.TAB_TABLE
 import com.krystianrymonlipinski.dicepouch.ui.components.DieImage
 import com.krystianrymonlipinski.dicepouch.ui.components.NoDiceCaption
@@ -56,12 +57,15 @@ fun TableRoute(
     onTabClicked: (Int) -> Unit
 ) {
     val screenState by viewModel.chosenSetScreenState.collectAsStateWithLifecycle()
+    val rollingSettings by viewModel.rollingSettingsState.collectAsStateWithLifecycle()
+
     LaunchedEffect(key1 = Unit) {
         viewModel.setCurrentSet()
     }
 
     TableScreen(
         screenState = screenState,
+        rollingSettings = rollingSettings,
         onTabClicked = onTabClicked
     )
 }
@@ -71,6 +75,7 @@ fun TableScreen(
     screenState: ChosenSetScreenState = ChosenSetScreenState(
         chosenSet = DiceSet(dice = listOf(Die(4), Die(8)), shortcuts = listOf(RollShortcut(name = "Athletics check"))),
     ),
+    rollingSettings: RollingSettings = RollingSettings(),
     onTabClicked: (Int) -> Unit = { }
 ) {
     var showRollSettingsDialog by rememberSaveable { mutableStateOf<Die?>(null) }
@@ -105,6 +110,7 @@ fun TableScreen(
             showRollDialog?.let {
                 RollDialog(
                     setting = it,
+                    rollingSettings = rollingSettings,
                     onConfirmButtonClicked = { showRollDialog = null }
                 )
             }
