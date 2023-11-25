@@ -6,6 +6,7 @@ import com.krystianrymonlipinski.dicepouch.LaunchedRollProcess
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
 import com.krystianrymonlipinski.dicepouch.model.RollState
+import com.krystianrymonlipinski.dicepouch.model.RollingSettings
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -77,7 +78,10 @@ class LaunchedRollProcessTest : BaseAndroidTest() {
     ) {
         LaunchedRollProcess(
             currentState = state,
+            rollingSettings = RollingSettings(),
+            onSingleThrowStarted = { },
             onNewRandomValue = { },
+            onRandomizationEnded = { },
             onSingleThrowFinished = onSingleThrowFinished,
             onTryFinished = { },
             onRollFinished = onRollFinished
