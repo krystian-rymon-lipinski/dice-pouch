@@ -38,8 +38,9 @@
     <string name="plus_sign">+</string>
 
     <!-- SettingsScreen -->
-    <string name="tab_bar_title">Settings</string>
+    <string name="app_caption">App</string>
     <string name="rolling_dice_caption">Rolling dice</string>
+    <string name="setting_mode">Mode</string>
     <string name="setting_sound_caption">Sound</string>
     <string name="setting_time_caption">Single throw time: %d ms</string>
     <string name="setting_throw_delay_caption">Delay between throws: %d ms</string>
