@@ -79,7 +79,9 @@ class LaunchedRollProcessTest : BaseAndroidTest() {
         LaunchedRollProcess(
             currentState = state,
             rollingSettings = RollingSettings(),
+            onSingleThrowStarted = { },
             onNewRandomValue = { },
+            onRandomizationEnded = { },
             onSingleThrowFinished = onSingleThrowFinished,
             onTryFinished = { },
             onRollFinished = onRollFinished

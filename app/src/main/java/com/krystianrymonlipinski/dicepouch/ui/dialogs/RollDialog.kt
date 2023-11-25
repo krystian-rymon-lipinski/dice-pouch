@@ -1,6 +1,7 @@
 package com.krystianrymonlipinski.dicepouch.ui.dialogs
 
 import RollDescription
+import android.media.MediaPlayer
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
@@ -26,6 +28,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -56,11 +59,28 @@ fun RollDialog(
 ) {
     val dialogStateHolder = rememberRollDialogStateHolder(setting)
     val coroutineScope = rememberCoroutineScope()
+    val currentContext = LocalContext.current
+
+    val clackMediaPlayer = remember { MediaPlayer.create(currentContext, R.raw.dice_clack)
+        .apply { isLooping = true }
+    }
+    val rollMediaPlayer = remember { MediaPlayer.create(currentContext, R.raw.dice_rolled) }
 
     LaunchedRollProcess(
         currentState = dialogStateHolder.rollState,
         rollingSettings = rollingSettings,
+        onSingleThrowStarted = {
+            if (rollingSettings.isSoundOn) { coroutineScope.launch {
+                clackMediaPlayer.start()
+            } }
+        },
         onNewRandomValue = { newValue -> dialogStateHolder.updateRandomizer(newValue) },
+        onRandomizationEnded = {
+            if (rollingSettings.isSoundOn) { coroutineScope.launch {
+                clackMediaPlayer.pause()
+                rollMediaPlayer.start()
+            } }
+        },
         onSingleThrowFinished = {
             dialogStateHolder.addThrowResult()
             dialogStateHolder.clearRandomizer()
@@ -77,7 +97,10 @@ fun RollDialog(
                     delay(rollingSettings.rollPopupAutodismissTimeMillis.toLong())
                     onConfirmButtonClicked()
                 }
-
+            }
+            if (rollingSettings.isSoundOn) {
+                clackMediaPlayer.release()
+                rollMediaPlayer.release()
             }
         }
     )
@@ -120,7 +143,6 @@ fun RollDialogContent(
         )
         CurrentThrow(randomizerState = randomizerState)
         RollResult(rollState = rollState)
-
     }
 }
 

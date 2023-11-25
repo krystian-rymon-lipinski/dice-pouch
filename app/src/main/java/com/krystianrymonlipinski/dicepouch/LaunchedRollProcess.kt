@@ -12,7 +12,9 @@ import kotlin.system.measureTimeMillis
 fun LaunchedRollProcess(
     currentState: RollState,
     rollingSettings: RollingSettings,
+    onSingleThrowStarted: () -> Unit,
     onNewRandomValue: (Int) -> Unit,
+    onRandomizationEnded: () -> Unit,
     onSingleThrowFinished: () -> Unit,
     onTryFinished: () -> Unit,
     onRollFinished: () -> Unit
@@ -22,7 +24,9 @@ fun LaunchedRollProcess(
             performRoll(
                 currentState = currentState,
                 rollingSettings = rollingSettings,
+                onSingleThrowStarted = onSingleThrowStarted,
                 onNewRandomValue = onNewRandomValue,
+                onRandomizationEnded = onRandomizationEnded,
                 onSingleThrowFinished = onSingleThrowFinished,
                 onTryFinished = onTryFinished,
                 onRollFinished = onRollFinished
@@ -34,7 +38,9 @@ fun LaunchedRollProcess(
 private suspend fun performRoll(
     currentState: RollState,
     rollingSettings: RollingSettings,
+    onSingleThrowStarted: () -> Unit,
     onNewRandomValue: (Int) -> Unit,
+    onRandomizationEnded: () -> Unit,
     onSingleThrowFinished: () -> Unit,
     onTryFinished: () -> Unit,
     onRollFinished: () -> Unit
@@ -46,7 +52,9 @@ private suspend fun performRoll(
         performTry(
             currentState = currentState,
             rollingSettings = rollingSettings,
+            onSingleThrowStarted = onSingleThrowStarted,
             onNewRandomValue = onNewRandomValue,
+            onRandomizationEnded = onRandomizationEnded,
             onSingleThrowFinished = onSingleThrowFinished
         )
         if (setting.modifier != 0 || setting.diceNumber > 1) {
@@ -67,17 +75,21 @@ private suspend fun performRoll(
 private suspend fun performTry(
     currentState: RollState,
     rollingSettings: RollingSettings,
+    onSingleThrowStarted: () -> Unit,
     onNewRandomValue: (Int) -> Unit,
+    onRandomizationEnded: () -> Unit,
     onSingleThrowFinished: () -> Unit
 ) {
     val setting = currentState.setting
 
     for (throwNumber in currentState.currentThrow until setting.diceNumber + 1) {
+        onSingleThrowStarted()
         performThrow(
             die = setting.die,
             throwTimeSettingMillis = rollingSettings.singleThrowTimeMillis,
             onNewRandomValue = onNewRandomValue
         )
+        onRandomizationEnded()
         delay(SHOW_THROW_RESULT_DELAY)
         onSingleThrowFinished()
         if (throwNumber < setting.diceNumber) {
