@@ -8,10 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DarkMode
-import androidx.compose.material.icons.filled.LightMode
-import androidx.compose.material3.Icon
+import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
@@ -34,7 +31,6 @@ import com.krystianrymonlipinski.dicepouch.R
 import com.krystianrymonlipinski.dicepouch.model.RollingSettings
 import com.krystianrymonlipinski.dicepouch.ui.DicePouchTabRow
 import com.krystianrymonlipinski.dicepouch.ui.TAB_SETTINGS
-import com.krystianrymonlipinski.dicepouch.ui.components.SecondaryCaption
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
 import com.krystianrymonlipinski.dicepouch.viewmodels.SettingsViewModel
 
@@ -72,10 +68,6 @@ fun SettingsScreen(
             )
             SettingsElementsLayout(
                 savedSettings = currentSettings,
-                onModeSettingSwitched = { isLightMode ->
-
-                    onSettingsChanged(currentSettings)
-                },
                 onSoundSettingSwitched = { isOn ->
                     currentSettings = currentSettings.setIsSoundOn(isOn)
                     onSettingsChanged(currentSettings)
@@ -98,7 +90,6 @@ fun SettingsScreen(
 @Composable
 fun SettingsElementsLayout(
     savedSettings: RollingSettings,
-    onModeSettingSwitched: (Boolean) -> Unit,
     onSoundSettingSwitched: (Boolean) -> Unit,
     onThrowTimeChange: (Int) -> Unit,
     onThrowTimeChangeFinished: () -> Unit,
@@ -111,19 +102,22 @@ fun SettingsElementsLayout(
     Column(
         modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)
     ) {
-        SecondaryCaption(text = stringResource(id = R.string.app_caption))
-        ModeSettingRow(
-            isLightMode = true,
-            onModeSettingSwitched = onModeSettingSwitched
+        RollingSettingsCaption()
+        Spacer(modifier = Modifier.height(2.dp))
+        Divider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(2.dp),
+            thickness = 2.dp,
+            color = MaterialTheme.colorScheme.secondary
         )
         Spacer(modifier = Modifier.height(16.dp))
+
         RollSoundSettingRow(
             isSoundOn = savedSettings.isSoundOn,
             onSoundSettingSwitched = onSoundSettingSwitched
         )
-        Spacer(modifier = Modifier.height(24.dp))
-
-        SecondaryCaption(text = stringResource(id = R.string.rolling_dice_caption))
+        Spacer(modifier = Modifier.height(16.dp))
         SingleThrowTimeSettingColumn(
             singleThrowTimeMillis = savedSettings.singleThrowTimeMillis,
             onThrowTimeChange = onThrowTimeChange,
@@ -147,31 +141,12 @@ fun SettingsElementsLayout(
 }
 
 @Composable
-fun ModeSettingRow(
-    isLightMode: Boolean,
-    onModeSettingSwitched: (Boolean) -> Unit
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(1f),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = stringResource(id = R.string.setting_mode),
-            modifier = Modifier.weight(1f),
-            style = MaterialTheme.typography.bodyMedium
-                .copy(fontWeight = FontWeight.Bold)
-        )
-        Switch(
-            checked = isLightMode,
-            onCheckedChange = onModeSettingSwitched,
-            thumbContent = {
-                Icon(
-                    imageVector = if (isLightMode) Icons.Filled.LightMode else Icons.Filled.DarkMode,
-                    contentDescription = "mode_switch_setting"
-                )
-            }
-        )
-    }
+fun RollingSettingsCaption() {
+    Text(
+        text = stringResource(id = R.string.rolling_dice_caption),
+        color = MaterialTheme.colorScheme.secondary,
+        style = MaterialTheme.typography.titleMedium
+    )
 }
 
 @Composable
