@@ -6,6 +6,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.krystianrymonlipinski.dicepouch.R
 
@@ -14,8 +15,9 @@ fun NoDiceCaption() {
     Text(
         text = stringResource(id = R.string.no_dice_added),
         modifier = Modifier.fillMaxWidth(),
-        color = MaterialTheme.colorScheme.secondary,
-        style = MaterialTheme.typography.bodyLarge,
+        style = MaterialTheme.typography.bodyLarge.copy(
+            fontWeight = FontWeight.Bold
+        ),
         textAlign = TextAlign.Center
     )
 }

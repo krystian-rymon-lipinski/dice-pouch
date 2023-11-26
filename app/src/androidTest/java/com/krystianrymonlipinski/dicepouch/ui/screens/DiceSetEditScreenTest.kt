@@ -28,7 +28,7 @@ class DiceSetEditScreenTest : BaseAndroidTest() {
         composeTestRule.apply {
             setContent { DicePouchTheme { DiceSetEditScreen() } }
 
-            onAllNodesWithContentDescription("add_icon")[0].performClick()
+            onAllNodesWithContentDescription("secondary_caption_icon")[0].performClick()
             onNode(isDialog()).assertIsDisplayed()
             onNodeWithText("sides").assertIsDisplayed()
         }
@@ -77,7 +77,7 @@ class DiceSetEditScreenTest : BaseAndroidTest() {
                 ) }
             }
 
-            onAllNodesWithContentDescription("add_icon")[1].performClick()
+            onAllNodesWithContentDescription("secondary_caption_icon")[1].performClick()
             onNode(isDialog()).assertIsDisplayed()
             onNodeWithText("New shortcut").assertIsDisplayed()
             onNodeWithText("1d10").assertIsDisplayed()
@@ -93,7 +93,7 @@ class DiceSetEditScreenTest : BaseAndroidTest() {
                 chosenSet = DiceSet()
             )) } }
 
-            onAllNodesWithContentDescription("add_icon")[1].performClick()
+            onAllNodesWithContentDescription("secondary_caption_icon")[1].performClick()
             onNode(isDialog()).assertDoesNotExist()
             onNodeWithText("Creating shortcut needs a die").assertIsDisplayed()
             composeTestRule.mainClock.advanceTimeBy(4500L)

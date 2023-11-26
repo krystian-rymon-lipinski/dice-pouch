@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
@@ -31,6 +30,7 @@ import com.krystianrymonlipinski.dicepouch.R
 import com.krystianrymonlipinski.dicepouch.model.RollingSettings
 import com.krystianrymonlipinski.dicepouch.ui.DicePouchTabRow
 import com.krystianrymonlipinski.dicepouch.ui.TAB_SETTINGS
+import com.krystianrymonlipinski.dicepouch.ui.components.SecondaryCaption
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
 import com.krystianrymonlipinski.dicepouch.viewmodels.SettingsViewModel
 
@@ -102,15 +102,7 @@ fun SettingsElementsLayout(
     Column(
         modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)
     ) {
-        RollingSettingsCaption()
-        Spacer(modifier = Modifier.height(2.dp))
-        Divider(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(2.dp),
-            thickness = 2.dp,
-            color = MaterialTheme.colorScheme.secondary
-        )
+        SecondaryCaption(text = stringResource(id = R.string.rolling_dice_caption))
         Spacer(modifier = Modifier.height(16.dp))
 
         RollSoundSettingRow(
@@ -138,15 +130,6 @@ fun SettingsElementsLayout(
             onPopupDismissTimeChangeFinished = onPopupDismissTimeChangeFinished
         )
     }
-}
-
-@Composable
-fun RollingSettingsCaption() {
-    Text(
-        text = stringResource(id = R.string.rolling_dice_caption),
-        color = MaterialTheme.colorScheme.secondary,
-        style = MaterialTheme.typography.titleMedium
-    )
 }
 
 @Composable

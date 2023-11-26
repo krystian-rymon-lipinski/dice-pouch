@@ -46,6 +46,7 @@ import com.krystianrymonlipinski.dicepouch.ui.TAB_TABLE
 import com.krystianrymonlipinski.dicepouch.ui.components.DieImage
 import com.krystianrymonlipinski.dicepouch.ui.components.NoDiceCaption
 import com.krystianrymonlipinski.dicepouch.ui.components.NoShortcutsCaption
+import com.krystianrymonlipinski.dicepouch.ui.components.SecondaryCaption
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollDialog
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollSettingsDialog
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
@@ -124,18 +125,20 @@ fun ChosenSetElementsLayout(
     onDieClicked: (Die) -> Unit,
     onShortcutClicked: (RollShortcut) -> Unit
 ) {
-    Column(modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)) {
+    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
         ChosenSetName(name = chosenSet.info.name)
-        DiceText()
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(24.dp))
+
+        SecondaryCaption(text = stringResource(id = R.string.dice_caption))
+        Spacer(modifier = Modifier.height(16.dp))
 
         if (chosenSet.dice.isEmpty()) NoDiceCaption()
         else DiceGrid(diceSet = chosenSet.dice, onDieClicked = onDieClicked)
 
         Spacer(modifier = Modifier.height(16.dp))
-        ShortcutsText()
+        SecondaryCaption(text = stringResource(id = R.string.shortcuts_caption))
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(16.dp))
         if (chosenSet.shortcuts.isEmpty()) NoShortcutsCaption()
         else ShortcutsGrid(shortcutsSet = chosenSet.shortcuts, onShortcutClicked = onShortcutClicked)
     }
@@ -160,7 +163,7 @@ fun ChosenSetName(name: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 16.dp),
+            .padding(top = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -174,17 +177,6 @@ fun ChosenSetName(name: String) {
             )
         )
     }
-}
-
-@Composable
-fun DiceText() {
-    Text(
-        text = stringResource(id = R.string.dice_caption),
-        color = MaterialTheme.colorScheme.primary,
-        style = MaterialTheme.typography.titleMedium.copy(
-            fontWeight = FontWeight.Bold
-        )
-    )
 }
 
 @Composable
@@ -216,17 +208,6 @@ fun DiceGrid(
             }
         }
     }
-}
-
-@Composable
-fun ShortcutsText() {
-    Text(
-        text = stringResource(id = R.string.shortcuts_caption),
-        color = MaterialTheme.colorScheme.primary,
-        style = MaterialTheme.typography.titleMedium.copy(
-            fontWeight = FontWeight.Bold
-        )
-    )
 }
 
 @Composable

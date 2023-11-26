@@ -42,7 +42,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -62,6 +61,7 @@ import com.krystianrymonlipinski.dicepouch.model.RollShortcut
 import com.krystianrymonlipinski.dicepouch.ui.components.DieImage
 import com.krystianrymonlipinski.dicepouch.ui.components.NoDiceCaption
 import com.krystianrymonlipinski.dicepouch.ui.components.NoShortcutsCaption
+import com.krystianrymonlipinski.dicepouch.ui.components.SecondaryCaptionWithIcon
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.NewDieDialog
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollShortcutDialog
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
@@ -208,19 +208,26 @@ fun ChosenSetElementsLayout(
         )
         .fillMaxWidth()
     ) {
-        DiceCaption(onAddNewDieClicked = onAddNewDieClicked)
+        SecondaryCaptionWithIcon(
+            text = stringResource(id = R.string.dice_caption),
+            imageVector = Icons.Filled.Add,
+            onIconClicked = onAddNewDieClicked
+        )
+        Spacer(modifier = Modifier.height(16.dp))
 
-        Spacer(modifier = Modifier.height(8.dp))
         if (chosenSet.dice.isEmpty()) NoDiceCaption()
         else EditableDiceGrid(
             diceSet = chosenSet.dice,
             onDeleteDieClicked = onDeleteDieClicked
         )
+        Spacer(modifier = Modifier.height(16.dp))
+        SecondaryCaptionWithIcon(
+            text = stringResource(id = R.string.shortcuts_caption),
+            imageVector = Icons.Filled.Add,
+            onIconClicked = onAddShortcutClicked
+        )
+        Spacer(modifier = Modifier.height(16.dp))
 
-        Spacer(modifier = Modifier.height(8.dp))
-        ShortcutsCaption(onAddShortcutClicked = onAddShortcutClicked)
-
-        Spacer(modifier = Modifier.height(8.dp))
         if (chosenSet.shortcuts.isEmpty()) NoShortcutsCaption()
         else EditableShortcutsGrid(
             shortcuts = chosenSet.shortcuts,
@@ -249,14 +256,6 @@ fun DeleteDieAlertDialog(
             }
         },
         text = { Text(text = stringResource(id = R.string.delete_die_dialog_message)) }
-    )
-}
-
-@Composable
-fun DiceCaption(onAddNewDieClicked: () -> Unit) {
-    RowWithCaptionAndPlusIcon(
-        captionText = stringResource(id = R.string.dice_caption),
-        onPlusIconClicked = onAddNewDieClicked
     )
 }
 
@@ -306,16 +305,6 @@ fun DeletableDieImage(die: Die, onDeleteDieClicked: (Die) -> Unit) {
             }
         }
     }
-}
-
-
-
-@Composable
-fun ShortcutsCaption(onAddShortcutClicked: () -> Unit) {
-    RowWithCaptionAndPlusIcon(
-        captionText = stringResource(id = R.string.shortcuts_caption),
-        onPlusIconClicked = onAddShortcutClicked
-    )
 }
 
 @Composable
@@ -373,33 +362,6 @@ fun DeletableShortcutCard(
                     tint = shortcut.setting.die.numberColor
                 )
             }
-        }
-    }
-}
-
-@Composable
-fun RowWithCaptionAndPlusIcon(
-    captionText: String,
-    onPlusIconClicked: () -> Unit
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            modifier = Modifier.weight(1f),
-            text = captionText,
-            color = MaterialTheme.colorScheme.primary,
-            style = MaterialTheme.typography.titleMedium.copy(
-                fontWeight = FontWeight.Bold
-            )
-        )
-        IconButton(onClick = onPlusIconClicked) {
-            Icon( //TODO: improve all icon buttons; for their selected state is not highlighted; also use icons, not images
-                imageVector = Icons.Filled.Add,
-                contentDescription = "add_icon",
-                tint = MaterialTheme.colorScheme.primary
-            )
         }
     }
 }
