@@ -45,8 +45,19 @@ class AppNavHostTest {
             }
             checkIfTableScreenOn()
 
+            onNodeWithText("Settings").performClick()
+            checkIfSettingsScreenOn()
+
+            activityRule.scenario.onActivity {
+                it.onBackPressedDispatcher.onBackPressed()
+            }
+            checkIfTableScreenOn()
+
             onNodeWithText("Pouch").performClick()
             checkIfPouchScreenOn()
+
+            onNodeWithText("Settings").performClick()
+            checkIfSettingsScreenOn()
 
             onNodeWithText("Table").performClick()
             checkIfTableScreenOn()
@@ -103,6 +114,14 @@ class AppNavHostTest {
     private fun checkIfPouchScreenOn() {
         composeTestRule.apply {
             onNodeWithText("Pouch")
+                .assertIsDisplayed()
+                .assertIsSelected()
+        }
+    }
+
+    private fun checkIfSettingsScreenOn() {
+        composeTestRule.apply {
+            onNodeWithText("Settings")
                 .assertIsDisplayed()
                 .assertIsSelected()
         }
