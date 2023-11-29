@@ -238,6 +238,12 @@ class MainActivityViewModelTest {
     }
 
     @Test
+    fun retrieveSetWithChosenId() {
+        testObj.retrieveSetWithChosenId(10)
+        verify(setsLocalDataSourceImpl).retrieveSetWithId(10)
+    }
+
+    @Test
     fun retrieveSettings() = runTest {
         val settingsToRetrieve = RollingSettings()
             .setIsRollPopupAutodismissOn(true)

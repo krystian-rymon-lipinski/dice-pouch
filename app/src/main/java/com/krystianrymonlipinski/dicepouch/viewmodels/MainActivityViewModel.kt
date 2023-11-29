@@ -18,6 +18,7 @@ import com.krystianrymonlipinski.dicepouch.model.RollingSettings
 import com.krystianrymonlipinski.dicepouch.room.AppDatabase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -164,6 +165,10 @@ class MainActivityViewModel @Inject constructor(
             settings = settingsLocalDataSource.retrieveRollingSettings().take(1).single()
         }
         return settings
+    }
+
+    fun retrieveSetWithChosenId(id: Int) : Flow<DiceSet?> {
+        return setsLocalDataSource.retrieveSetWithId(id)
     }
 
     private suspend fun refreshSetIdState() {

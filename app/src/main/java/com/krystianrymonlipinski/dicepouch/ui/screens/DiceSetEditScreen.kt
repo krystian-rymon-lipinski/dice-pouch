@@ -50,13 +50,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.krystianrymonlipinski.dicepouch.ui.DicePouchTopBar
 import com.krystianrymonlipinski.dicepouch.R
-import com.krystianrymonlipinski.dicepouch.model.ChosenSetScreenState
 import com.krystianrymonlipinski.dicepouch.model.DiceSet
 import com.krystianrymonlipinski.dicepouch.model.DiceSetInfo
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
 import com.krystianrymonlipinski.dicepouch.model.RollShortcut
 import com.krystianrymonlipinski.dicepouch.ui.components.DieImage
+import com.krystianrymonlipinski.dicepouch.ui.components.LoadingScreen
 import com.krystianrymonlipinski.dicepouch.ui.components.NoDiceCaption
 import com.krystianrymonlipinski.dicepouch.ui.components.NoShortcutsCaption
 import com.krystianrymonlipinski.dicepouch.ui.components.SecondaryCaptionWithIcon
@@ -73,10 +73,13 @@ fun DiceSetEditRoute(
     chosenSetId: Int,
     onUpClicked: () -> Unit
 ) {
-    val screenState by viewModel.tableScreenState.collectAsStateWithLifecycle()
+
+    val setBeingEdited by viewModel.retrieveSetWithChosenId(chosenSetId).collectAsStateWithLifecycle(
+        initialValue = null
+    )
 
     DiceSetEditScreen(
-        screenState = screenState,
+        setBeingEdited = setBeingEdited,
         onUpClicked = onUpClicked,
         onNewDieAdded = { numberOfSides -> viewModel.addNewDieToSet(chosenSetId, numberOfSides) },
         onDeleteDieClicked = { die -> viewModel.deleteDieFromSet(chosenSetId, die) },
@@ -88,9 +91,7 @@ fun DiceSetEditRoute(
 
 @Composable
 fun DiceSetEditScreen(
-    screenState: ChosenSetScreenState = ChosenSetScreenState(
-        chosenSet = DiceSet(DiceSetInfo(0, "A set"), listOf(Die(20), Die(15)), listOf(RollShortcut(name = "Some check"))),
-    ),
+    setBeingEdited: DiceSet? = DiceSet(DiceSetInfo(0, "A set"), listOf(Die(20), Die(15)), listOf(RollShortcut(name = "Some check"))),
     onUpClicked: () -> Unit = { },
     onNewDieAdded: (Int) -> Unit = {},
     onDeleteDieClicked: (Die) -> Unit = {},
@@ -111,7 +112,7 @@ fun DiceSetEditScreen(
     Scaffold(
         snackbarHost = { SnackbarHost(snackBarHostState) },
         topBar = { DicePouchTopBar(
-            title = screenState.chosenSet?.info?.name ?: "",
+            title = setBeingEdited?.info?.name ?: "",
             navigationIcon = { IconButton(onClick = onUpClicked ) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
@@ -121,7 +122,7 @@ fun DiceSetEditScreen(
             } }
         ) }
     ) { paddingValues ->
-        screenState.chosenSet?.let { diceSet ->
+        setBeingEdited?.let { diceSet ->
             ChosenSetElementsLayout(
                 paddingValues = paddingValues,
                 chosenSet = diceSet,
@@ -143,7 +144,7 @@ fun DiceSetEditScreen(
                 onShortcutClicked = { shortcutClicked -> showUpdateShortcutDialog = shortcutClicked},
                 onDeleteShortcutClicked = onDeleteShortcutClicked
             )
-        }
+        } ?: LoadingScreen(modifier = Modifier.fillMaxSize())
 
         if (showNewDieDialog) {
             NewDieDialog(
@@ -168,7 +169,7 @@ fun DiceSetEditScreen(
         if (showNewShortcutDialog || showUpdateShortcutDialog != null) {
             RollShortcutDialog(
                 shortcut = showUpdateShortcutDialog,
-                diceInSet = screenState.chosenSet?.dice ?: emptyList(),
+                diceInSet = setBeingEdited?.dice ?: emptyList(),
                 onDialogDismissed = {
                     showNewShortcutDialog = false
                     showUpdateShortcutDialog = null
