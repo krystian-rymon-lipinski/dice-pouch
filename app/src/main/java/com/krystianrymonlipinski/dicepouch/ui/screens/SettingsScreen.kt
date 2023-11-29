@@ -32,19 +32,19 @@ import com.krystianrymonlipinski.dicepouch.ui.DicePouchTabRow
 import com.krystianrymonlipinski.dicepouch.ui.TAB_SETTINGS
 import com.krystianrymonlipinski.dicepouch.ui.components.SecondaryCaption
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
-import com.krystianrymonlipinski.dicepouch.viewmodels.SettingsViewModel
+import com.krystianrymonlipinski.dicepouch.viewmodels.MainActivityViewModel
 
 @Composable
 fun SettingsRoute(
-    settingsViewModel: SettingsViewModel = hiltViewModel(),
+    viewModel: MainActivityViewModel = hiltViewModel(),
     onTabClicked: (Int) -> Unit
 ) {
 
     SettingsScreen(
         onTabClicked = { tabIndex -> onTabClicked(tabIndex) },
-        settingsScreenState = settingsViewModel.retrieveSettings(),
+        settingsScreenState = viewModel.retrieveSettings(),
         onSettingsChanged = { newSettings ->
-            settingsViewModel.saveSettings(newSettings)
+            viewModel.saveSettings(newSettings)
         }
     )
 }

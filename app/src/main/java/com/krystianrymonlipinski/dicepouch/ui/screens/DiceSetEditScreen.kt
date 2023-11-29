@@ -32,7 +32,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,7 +48,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.krystianrymonlipinski.dicepouch.viewmodels.CurrentSetViewModel
 import com.krystianrymonlipinski.dicepouch.ui.DicePouchTopBar
 import com.krystianrymonlipinski.dicepouch.R
 import com.krystianrymonlipinski.dicepouch.model.ChosenSetScreenState
@@ -65,25 +63,23 @@ import com.krystianrymonlipinski.dicepouch.ui.components.SecondaryCaptionWithIco
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.NewDieDialog
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollShortcutDialog
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
+import com.krystianrymonlipinski.dicepouch.viewmodels.MainActivityViewModel
 import kotlinx.coroutines.launch
 
 
 @Composable
 fun DiceSetEditRoute(
-    viewModel: CurrentSetViewModel = hiltViewModel(),
+    viewModel: MainActivityViewModel = hiltViewModel(),
     chosenSetId: Int,
     onUpClicked: () -> Unit
 ) {
-    val screenState by viewModel.chosenSetScreenState.collectAsStateWithLifecycle()
-    LaunchedEffect(key1 = Unit) {
-        viewModel.setCurrentSet(chosenSetId)
-    }
+    val screenState by viewModel.tableScreenState.collectAsStateWithLifecycle()
 
     DiceSetEditScreen(
         screenState = screenState,
         onUpClicked = onUpClicked,
-        onNewDieAdded = { numberOfSides -> viewModel.addNewDieToSet(numberOfSides) },
-        onDeleteDieClicked = { die -> viewModel.deleteDieFromSet(die) },
+        onNewDieAdded = { numberOfSides -> viewModel.addNewDieToSet(chosenSetId, numberOfSides) },
+        onDeleteDieClicked = { die -> viewModel.deleteDieFromSet(chosenSetId, die) },
         onNewShortcutAdded = { name, setting -> viewModel.addNewShortcutToSet(name, setting) },
         onShortcutUpdated = { shortcut -> viewModel.updateShortcut(shortcut) },
         onDeleteShortcutClicked = { shortcut -> viewModel.deleteShortcut(shortcut) }

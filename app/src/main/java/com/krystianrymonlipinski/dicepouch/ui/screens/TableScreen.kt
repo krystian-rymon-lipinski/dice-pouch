@@ -33,7 +33,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.krystianrymonlipinski.dicepouch.viewmodels.CurrentSetViewModel
 import com.krystianrymonlipinski.dicepouch.ui.DicePouchTabRow
 import com.krystianrymonlipinski.dicepouch.R
 import com.krystianrymonlipinski.dicepouch.model.ChosenSetScreenState
@@ -50,18 +49,19 @@ import com.krystianrymonlipinski.dicepouch.ui.components.SecondaryCaption
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollDialog
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollSettingsDialog
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
+import com.krystianrymonlipinski.dicepouch.viewmodels.MainActivityViewModel
 
 
 @Composable
 fun TableRoute(
-    viewModel: CurrentSetViewModel = hiltViewModel(),
+    viewModel: MainActivityViewModel = hiltViewModel(),
     onTabClicked: (Int) -> Unit
 ) {
-    val screenState by viewModel.chosenSetScreenState.collectAsStateWithLifecycle()
-    val rollingSettings by viewModel.rollingSettingsState.collectAsStateWithLifecycle()
+    val screenState by viewModel.tableScreenState.collectAsStateWithLifecycle()
+    val rollingSettings by viewModel.rollingSettingStream.collectAsStateWithLifecycle()
 
     LaunchedEffect(key1 = Unit) {
-        viewModel.setCurrentSet()
+        viewModel.initiateCurrentSet()
     }
 
     TableScreen(

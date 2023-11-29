@@ -10,11 +10,14 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             DicePouchTheme {
-                AppNavHost(navController = rememberNavController())
+                AppNavHost(
+                    navController = rememberNavController()
+                )
             }
         }
     }

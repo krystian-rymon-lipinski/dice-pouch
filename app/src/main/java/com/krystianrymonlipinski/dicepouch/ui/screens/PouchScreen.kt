@@ -45,7 +45,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.krystianrymonlipinski.dicepouch.ui.DicePouchTabRow
 import com.krystianrymonlipinski.dicepouch.ui.DicePouchTopBar
-import com.krystianrymonlipinski.dicepouch.viewmodels.PouchViewModel
 import com.krystianrymonlipinski.dicepouch.R
 import com.krystianrymonlipinski.dicepouch.model.DiceSetInfo
 import com.krystianrymonlipinski.dicepouch.model.PouchScreenState
@@ -54,15 +53,16 @@ import com.krystianrymonlipinski.dicepouch.ui.TAB_POUCH
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.NewSetDialog
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.conditionalBorder
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
+import com.krystianrymonlipinski.dicepouch.viewmodels.MainActivityViewModel
 
 @Composable
 fun PouchRoute(
-    viewModel: PouchViewModel = hiltViewModel(),
+    viewModel: MainActivityViewModel = hiltViewModel(),
     onTabClicked: (Int) -> Unit,
     onBackStackPopped: () -> Unit,
     onEditSetClicked: (DiceSetInfo) -> Unit
 ) {
-    val screenState by viewModel.allSetsState.collectAsStateWithLifecycle()
+    val screenState by viewModel.pouchScreenState.collectAsStateWithLifecycle()
 
     PouchScreen(
         screenState = screenState,

@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -13,9 +14,13 @@ import com.krystianrymonlipinski.dicepouch.ui.screens.DiceSetEditRoute
 import com.krystianrymonlipinski.dicepouch.ui.screens.PouchRoute
 import com.krystianrymonlipinski.dicepouch.ui.screens.SettingsRoute
 import com.krystianrymonlipinski.dicepouch.ui.screens.TableRoute
+import com.krystianrymonlipinski.dicepouch.viewmodels.MainActivityViewModel
 
 @Composable
-fun AppNavHost(navController: NavHostController) {
+fun AppNavHost(
+    viewModel: MainActivityViewModel = hiltViewModel(),
+    navController: NavHostController
+) {
     NavHost(
         navController = navController,
         startDestination = ROUTE_TABLE_SCREEN,
@@ -23,11 +28,13 @@ fun AppNavHost(navController: NavHostController) {
     ) {
         composable(route = ROUTE_TABLE_SCREEN) {
             TableRoute(
+                viewModel = viewModel,
                 onTabClicked = { tabIndex -> navController.navigate(getRouteFromTabIndex(tabIndex)) }
             )
         }
         composable(route = ROUTE_POUCH_SCREEN) {
             PouchRoute(
+                viewModel = viewModel,
                 onTabClicked = { tabIndex -> navController.navigate(getRouteFromTabIndex(tabIndex)) },
                 onBackStackPopped = { navController.popBackStack() },
                 onEditSetClicked = { setInfo ->
@@ -40,6 +47,7 @@ fun AppNavHost(navController: NavHostController) {
             arguments = listOf(navArgument(name = "setId") { type = NavType.IntType })
         ) { backStackEntry ->
             DiceSetEditRoute(
+                viewModel = viewModel,
                 chosenSetId = backStackEntry.arguments?.getInt("setId") ?: 0,
                 onUpClicked = { navController.popBackStack() }
             )
@@ -48,6 +56,7 @@ fun AppNavHost(navController: NavHostController) {
             route = ROUTE_SETTINGS_SCREEN
         ) {
             SettingsRoute(
+                viewModel = viewModel,
                 onTabClicked = { tabIndex -> navController.navigate(getRouteFromTabIndex(tabIndex)) }
             )
         }
