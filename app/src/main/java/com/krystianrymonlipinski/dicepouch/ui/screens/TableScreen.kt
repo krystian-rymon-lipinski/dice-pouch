@@ -43,6 +43,7 @@ import com.krystianrymonlipinski.dicepouch.model.RollShortcut
 import com.krystianrymonlipinski.dicepouch.model.RollingSettings
 import com.krystianrymonlipinski.dicepouch.ui.TAB_TABLE
 import com.krystianrymonlipinski.dicepouch.ui.components.DieImage
+import com.krystianrymonlipinski.dicepouch.ui.components.LoadingScreen
 import com.krystianrymonlipinski.dicepouch.ui.components.NoDiceCaption
 import com.krystianrymonlipinski.dicepouch.ui.components.NoShortcutsCaption
 import com.krystianrymonlipinski.dicepouch.ui.components.SecondaryCaption
@@ -92,11 +93,15 @@ fun TableScreen(
                 selectedTabIndex = TAB_TABLE,
                 onTabClicked = { tabIndex -> onTabClicked(tabIndex) }
             )
-            screenState.chosenSet?.let { chosenSet -> ChosenSetElementsLayout(
-                chosenSet = chosenSet,
-                onDieClicked = { die -> showRollSettingsDialog = die },
-                onShortcutClicked = { shortcut -> showRollDialog = shortcut.setting }
-            ) } ?: NoSetChosenCaption()
+            if (!screenState.isLoadingCompleted) {
+                LoadingScreen(modifier = Modifier.fillMaxSize())
+            } else {
+                screenState.chosenSet?.let { chosenSet -> ChosenSetElementsLayout(
+                    chosenSet = chosenSet,
+                    onDieClicked = { die -> showRollSettingsDialog = die },
+                    onShortcutClicked = { shortcut -> showRollDialog = shortcut.setting }
+                ) } ?: NoSetChosenCaption()
+            }
 
             showRollSettingsDialog?.let {
                 RollSettingsDialog(
