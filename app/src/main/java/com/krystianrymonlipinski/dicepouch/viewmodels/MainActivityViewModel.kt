@@ -167,6 +167,12 @@ class MainActivityViewModel @Inject constructor(
         return settings
     }
 
+    fun changeSetName(setInfo: DiceSetInfo?, newName: String) {
+        setInfo?.let { viewModelScope.launch {
+            setsLocalDataSource.changeSetName(setInfo, newName)
+        } }
+    }
+
     fun retrieveSetWithChosenId(id: Int) : Flow<DiceSet?> {
         return setsLocalDataSource.retrieveSetWithId(id)
     }

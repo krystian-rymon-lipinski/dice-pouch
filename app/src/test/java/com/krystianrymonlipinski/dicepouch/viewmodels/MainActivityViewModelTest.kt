@@ -286,6 +286,7 @@ class MainActivityViewModelTest {
         override fun retrieveSetWithId(id: Int) = setWithIdStream
 
         override suspend fun addDiceSet(set: DiceSetInfo) { /* Do nothing */ }
+        override suspend fun changeSetName(set: DiceSetInfo, newName: String) { /* Do nothing */ }
         override suspend fun deleteDiceSet(set: DiceSetInfo) { /* Do nothing */ }
     }
 

@@ -58,6 +58,16 @@ class SetsLocalDataSourceImplTest {
     }
 
     @Test
+    fun changeSetName() = runTest {
+        val setToBeChanged = DiceSetInfo(name = "some_name", diceColor = Color.Magenta, numbersColor = Color.LightGray)
+        val setEntity = SetEntity(name = "another_name", diceSideColorArgb = Color.Magenta.toArgb(), diceNumberColorArgb = Color.LightGray.toArgb())
+
+        testObj.changeSetName(setToBeChanged, "another_name")
+        verify(setDao).update(capture(setEntityCaptor))
+        assertEquals(setEntity, setEntityCaptor.value)
+    }
+
+    @Test
     fun deleteSet() = runTest {
         val setToBeDeleted = DiceSetInfo(name = "f_name", diceColor = Color.Blue, numbersColor = Color.LightGray)
         val entityToBeDeleted = SetEntity(name = "f_name", diceSideColorArgb = Color.Blue.toArgb(), diceNumberColorArgb = Color.LightGray.toArgb())

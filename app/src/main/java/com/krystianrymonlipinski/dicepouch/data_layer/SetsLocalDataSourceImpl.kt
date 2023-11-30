@@ -38,6 +38,12 @@ class SetsLocalDataSourceImpl @Inject constructor(
         setDao.add(convertToEntity(set))
     }
 
+    override suspend fun changeSetName(set: DiceSetInfo, newName: String) = withContext(Dispatchers.IO) {
+        setDao.update(convertToEntity(
+            set.changeName(newName)
+        ))
+    }
+
     override suspend fun deleteDiceSet(set: DiceSetInfo) = withContext(Dispatchers.IO) {
         setDao.delete(convertToEntity(set))
     }
