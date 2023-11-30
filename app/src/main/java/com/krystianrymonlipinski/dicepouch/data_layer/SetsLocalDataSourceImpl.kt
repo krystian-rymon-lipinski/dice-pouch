@@ -75,12 +75,18 @@ class SetsLocalDataSourceImpl @Inject constructor(
                     name = entityToConvert.set.name,
                     diceColor = Color(entityToConvert.set.diceSideColorArgb),
                     numbersColor = Color(entityToConvert.set.diceNumberColorArgb)),
-                dice = entityToConvert.diceWithShortcuts.map { convertToDieFromEntity(it.die) },
+                dice = entityToConvert.diceWithShortcuts.map { convertToDieFromEntity(
+                    dieEntity = it.die,
+                    diceSideColor = entityToConvert.set.diceSideColorArgb,
+                    diceTextColor = entityToConvert.set.diceNumberColorArgb
+                ) },
                 shortcuts = entityToConvert.diceWithShortcuts.flatMap { dieWithShortcuts ->
                     dieWithShortcuts.shortcuts.map { shortcut ->
                         convertToShortcutFromRelatedEntities(
                             shortcut = shortcut,
-                            dieEntity = dieWithShortcuts.die
+                            dieEntity = dieWithShortcuts.die,
+                            diceSideColor = entityToConvert.set.diceSideColorArgb,
+                            diceTextColor = entityToConvert.set.diceNumberColorArgb
                         )
                     }
                 }
@@ -88,24 +94,34 @@ class SetsLocalDataSourceImpl @Inject constructor(
         }
     }
 
-    private fun convertToDieFromEntity(dieEntity: DieEntity) : Die {
+    private fun convertToDieFromEntity(
+        dieEntity: DieEntity,
+        diceSideColor: Int,
+        diceTextColor: Int
+    ) : Die {
         return Die(
             dieEntity.sides,
-            Color(dieEntity.sidesColorArgb),
-            Color(dieEntity.numberColorArgb),
+            Color(diceSideColor),
+            Color(diceTextColor),
             dieEntity.timestampId
         )
     }
 
     private fun convertToShortcutFromRelatedEntities(
         shortcut: ShortcutEntity,
-        dieEntity: DieEntity
+        dieEntity: DieEntity,
+        diceSideColor: Int,
+        diceTextColor: Int
     ) : RollShortcut {
         return RollShortcut(
             timestampId = shortcut.timestampId,
             name = shortcut.name,
             setting = RollSetting(
-                die = convertToDieFromEntity(dieEntity),
+                die = convertToDieFromEntity(
+                    dieEntity,
+                    diceSideColor,
+                    diceTextColor
+                ),
                 diceNumber = shortcut.diceNumber,
                 modifier = shortcut.modifier,
                 mechanic = RollSetting.Mechanic.fromString(shortcut.mechanic)

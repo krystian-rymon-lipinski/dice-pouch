@@ -24,7 +24,7 @@ class DieDaoTest : BaseDaoTest() {
 
     @Test
     fun addDieToDatabase() = runTest {
-        val dieToAdd = DieEntity(timestampId = 1, setId = setId, sides = 6, sidesColorArgb = 0, numberColorArgb = 0)
+        val dieToAdd = DieEntity(timestampId = 1, setId = setId, sides = 6)
 
         dieDao.add(dieToAdd)
         val diceStored = dieDao.retrieveAllWithShortcuts().take(1).single()
@@ -36,8 +36,8 @@ class DieDaoTest : BaseDaoTest() {
 
     @Test
     fun deleteDieFromDatabase() = runTest {
-        val dieToSpare = DieEntity(timestampId = 1, setId = setId, sides = 6, sidesColorArgb = 0, numberColorArgb = 0)
-        val dieToDelete = DieEntity(timestampId = 2, setId = setId, sides = 20, sidesColorArgb = 0, numberColorArgb = 0)
+        val dieToSpare = DieEntity(timestampId = 1, setId = setId, sides = 6)
+        val dieToDelete = DieEntity(timestampId = 2, setId = setId, sides = 20)
 
         dieDao.add(dieToDelete)
         dieDao.add(dieToSpare)
@@ -51,7 +51,7 @@ class DieDaoTest : BaseDaoTest() {
     @Test
     fun retrieveDie_withShortcuts() = runTest {
         val dieId = 1L
-        val dieEntity = DieEntity(timestampId = dieId, setId = setId, sides = 4, sidesColorArgb = 0, numberColorArgb = 0)
+        val dieEntity = DieEntity(timestampId = dieId, setId = setId, sides = 4)
         val shortcutEntity1 = ShortcutEntity(timestampId = 12L, name = "a_name", diceNumber = 2, dieId = dieId, modifier = -1, mechanic = "NORMAL")
         val shortcutEntity2 = ShortcutEntity(timestampId = 13L, name = "b_name", diceNumber = 1, dieId = dieId, modifier = 0, mechanic = "NORMAL")
 
@@ -71,7 +71,7 @@ class DieDaoTest : BaseDaoTest() {
     @Test
     fun deleteDie_withShortcuts() = runTest {
         val dieId = 1L
-        val dieEntity = DieEntity(timestampId = dieId, setId = setId, sides = 4, sidesColorArgb = 0, numberColorArgb = 0)
+        val dieEntity = DieEntity(timestampId = dieId, setId = setId, sides = 4)
         val shortcutEntity1 = ShortcutEntity(timestampId = 12L, name = "a_name", diceNumber = 2, dieId = dieId, modifier = -1, mechanic = "NORMAL")
         val shortcutEntity2 = ShortcutEntity(timestampId = 13L, name = "b_name", diceNumber = 1, dieId = dieId, modifier = 0, mechanic = "NORMAL")
 

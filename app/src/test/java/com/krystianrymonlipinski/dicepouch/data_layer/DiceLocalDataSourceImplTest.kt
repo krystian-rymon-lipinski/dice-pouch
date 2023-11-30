@@ -1,7 +1,6 @@
 package com.krystianrymonlipinski.dicepouch.data_layer
 
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.room.DieDao
 import com.krystianrymonlipinski.dicepouch.room.DieEntity
@@ -39,7 +38,7 @@ class DiceLocalDataSourceImplTest {
     fun addNewDieToSet() = runTest {
         val setId = 1
         val dieToAdd = Die(sides = 6, timestampId = 10, sideColor = Color.Magenta, numberColor = Color.Blue)
-        val dieEntityToCheck = DieEntity(timestampId = 10, setId = 1, sides = 6, sidesColorArgb = Color.Magenta.toArgb(), numberColorArgb = Color.Blue.toArgb())
+        val dieEntityToCheck = DieEntity(timestampId = 10, setId = 1, sides = 6)
 
         testObj.addNewDieToSet(setId, dieToAdd)
         verify(dieDao).add(capture(dieEntityCaptor))
@@ -50,7 +49,7 @@ class DiceLocalDataSourceImplTest {
     fun deleteDieFromSet() = runTest {
         val setId = 1
         val dieToDelete = Die(sides = 6, timestampId = 10, sideColor = Color.Magenta, numberColor = Color.Blue)
-        val dieEntityToCheck = DieEntity(timestampId = 10, setId = 1, sides = 6, sidesColorArgb = Color.Magenta.toArgb(), numberColorArgb = Color.Blue.toArgb())
+        val dieEntityToCheck = DieEntity(timestampId = 10, setId = 1, sides = 6)
 
         testObj.deleteDieFromSet(setId, dieToDelete)
         verify(dieDao).delete(capture(dieEntityCaptor))

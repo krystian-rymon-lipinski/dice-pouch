@@ -4,10 +4,8 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-import com.krystianrymonlipinski.dicepouch.room.AppDatabase.Companion.DICE_TABLE_COLUMN_NUMBER_COLOR
 import com.krystianrymonlipinski.dicepouch.room.AppDatabase.Companion.DICE_TABLE_COLUMN_SET_ID
 import com.krystianrymonlipinski.dicepouch.room.AppDatabase.Companion.DICE_TABLE_COLUMN_SIDES
-import com.krystianrymonlipinski.dicepouch.room.AppDatabase.Companion.DICE_TABLE_COLUMN_SIDES_COLOR
 import com.krystianrymonlipinski.dicepouch.room.AppDatabase.Companion.DICE_TABLE_COLUMN_TIMESTAMP_ID
 import com.krystianrymonlipinski.dicepouch.room.AppDatabase.Companion.DICE_TABLE_NAME
 import com.krystianrymonlipinski.dicepouch.room.AppDatabase.Companion.SET_TABLE_COLUMN_ID
@@ -25,6 +23,4 @@ data class DieEntity(
     @PrimaryKey @ColumnInfo(name = DICE_TABLE_COLUMN_TIMESTAMP_ID) val timestampId: Long,
     @ColumnInfo(name = DICE_TABLE_COLUMN_SET_ID) val setId: Int,
     @ColumnInfo(name = DICE_TABLE_COLUMN_SIDES) val sides: Int,
-    @ColumnInfo(name = DICE_TABLE_COLUMN_SIDES_COLOR) val sidesColorArgb: Int,
-    @ColumnInfo(name = DICE_TABLE_COLUMN_NUMBER_COLOR) val numberColorArgb: Int
 )

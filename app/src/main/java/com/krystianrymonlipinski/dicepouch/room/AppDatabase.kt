@@ -55,8 +55,6 @@ abstract class AppDatabase : RoomDatabase() {
                     put(DICE_TABLE_COLUMN_TIMESTAMP_ID, it.timestampId)
                     put(DICE_TABLE_COLUMN_SET_ID, it.setId)
                     put(DICE_TABLE_COLUMN_SIDES, it.sides)
-                    put(DICE_TABLE_COLUMN_SIDES_COLOR, it.sidesColorArgb)
-                    put(DICE_TABLE_COLUMN_NUMBER_COLOR, it.numberColorArgb)
                 }
                 insertTableRow(db, DICE_TABLE_NAME, contentValues)
             }
@@ -108,8 +106,7 @@ abstract class AppDatabase : RoomDatabase() {
         )
 
         private fun generateDie(id: Long, sides: Int) : DieEntity {
-            return DieEntity(timestampId = id, setId = 1, sides = sides,
-                sidesColorArgb = Color.White.toArgb(), numberColorArgb = Color.Black.toArgb())
+            return DieEntity(timestampId = id, setId = 1, sides = sides)
         }
 
         const val DATABASE_NAME = "dice_pouch_database"
@@ -120,8 +117,6 @@ abstract class AppDatabase : RoomDatabase() {
         const val DICE_TABLE_COLUMN_TIMESTAMP_ID = "dice_timestamp_id"
         const val DICE_TABLE_COLUMN_SET_ID = "set_id"
         const val DICE_TABLE_COLUMN_SIDES = "sides"
-        const val DICE_TABLE_COLUMN_SIDES_COLOR = "sides_color_argb"
-        const val DICE_TABLE_COLUMN_NUMBER_COLOR = "number_color_argb"
 
         const val SHORTCUTS_TABLE_COLUMN_TIMESTAMP = "shortcut_timestamp_id"
         const val SHORTCUTS_TABLE_COLUMN_NAME = "name"
