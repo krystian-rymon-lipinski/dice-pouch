@@ -220,6 +220,15 @@ class MainActivityViewModelTest {
     }
 
     @Test
+    fun changeSetInfo() = runTest {
+        val newSetInfo = DiceSetInfo(name = "fre", diceColor = Color.LightGray, numbersColor = Color.Blue)
+
+        testObj.changeSetInfo(setInfo = newSetInfo)
+        verify(setsLocalDataSourceImpl).changeSetInfo(capture(setCaptor))
+        assertEquals(newSetInfo, setCaptor.value)
+    }
+
+    @Test
     fun deleteSet() = runTest {
         val setToBeDeleted = DiceSetInfo(name = "z_name", diceColor = Color.White, numbersColor = Color.Cyan)
 
@@ -286,7 +295,7 @@ class MainActivityViewModelTest {
         override fun retrieveSetWithId(id: Int) = setWithIdStream
 
         override suspend fun addDiceSet(set: DiceSetInfo) { /* Do nothing */ }
-        override suspend fun changeSetName(set: DiceSetInfo, newName: String) { /* Do nothing */ }
+        override suspend fun changeSetInfo(newInfo: DiceSetInfo) { /* Do nothing */ }
         override suspend fun deleteDiceSet(set: DiceSetInfo) { /* Do nothing */ }
     }
 

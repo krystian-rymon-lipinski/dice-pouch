@@ -61,9 +61,9 @@ import com.krystianrymonlipinski.dicepouch.ui.components.LoadingScreen
 import com.krystianrymonlipinski.dicepouch.ui.components.NoDiceCaption
 import com.krystianrymonlipinski.dicepouch.ui.components.NoShortcutsCaption
 import com.krystianrymonlipinski.dicepouch.ui.components.SecondaryCaptionWithIcon
+import com.krystianrymonlipinski.dicepouch.ui.dialogs.DiceSetConfigurationDialog
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.NewDieDialog
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollShortcutDialog
-import com.krystianrymonlipinski.dicepouch.ui.dialogs.SetNameChangeDialog
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
 import com.krystianrymonlipinski.dicepouch.viewmodels.MainActivityViewModel
 import kotlinx.coroutines.launch
@@ -83,7 +83,7 @@ fun DiceSetEditRoute(
     DiceSetEditScreen(
         setBeingEdited = setBeingEdited,
         onUpClicked = onUpClicked,
-        onSetNameChanged = { newName -> viewModel.changeSetName(setBeingEdited?.info, newName) },
+        onSetInfoChanged = { newInfo -> viewModel.changeSetInfo(newInfo) },
         onNewDieAdded = { numberOfSides -> viewModel.addNewDieToSet(chosenSetId, numberOfSides) },
         onDeleteDieClicked = { die -> viewModel.deleteDieFromSet(chosenSetId, die) },
         onNewShortcutAdded = { name, setting -> viewModel.addNewShortcutToSet(name, setting) },
@@ -96,7 +96,7 @@ fun DiceSetEditRoute(
 fun DiceSetEditScreen(
     setBeingEdited: DiceSet? = DiceSet(DiceSetInfo(0, "A set"), listOf(Die(20), Die(15)), listOf(RollShortcut(name = "Some check"))),
     onUpClicked: () -> Unit = { },
-    onSetNameChanged: (String) -> Unit = { },
+    onSetInfoChanged: (DiceSetInfo) -> Unit = { },
     onNewDieAdded: (Int) -> Unit = {},
     onDeleteDieClicked: (Die) -> Unit = {},
     onNewShortcutAdded: (String, RollSetting) -> Unit = { _, _ -> /* Nothing by default */},
@@ -159,11 +159,11 @@ fun DiceSetEditScreen(
         } ?: LoadingScreen(modifier = Modifier.fillMaxSize())
 
         if (showSetNameChangeDialog) {
-            SetNameChangeDialog(
+            DiceSetConfigurationDialog(
+                currentConfiguration = setBeingEdited?.info,
                 onDialogDismissed = { showSetNameChangeDialog = false },
-                currentSetName = setBeingEdited?.info?.name ?: "",
-                onSetNameChanged = {
-                    newName -> onSetNameChanged(newName)
+                onSetConfigurationConfirmed = { setInfo ->
+                    onSetInfoChanged(setInfo)
                     showSetNameChangeDialog = false
                 }
             )

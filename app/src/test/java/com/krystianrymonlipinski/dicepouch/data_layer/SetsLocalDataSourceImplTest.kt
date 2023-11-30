@@ -59,10 +59,10 @@ class SetsLocalDataSourceImplTest {
 
     @Test
     fun changeSetName() = runTest {
-        val setToBeChanged = DiceSetInfo(name = "some_name", diceColor = Color.Magenta, numbersColor = Color.LightGray)
+        val setToBeChanged = DiceSetInfo(name = "another_name", diceColor = Color.Magenta, numbersColor = Color.LightGray)
         val setEntity = SetEntity(name = "another_name", diceSideColorArgb = Color.Magenta.toArgb(), diceNumberColorArgb = Color.LightGray.toArgb())
 
-        testObj.changeSetName(setToBeChanged, "another_name")
+        testObj.changeSetInfo(setToBeChanged)
         verify(setDao).update(capture(setEntityCaptor))
         assertEquals(setEntity, setEntityCaptor.value)
     }

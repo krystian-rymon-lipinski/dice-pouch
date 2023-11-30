@@ -33,19 +33,25 @@ import com.krystianrymonlipinski.dicepouch.ui.components.CenteredDialogConfirmBu
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
 
 @Composable
-fun NewSetDialog(
+fun DiceSetConfigurationDialog(
+    currentConfiguration: DiceSetInfo? = null,
     onDialogDismissed: () -> Unit = { },
-    onNewSetAdded: (DiceSetInfo) -> Unit = { }
+    onSetConfigurationConfirmed: (DiceSetInfo) -> Unit = { }
 ) {
-    var currentSetState by rememberSaveable { mutableStateOf(DiceSetInfo(name = "New set")) }
+    var currentSetState by rememberSaveable { mutableStateOf(
+        currentConfiguration ?: DiceSetInfo(name = "New set"))
+    }
     var showColorPicker by rememberSaveable { mutableStateOf<ColorType?>(null) }
 
     AlertDialog(
         properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true),
         onDismissRequest = onDialogDismissed,
         confirmButton = { CenteredDialogConfirmButton(
-            text = stringResource(id = R.string.btn_dialog_add),
-            onClick = { onNewSetAdded(currentSetState) }
+            text = stringResource(id =
+                if (currentConfiguration == null) R.string.btn_dialog_add
+                else R.string.btn_dialog_save
+            ),
+            onClick = { onSetConfigurationConfirmed(currentSetState) }
         ) },
         text = { NewSetDialogContent(
             setState = currentSetState,
@@ -147,6 +153,6 @@ enum class ColorType {
 @Composable
 fun NewSetDialogContentPreview() {
     DicePouchTheme {
-        NewSetDialog()
+        DiceSetConfigurationDialog()
     }
 }

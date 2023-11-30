@@ -50,7 +50,7 @@ import com.krystianrymonlipinski.dicepouch.model.DiceSetInfo
 import com.krystianrymonlipinski.dicepouch.model.PouchScreenState
 import com.krystianrymonlipinski.dicepouch.room.AppDatabase
 import com.krystianrymonlipinski.dicepouch.ui.TAB_POUCH
-import com.krystianrymonlipinski.dicepouch.ui.dialogs.NewSetDialog
+import com.krystianrymonlipinski.dicepouch.ui.dialogs.DiceSetConfigurationDialog
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.conditionalBorder
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
 import com.krystianrymonlipinski.dicepouch.viewmodels.MainActivityViewModel
@@ -149,9 +149,9 @@ fun PouchScreen(
             )
 
             if (shouldShowNewSetDialog) {
-                NewSetDialog(
+                DiceSetConfigurationDialog(
                     onDialogDismissed = { shouldShowNewSetDialog = false },
-                    onNewSetAdded = { newSet ->
+                    onSetConfigurationConfirmed = { newSet ->
                         onNewSetAdded(newSet)
                         shouldShowNewSetDialog = false
                     }

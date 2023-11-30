@@ -167,9 +167,9 @@ class MainActivityViewModel @Inject constructor(
         return settings
     }
 
-    fun changeSetName(setInfo: DiceSetInfo?, newName: String) {
+    fun changeSetInfo(setInfo: DiceSetInfo?) {
         setInfo?.let { viewModelScope.launch {
-            setsLocalDataSource.changeSetName(setInfo, newName)
+            setsLocalDataSource.changeSetInfo(setInfo)
         } }
     }
 
