@@ -8,6 +8,7 @@ import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.krystianrymonlipinski.dicepouch.BaseAndroidTest
@@ -20,6 +21,17 @@ import org.junit.Test
 
 class DiceSetEditScreenTest : BaseAndroidTest() {
 
+
+    @Test
+    fun clickEditSetName_showDialog() {
+        composeTestRule.apply {
+            setContent { DicePouchTheme { DiceSetEditScreen() } }
+
+            onNodeWithContentDescription("primary_caption_icon").performClick()
+            onNode(isDialog()).assertIsDisplayed()
+            onNodeWithText("Save").assertIsDisplayed()
+        }
+    }
 
     @Test
     fun clickNewDie_showDialog() {

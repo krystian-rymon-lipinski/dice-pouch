@@ -4,10 +4,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -26,7 +24,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -47,6 +44,7 @@ import com.krystianrymonlipinski.dicepouch.ui.components.LoadingScreen
 import com.krystianrymonlipinski.dicepouch.ui.components.NoDiceCaption
 import com.krystianrymonlipinski.dicepouch.ui.components.NoShortcutsCaption
 import com.krystianrymonlipinski.dicepouch.ui.components.SecondaryCaption
+import com.krystianrymonlipinski.dicepouch.ui.components.DiceSetName
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollDialog
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollSettingsDialog
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
@@ -131,7 +129,8 @@ fun ChosenSetElementsLayout(
     onShortcutClicked: (RollShortcut) -> Unit
 ) {
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-        ChosenSetName(name = chosenSet.info.name)
+        Spacer(modifier = Modifier.height(16.dp))
+        DiceSetName(setName = chosenSet.info.name)
         Spacer(modifier = Modifier.height(24.dp))
 
         SecondaryCaption(text = stringResource(id = R.string.dice_caption))
@@ -159,27 +158,6 @@ fun NoSetChosenCaption() {
             text = stringResource(id = R.string.no_set_chosen),
             color = MaterialTheme.colorScheme.primary,
             style = MaterialTheme.typography.headlineSmall
-        )
-    }
-}
-
-@Composable
-fun ChosenSetName(name: String) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 16.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            modifier = Modifier.weight(1f),
-            text = name,
-            overflow = TextOverflow.Ellipsis,
-            maxLines = 1,
-            color = MaterialTheme.colorScheme.primary,
-            style = MaterialTheme.typography.titleLarge.copy(
-                fontWeight = FontWeight.Bold
-            )
         )
     }
 }

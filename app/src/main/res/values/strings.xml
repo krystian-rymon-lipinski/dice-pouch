@@ -25,6 +25,9 @@
     <string name="new_shortcut">New shortcut</string>
     <string name="btn_dialog_save">Save</string>
 
+    <!-- DiceSetEditScreen -->
+
+    <string name="placeholder_set_name">Set name</string>
     <string name="no_dice_snackbar_message">Creating shortcut needs a die</string> <!-- TODO: improve snackbar message -->
     <string name="btn_yes">Yes</string>
     <string name="btn_no">No</string>

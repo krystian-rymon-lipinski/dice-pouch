@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
@@ -62,6 +63,7 @@ import com.krystianrymonlipinski.dicepouch.ui.components.NoShortcutsCaption
 import com.krystianrymonlipinski.dicepouch.ui.components.SecondaryCaptionWithIcon
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.NewDieDialog
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollShortcutDialog
+import com.krystianrymonlipinski.dicepouch.ui.dialogs.SetNameChangeDialog
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
 import com.krystianrymonlipinski.dicepouch.viewmodels.MainActivityViewModel
 import kotlinx.coroutines.launch
@@ -81,6 +83,7 @@ fun DiceSetEditRoute(
     DiceSetEditScreen(
         setBeingEdited = setBeingEdited,
         onUpClicked = onUpClicked,
+        onSetNameChanged = { newName -> viewModel.changeSetName(setBeingEdited?.info, newName) },
         onNewDieAdded = { numberOfSides -> viewModel.addNewDieToSet(chosenSetId, numberOfSides) },
         onDeleteDieClicked = { die -> viewModel.deleteDieFromSet(chosenSetId, die) },
         onNewShortcutAdded = { name, setting -> viewModel.addNewShortcutToSet(name, setting) },
@@ -93,6 +96,7 @@ fun DiceSetEditRoute(
 fun DiceSetEditScreen(
     setBeingEdited: DiceSet? = DiceSet(DiceSetInfo(0, "A set"), listOf(Die(20), Die(15)), listOf(RollShortcut(name = "Some check"))),
     onUpClicked: () -> Unit = { },
+    onSetNameChanged: (String) -> Unit = { },
     onNewDieAdded: (Int) -> Unit = {},
     onDeleteDieClicked: (Die) -> Unit = {},
     onNewShortcutAdded: (String, RollSetting) -> Unit = { _, _ -> /* Nothing by default */},
@@ -100,6 +104,7 @@ fun DiceSetEditScreen(
     onDeleteShortcutClicked: (RollShortcut) -> Unit = {}
 ) {
 
+    var showSetNameChangeDialog by rememberSaveable { mutableStateOf(false) }
     var showNewDieDialog by rememberSaveable { mutableStateOf(false) }
     var showNewShortcutDialog by rememberSaveable { mutableStateOf(false) }
     var showUpdateShortcutDialog by rememberSaveable { mutableStateOf<RollShortcut?>(null) }
@@ -117,6 +122,13 @@ fun DiceSetEditScreen(
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
                     contentDescription = "arrow_back",
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            } },
+            actions = { IconButton(onClick = { showSetNameChangeDialog = true }) {
+                Icon(
+                    imageVector = Icons.Filled.Edit,
+                    contentDescription = "primary_caption_icon",
                     tint = MaterialTheme.colorScheme.primary
                 )
             } }
@@ -145,6 +157,17 @@ fun DiceSetEditScreen(
                 onDeleteShortcutClicked = onDeleteShortcutClicked
             )
         } ?: LoadingScreen(modifier = Modifier.fillMaxSize())
+
+        if (showSetNameChangeDialog) {
+            SetNameChangeDialog(
+                onDialogDismissed = { showSetNameChangeDialog = false },
+                currentSetName = setBeingEdited?.info?.name ?: "",
+                onSetNameChanged = {
+                    newName -> onSetNameChanged(newName)
+                    showSetNameChangeDialog = false
+                }
+            )
+        }
 
         if (showNewDieDialog) {
             NewDieDialog(
