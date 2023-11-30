@@ -170,7 +170,7 @@ fun DiceGrid(
     onDieClicked: (Die) -> Unit
 ) {
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(120.dp),
+        columns = GridCells.Adaptive(130.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
@@ -185,10 +185,7 @@ fun DiceGrid(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    DieImage(
-                        die = diceSet[die],
-                        textStyle = MaterialTheme.typography.headlineMedium
-                    )
+                    DieImage(die = diceSet[die])
                 }
             }
         }

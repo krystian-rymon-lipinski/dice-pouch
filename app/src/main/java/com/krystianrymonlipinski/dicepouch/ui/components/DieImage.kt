@@ -23,7 +23,7 @@ fun DieImage(
     modifier: Modifier = Modifier,
     die: Die = Die(6),
     valueShown: String? = die.sides.toString(),
-    textStyle: TextStyle = MaterialTheme.typography.headlineMedium
+    textStyle: TextStyle = MaterialTheme.typography.headlineSmall
 ) {
     Box(
         modifier = modifier,

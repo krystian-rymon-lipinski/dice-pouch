@@ -19,7 +19,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CardDefaults
@@ -286,7 +285,7 @@ fun EditableDiceGrid(
     onDeleteDieClicked: (Die) -> Unit
 ) {
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(120.dp),
+        columns = GridCells.Adaptive(130.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
@@ -310,18 +309,15 @@ fun DeletableDieImage(die: Die, onDeleteDieClicked: (Die) -> Unit) {
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            DieImage(
-                die = die,
-                textStyle = MaterialTheme.typography.headlineMedium
-            )
+            DieImage(die = die)
             IconButton(
                 modifier = Modifier.align(Alignment.TopEnd),
                 onClick = { onDeleteDieClicked(die) }
             ) {
                 Icon(
-                    imageVector = Icons.Filled.Delete,
+                    imageVector = Icons.Filled.Close,
                     contentDescription = "delete_die_icon",
-                    tint = MaterialTheme.colorScheme.primary
+                    tint = die.numberColor
                 )
             }
         }
