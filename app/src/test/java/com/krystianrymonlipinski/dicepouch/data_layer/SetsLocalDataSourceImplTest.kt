@@ -94,7 +94,7 @@ class SetsLocalDataSourceImplTest {
         val setWithDice = SetWithDice(
             set = SetEntity(id = 4, name = "g_name", diceSideColorArgb = 23, diceNumberColorArgb = 10),
             diceWithShortcuts = listOf(DieWithShortcuts(
-                die = DieEntity(timestampId = 1L, setId = 4, sides = 5, sidesColorArgb = 2, numberColorArgb = 99),
+                die = DieEntity(timestampId = 1L, setId = 4, sides = 5),
                 shortcuts = listOf(ShortcutEntity(timestampId = 100L, name = "short", diceNumber = 12,
                     dieId = 1L, modifier = -2, mechanic = "NORMAL"))
             ))
