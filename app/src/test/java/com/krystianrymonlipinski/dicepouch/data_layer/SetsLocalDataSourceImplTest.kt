@@ -101,10 +101,10 @@ class SetsLocalDataSourceImplTest {
         )
         val setToBeRetrieved = DiceSet(
             info = DiceSetInfo(id = 4, name = "g_name", diceColor = Color(23), numbersColor = Color(10)),
-            dice = listOf(Die(timestampId = 1L, sides = 5, sideColor = Color(2), numberColor = Color(99))),
+            dice = listOf(Die(timestampId = 1L, sides = 5, sideColor = Color(23), numberColor = Color(10))),
             shortcuts = listOf(RollShortcut(timestampId = 100L, name = "short",
                 setting = RollSetting(
-                    die = Die(timestampId = 1L, sides = 5, sideColor = Color(2), numberColor = Color(99)),
+                    die = Die(timestampId = 1L, sides = 5, sideColor = Color(23), numberColor = Color(10)),
                     diceNumber = 12,
                     modifier = -2,
                     mechanic = RollSetting.Mechanic.NORMAL
