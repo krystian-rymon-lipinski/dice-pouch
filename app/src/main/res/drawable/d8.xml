@@ -7,13 +7,13 @@
 
     <group>
         <path
-            android:pathData="M50,5 l-45,30, v30, l45,30, l45,-30, v-30Z"
+            android:pathData="M50,5 l-45,27.5, v35, l45,27.5, l45,-27.5, v-35Z"
             android:strokeWidth="2.2"
             android:strokeColor="@color/black"
             android:fillColor="@color/white"/>
 
         <path
-            android:pathData="M50,5 L5,65, L95,65Z"
+            android:pathData="M50,5 L5,67.5, h90Z"
             android:strokeWidth="1.2"
             android:strokeColor="@color/black"/>
     </group>
