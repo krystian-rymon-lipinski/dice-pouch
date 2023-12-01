@@ -1,6 +1,7 @@
 package com.krystianrymonlipinski.dicepouch.ui.screens
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -60,8 +61,10 @@ fun SettingsScreen(
 
     Scaffold { paddingValues ->
         Column(modifier = Modifier
+            .padding(paddingValues)
             .fillMaxSize()
-            .padding(paddingValues)) {
+            .background(color = MaterialTheme.colorScheme.background)
+        ) {
             DicePouchTabRow(
                 selectedTabIndex = TAB_SETTINGS,
                 onTabClicked = { tabIndex -> onTabClicked(tabIndex) }

@@ -4,6 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -12,7 +13,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -107,10 +107,7 @@ fun PouchScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = {
-                        onEditSetClicked(setInEditMode!!)
-                        setInEditMode = null
-                    }) {
+                    IconButton(onClick = { onEditSetClicked(setInEditMode!!) }) {
                         Icon(
                             imageVector = Icons.Filled.Edit,
                             contentDescription = "edit_set",
@@ -135,7 +132,9 @@ fun PouchScreen(
     ) { paddingValues ->
         Column(modifier = Modifier
             .padding(paddingValues)
-            .fillMaxWidth()) {
+            .fillMaxSize()
+            .background(color = MaterialTheme.colorScheme.background)
+        ) {
             DicePouchTabRow(
                 selectedTabIndex = TAB_POUCH,
                 onTabClicked = { tabIndex -> onTabClicked(tabIndex) }
@@ -171,7 +170,7 @@ fun SetsGrid(
 ) {
     LazyVerticalGrid(
         modifier = Modifier
-            .padding(top = 16.dp, start = 16.dp, end = 16.dp)
+            .padding(16.dp)
             .fillMaxSize(),
         columns = GridCells.Adaptive(120.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -260,7 +259,10 @@ fun AddNewSetGridElement(
     ElevatedCard(
         modifier = Modifier
             .alpha(alpha)
-            .clickable(onClick = onClicked),
+            .clickable(
+                enabled = isEnabled,
+                onClick = onClicked
+            ),
         shape = MaterialTheme.shapes.extraLarge,
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(4.dp)

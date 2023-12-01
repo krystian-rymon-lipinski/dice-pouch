@@ -1,5 +1,6 @@
 package com.krystianrymonlipinski.dicepouch.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -90,6 +91,7 @@ fun TableScreen(
         Column(modifier = Modifier
             .padding(paddingValues)
             .fillMaxSize()
+            .background(color = MaterialTheme.colorScheme.background)
         ) {
             DicePouchTabRow(
                 selectedTabIndex = TAB_TABLE,

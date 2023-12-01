@@ -1,5 +1,6 @@
 package com.krystianrymonlipinski.dicepouch.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -12,7 +13,7 @@ fun LoadingScreen(
     modifier: Modifier = Modifier
 ) {
     Box(
-        modifier = modifier,
+        modifier = modifier.background(color = MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator(

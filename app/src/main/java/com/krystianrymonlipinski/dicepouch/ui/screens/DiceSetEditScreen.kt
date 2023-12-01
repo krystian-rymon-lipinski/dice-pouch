@@ -1,5 +1,6 @@
 package com.krystianrymonlipinski.dicepouch.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -229,6 +230,7 @@ fun ChosenSetElementsLayout(
             end = 16.dp
         )
         .fillMaxWidth()
+        .background(color = MaterialTheme.colorScheme.background)
     ) {
         SecondaryCaptionWithIcon(
             text = stringResource(id = R.string.dice_caption),
