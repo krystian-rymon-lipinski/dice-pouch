@@ -12,9 +12,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
@@ -222,7 +224,7 @@ fun ChosenSetElementsLayout(
     Column(modifier = Modifier
         .padding(
             top = paddingValues.calculateTopPadding(),
-            bottom = paddingValues.calculateBottomPadding(),
+            bottom = 16.dp,
             start = 16.dp,
             end = 16.dp
         )
@@ -234,12 +236,12 @@ fun ChosenSetElementsLayout(
             onIconClicked = onAddNewDieClicked
         )
         Spacer(modifier = Modifier.height(16.dp))
-
-        if (chosenSet.dice.isEmpty()) NoDiceCaption()
-        else EditableDiceGrid(
+        EditableDiceGrid(
+            modifier = Modifier.weight(1f),
             diceSet = chosenSet.dice,
             onDeleteDieClicked = onDeleteDieClicked
         )
+
         Spacer(modifier = Modifier.height(16.dp))
         SecondaryCaptionWithIcon(
             text = stringResource(id = R.string.shortcuts_caption),
@@ -247,9 +249,8 @@ fun ChosenSetElementsLayout(
             onIconClicked = onAddShortcutClicked
         )
         Spacer(modifier = Modifier.height(16.dp))
-
-        if (chosenSet.shortcuts.isEmpty()) NoShortcutsCaption()
-        else EditableShortcutsGrid(
+        EditableShortcutsGrid(
+            modifier = Modifier.weight(1f),
             shortcuts = chosenSet.shortcuts,
             onShortcutClicked = onShortcutClicked,
             onDeleteShortcutClicked = onDeleteShortcutClicked
@@ -281,19 +282,27 @@ fun DeleteDieAlertDialog(
 
 @Composable
 fun EditableDiceGrid(
+    modifier: Modifier,
     diceSet: List<Die>,
     onDeleteDieClicked: (Die) -> Unit
 ) {
     LazyVerticalGrid(
+        modifier = modifier,
         columns = GridCells.Adaptive(130.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        items(diceSet.size) {dieIndex: Int ->
-            DeletableDieImage(
-                die = diceSet[dieIndex],
-                onDeleteDieClicked = onDeleteDieClicked
-            )
+        if (diceSet.isEmpty()) {
+            item(span = { GridItemSpan(maxCurrentLineSpan) }) {
+                NoDiceCaption()
+            }
+        } else {
+            items(diceSet.size) {dieIndex: Int ->
+                DeletableDieImage(
+                    die = diceSet[dieIndex],
+                    onDeleteDieClicked = onDeleteDieClicked
+                )
+            }
         }
     }
 }
@@ -326,21 +335,29 @@ fun DeletableDieImage(die: Die, onDeleteDieClicked: (Die) -> Unit) {
 
 @Composable
 fun EditableShortcutsGrid(
+    modifier: Modifier,
     shortcuts: List<RollShortcut>,
     onShortcutClicked: (RollShortcut) -> Unit,
     onDeleteShortcutClicked: (RollShortcut) -> Unit
 ) {
     LazyVerticalStaggeredGrid(
+        modifier = modifier,
         columns = StaggeredGridCells.Fixed(3),
         verticalItemSpacing = 8.dp,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        items(shortcuts.size) { index ->
-            DeletableShortcutCard(
-                shortcut = shortcuts[index],
-                onShortcutClicked = onShortcutClicked,
-                onDeleteShortcutClicked = onDeleteShortcutClicked
-            )
+        if (shortcuts.isEmpty()) {
+            item(StaggeredGridItemSpan.FullLine) {
+                NoShortcutsCaption()
+            }
+        } else {
+            items(shortcuts.size) { index ->
+                DeletableShortcutCard(
+                    shortcut = shortcuts[index],
+                    onShortcutClicked = onShortcutClicked,
+                    onDeleteShortcutClicked = onDeleteShortcutClicked
+                )
+            }
         }
     }
 }

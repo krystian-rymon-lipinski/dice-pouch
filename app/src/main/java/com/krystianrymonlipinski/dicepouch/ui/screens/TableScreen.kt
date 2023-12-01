@@ -10,9 +10,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
@@ -130,23 +132,26 @@ fun ChosenSetElementsLayout(
     onDieClicked: (Die) -> Unit,
     onShortcutClicked: (RollShortcut) -> Unit
 ) {
-    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-        Spacer(modifier = Modifier.height(16.dp))
+    Column(modifier = Modifier.padding(16.dp)) {
         DiceSetName(setName = chosenSet.info.name)
-        Spacer(modifier = Modifier.height(24.dp))
 
+        Spacer(modifier = Modifier.height(24.dp))
         SecondaryCaption(text = stringResource(id = R.string.dice_caption))
         Spacer(modifier = Modifier.height(16.dp))
-
-        if (chosenSet.dice.isEmpty()) NoDiceCaption()
-        else DiceGrid(diceSet = chosenSet.dice, onDieClicked = onDieClicked)
+        DiceGrid(
+            modifier = Modifier.weight(1f),
+            diceSet = chosenSet.dice,
+            onDieClicked = onDieClicked
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
         SecondaryCaption(text = stringResource(id = R.string.shortcuts_caption))
-
         Spacer(modifier = Modifier.height(16.dp))
-        if (chosenSet.shortcuts.isEmpty()) NoShortcutsCaption()
-        else ShortcutsGrid(shortcutsSet = chosenSet.shortcuts, onShortcutClicked = onShortcutClicked)
+        ShortcutsGrid(
+            modifier = Modifier.weight(1f),
+            shortcutsSet = chosenSet.shortcuts,
+            onShortcutClicked = onShortcutClicked
+        )
     }
 }
 
@@ -166,26 +171,34 @@ fun NoSetChosenCaption() {
 
 @Composable
 fun DiceGrid(
+    modifier: Modifier,
     diceSet: List<Die>,
     onDieClicked: (Die) -> Unit
 ) {
     LazyVerticalGrid(
+        modifier = modifier,
         columns = GridCells.Adaptive(130.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        items(count = diceSet.size) { die ->
-            ElevatedCard(
-                modifier = Modifier.clickable { onDieClicked(diceSet[die]) },
-                shape = MaterialTheme.shapes.small,
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
-                elevation = CardDefaults.cardElevation(4.dp)
-            ) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
+        if (diceSet.isEmpty()) {
+            item(span = { GridItemSpan(maxCurrentLineSpan) }) {
+                NoDiceCaption()
+            }
+        } else {
+            items(count = diceSet.size) { die ->
+                ElevatedCard(
+                    modifier = Modifier.clickable { onDieClicked(diceSet[die]) },
+                    shape = MaterialTheme.shapes.small,
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
+                    elevation = CardDefaults.cardElevation(4.dp)
                 ) {
-                    DieImage(die = diceSet[die])
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        DieImage(die = diceSet[die])
+                    }
                 }
             }
         }
@@ -194,16 +207,24 @@ fun DiceGrid(
 
 @Composable
 fun ShortcutsGrid(
+    modifier: Modifier,
     shortcutsSet: List<RollShortcut>,
     onShortcutClicked: (RollShortcut) -> Unit
 ) {
     LazyVerticalStaggeredGrid(
+        modifier = modifier,
         columns = StaggeredGridCells.Fixed(3),
         verticalItemSpacing = 8.dp,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        items(shortcutsSet.size) { index ->
-            ShortcutCard(shortcut = shortcutsSet[index], onClicked = onShortcutClicked)
+        if (shortcutsSet.isEmpty()) {
+            item(span = StaggeredGridItemSpan.FullLine) {
+                NoShortcutsCaption()
+            }
+        } else {
+            items(shortcutsSet.size) { index ->
+                ShortcutCard(shortcut = shortcutsSet[index], onClicked = onShortcutClicked)
+            }
         }
     }
 }
