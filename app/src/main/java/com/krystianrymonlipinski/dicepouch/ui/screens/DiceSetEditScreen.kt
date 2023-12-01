@@ -347,7 +347,7 @@ fun EditableShortcutsGrid(
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         if (shortcuts.isEmpty()) {
-            item(StaggeredGridItemSpan.FullLine) {
+            item(key = -1, span = StaggeredGridItemSpan.FullLine) {
                 NoShortcutsCaption()
             }
         } else {

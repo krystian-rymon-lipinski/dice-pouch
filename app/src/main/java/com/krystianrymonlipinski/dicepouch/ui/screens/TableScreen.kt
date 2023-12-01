@@ -218,11 +218,11 @@ fun ShortcutsGrid(
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         if (shortcutsSet.isEmpty()) {
-            item(span = StaggeredGridItemSpan.FullLine) {
+            item(key = -1, span = StaggeredGridItemSpan.FullLine) {
                 NoShortcutsCaption()
             }
         } else {
-            items(shortcutsSet.size) { index ->
+            items(count = shortcutsSet.size) { index ->
                 ShortcutCard(shortcut = shortcutsSet[index], onClicked = onShortcutClicked)
             }
         }
