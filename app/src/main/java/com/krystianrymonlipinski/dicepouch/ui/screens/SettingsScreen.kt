@@ -249,17 +249,17 @@ fun SettingsScreenPreview() {
     }
 }
 
-private const val MIN_ROLL_TIME_MILLIS = 500f
-private const val MAX_ROLL_TIME_MILLIS = 5000f
-private const val ROLL_TIME_STEP_MILLIS = 10f
+private const val MIN_ROLL_TIME_MILLIS = 200f
+private const val MAX_ROLL_TIME_MILLIS = 3000f
+private const val ROLL_TIME_STEP_MILLIS = 50f
 private const val ROLL_TIME_STEPS_NUMBER = ((MAX_ROLL_TIME_MILLIS - MIN_ROLL_TIME_MILLIS) / ROLL_TIME_STEP_MILLIS).toInt() - 1
 
-private const val MIN_THROW_DELAY_TIME_MILLIS = 10f
+private const val MIN_THROW_DELAY_TIME_MILLIS = 50f
 private const val MAX_THROW_DELAY_TIME_MILLIS = 2000f
-private const val THROW_DELAY_STEP_MILLIS = 10f
+private const val THROW_DELAY_STEP_MILLIS = 50f
 private const val THROW_DELAY_STEPS_NUMBER = ((MAX_THROW_DELAY_TIME_MILLIS - MIN_THROW_DELAY_TIME_MILLIS) / THROW_DELAY_STEP_MILLIS).toInt() - 1
 
-private const val MIN_POPUP_DISMISS_TIME_MILLIS = 200f
+private const val MIN_POPUP_DISMISS_TIME_MILLIS = 500f
 private const val MAX_POPUP_DISMISS_TIME_MILLIS = 3000f
-private const val POPUP_DISMISS_TIME_STEP_MILLIS = 10f
+private const val POPUP_DISMISS_TIME_STEP_MILLIS = 50f
 private const val POPUP_DISMISS_TIME_STEPS_NUMBER = ((MAX_POPUP_DISMISS_TIME_MILLIS - MIN_POPUP_DISMISS_TIME_MILLIS) / POPUP_DISMISS_TIME_STEP_MILLIS).toInt() - 1
