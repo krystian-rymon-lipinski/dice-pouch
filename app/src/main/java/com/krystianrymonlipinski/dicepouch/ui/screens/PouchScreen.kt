@@ -5,7 +5,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -47,8 +46,8 @@ import com.krystianrymonlipinski.dicepouch.ui.TAB_POUCH
 import com.krystianrymonlipinski.dicepouch.ui.components.icons.ArrowBack
 import com.krystianrymonlipinski.dicepouch.ui.components.icons.DeleteSetIcon
 import com.krystianrymonlipinski.dicepouch.ui.components.icons.EditSetIcon
+import com.krystianrymonlipinski.dicepouch.ui.conditionalBorder
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.DiceSetConfigurationDialog
-import com.krystianrymonlipinski.dicepouch.ui.dialogs.conditionalBorder
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
 import com.krystianrymonlipinski.dicepouch.viewmodels.MainActivityViewModel
 
@@ -196,13 +195,12 @@ fun DiceSetGridElement(
                     haptics.performHapticFeedback(HapticFeedbackType.LongPress)
                     onSetLongPressed(diceSetInfo)
                 })
-            .conditionalBorder(isCurrentSet) {
-                this.border(
-                    width = 4.dp,
-                    color = MaterialTheme.colorScheme.primary,
-                    shape = MaterialTheme.shapes.extraLarge
-                )
-            },
+            .conditionalBorder(
+                condition = isCurrentSet,
+                width = 4.dp,
+                color = MaterialTheme.colorScheme.primary,
+                shape = MaterialTheme.shapes.extraLarge
+            ),
         shape = MaterialTheme.shapes.extraLarge,
         colors = CardDefaults.cardColors(containerColor = diceSetInfo.diceColor),
         elevation = CardDefaults.cardElevation(4.dp)

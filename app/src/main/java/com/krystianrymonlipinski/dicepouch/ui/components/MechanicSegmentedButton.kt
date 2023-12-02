@@ -2,7 +2,6 @@ package com.krystianrymonlipinski.dicepouch.ui.components
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -34,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import com.krystianrymonlipinski.dicepouch.R
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
+import com.krystianrymonlipinski.dicepouch.ui.conditionalBackground
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
 import com.krystianrymonlipinski.dicepouch.ui.theme.dieDisadvantage
 import com.krystianrymonlipinski.dicepouch.ui.theme.dieAdvantage
@@ -108,9 +108,7 @@ fun SingleOption(
     Row(
         modifier = modifier
             .fillMaxHeight()
-            .conditionalBackground(isSelected) {
-                this.background(MaterialTheme.colorScheme.secondaryContainer)
-            }
+            .conditionalBackground(condition = isSelected, color = MaterialTheme.colorScheme.secondaryContainer)
             .clickable { onOptionSelected() }
             .padding(horizontal = 24.dp)
             .semantics { contentDescription = "mechanics_option" },
@@ -134,9 +132,7 @@ fun DieImage(die: Die, mechanic: RollSetting.Mechanic) {
     )
 }
 
-@Composable
-fun Modifier.conditionalBackground(condition: Boolean, modifier: @Composable Modifier.() -> Modifier) =
-    then(if (condition) modifier.invoke(this) else this)
+
 
 
 @DrawableRes
