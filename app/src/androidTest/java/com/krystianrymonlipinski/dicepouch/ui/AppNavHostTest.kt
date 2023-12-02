@@ -131,7 +131,7 @@ class AppNavHostTest {
         composeTestRule.apply {
             onNodeWithContentDescription("arrow_back").assertIsDisplayed()
             onNodeWithText("Basic set").assertIsDisplayed()
-            onAllNodesWithContentDescription("secondary_caption_icon").assertCountEquals(2)
+            onAllNodesWithContentDescription("edit_set").assertCountEquals(2)
         }
     }
 }
