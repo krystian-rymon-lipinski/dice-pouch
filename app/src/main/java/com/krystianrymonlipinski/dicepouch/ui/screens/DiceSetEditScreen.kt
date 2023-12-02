@@ -18,16 +18,9 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
@@ -59,11 +52,14 @@ import com.krystianrymonlipinski.dicepouch.model.DiceSetInfo
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
 import com.krystianrymonlipinski.dicepouch.model.RollShortcut
+import com.krystianrymonlipinski.dicepouch.ui.components.icons.ArrowBack
 import com.krystianrymonlipinski.dicepouch.ui.components.DieImage
+import com.krystianrymonlipinski.dicepouch.ui.components.icons.EditSetIcon
 import com.krystianrymonlipinski.dicepouch.ui.components.LoadingScreen
 import com.krystianrymonlipinski.dicepouch.ui.components.NoDiceCaption
 import com.krystianrymonlipinski.dicepouch.ui.components.NoShortcutsCaption
-import com.krystianrymonlipinski.dicepouch.ui.components.SecondaryCaptionWithIcon
+import com.krystianrymonlipinski.dicepouch.ui.components.SecondaryCaptionWithAddIcon
+import com.krystianrymonlipinski.dicepouch.ui.components.icons.DeleteElementIcon
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.DiceSetConfigurationDialog
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.NewDieDialog
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollShortcutDialog
@@ -121,20 +117,10 @@ fun DiceSetEditScreen(
         snackbarHost = { SnackbarHost(snackBarHostState) },
         topBar = { DicePouchTopBar(
             title = setBeingEdited?.info?.name ?: "",
-            navigationIcon = { IconButton(onClick = onUpClicked ) {
-                Icon(
-                    imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = "arrow_back",
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            } },
-            actions = { IconButton(onClick = { showSetNameChangeDialog = true }) {
-                Icon(
-                    imageVector = Icons.Filled.Edit,
-                    contentDescription = "primary_caption_icon",
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            } }
+            navigationIcon = { ArrowBack(onIconClicked = onUpClicked) },
+            actions = {
+                EditSetIcon(onIconClicked = { showSetNameChangeDialog = true })
+            }
         ) }
     ) { paddingValues ->
         setBeingEdited?.let { diceSet ->
@@ -232,9 +218,8 @@ fun ChosenSetElementsLayout(
         .fillMaxWidth()
         .background(color = MaterialTheme.colorScheme.background)
     ) {
-        SecondaryCaptionWithIcon(
+        SecondaryCaptionWithAddIcon(
             text = stringResource(id = R.string.dice_caption),
-            imageVector = Icons.Filled.Add,
             onIconClicked = onAddNewDieClicked
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -245,9 +230,8 @@ fun ChosenSetElementsLayout(
         )
 
         Spacer(modifier = Modifier.height(16.dp))
-        SecondaryCaptionWithIcon(
+        SecondaryCaptionWithAddIcon(
             text = stringResource(id = R.string.shortcuts_caption),
-            imageVector = Icons.Filled.Add,
             onIconClicked = onAddShortcutClicked
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -321,16 +305,11 @@ fun DeletableDieImage(die: Die, onDeleteDieClicked: (Die) -> Unit) {
             contentAlignment = Alignment.Center
         ) {
             DieImage(die = die)
-            IconButton(
+            DeleteElementIcon(
                 modifier = Modifier.align(Alignment.TopEnd),
-                onClick = { onDeleteDieClicked(die) }
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Close,
-                    contentDescription = "delete_die_icon",
-                    tint = die.numberColor
-                )
-            }
+                iconColor = die.numberColor,
+                onIconClicked = { onDeleteDieClicked(die) }
+            )
         }
     }
 }
@@ -389,13 +368,10 @@ fun DeletableShortcutCard(
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.titleSmall
             )
-            IconButton(onClick = { onDeleteShortcutClicked(shortcut) }) {
-                Icon(
-                    imageVector = Icons.Filled.Close,
-                    contentDescription = "delete_shortcut",
-                    tint = shortcut.setting.die.numberColor
-                )
-            }
+            DeleteElementIcon(
+                onIconClicked = { onDeleteShortcutClicked(shortcut) },
+                iconColor = shortcut.setting.die.numberColor
+            )
         }
     }
 }

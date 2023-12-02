@@ -1,4 +1,4 @@
-package com.krystianrymonlipinski.dicepouch.ui.components
+package com.krystianrymonlipinski.dicepouch.ui.components.icons
 
 import androidx.compose.foundation.background
 import androidx.compose.material.icons.Icons

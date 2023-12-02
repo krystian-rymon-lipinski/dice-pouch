@@ -23,11 +23,11 @@ class DiceSetEditScreenTest : BaseAndroidTest() {
 
 
     @Test
-    fun clickEditSetName_showDialog() {
+    fun clickEditSet_showDialog() {
         composeTestRule.apply {
             setContent { DicePouchTheme { DiceSetEditScreen() } }
 
-            onNodeWithContentDescription("primary_caption_icon").performClick()
+            onNodeWithContentDescription("edit_set").performClick()
             onNode(isDialog()).assertIsDisplayed()
             onNodeWithText("Save").assertIsDisplayed()
         }
@@ -38,7 +38,7 @@ class DiceSetEditScreenTest : BaseAndroidTest() {
         composeTestRule.apply {
             setContent { DicePouchTheme { DiceSetEditScreen() } }
 
-            onAllNodesWithContentDescription("secondary_caption_icon")[0].performClick()
+            onAllNodesWithContentDescription("add_set_element_icon")[0].performClick()
             onNode(isDialog()).assertIsDisplayed()
             onNodeWithText("sides").assertIsDisplayed()
         }
@@ -55,7 +55,7 @@ class DiceSetEditScreenTest : BaseAndroidTest() {
                 )
             ) } }
 
-            onAllNodesWithContentDescription("delete_die_icon")[0].performClick()
+            onAllNodesWithContentDescription("delete_set_element_icon")[0].performClick()
             onNode(isDialog()).assertIsDisplayed()
             onNodeWithText(text = "Do you wish to proceed?", substring = true)
         }
@@ -68,7 +68,7 @@ class DiceSetEditScreenTest : BaseAndroidTest() {
                 DiceSetEditScreen(DiceSet(dice = listOf(Die(20))))
             } }
 
-            onAllNodesWithContentDescription("delete_die_icon")[0].performClick()
+            onAllNodesWithContentDescription("delete_set_element_icon")[0].performClick()
             onNode(isDialog()).assertDoesNotExist()
         }
     }
@@ -84,7 +84,7 @@ class DiceSetEditScreenTest : BaseAndroidTest() {
                 }
             }
 
-            onAllNodesWithContentDescription("secondary_caption_icon")[1].performClick()
+            onAllNodesWithContentDescription("add_set_element_icon")[1].performClick()
             onNode(isDialog()).assertIsDisplayed()
             onNodeWithText("New shortcut").assertIsDisplayed()
             onNodeWithText("1d10").assertIsDisplayed()
@@ -98,7 +98,7 @@ class DiceSetEditScreenTest : BaseAndroidTest() {
                 DiceSetEditScreen(DiceSet())
             } }
 
-            onAllNodesWithContentDescription("secondary_caption_icon")[1].performClick()
+            onAllNodesWithContentDescription("add_set_element_icon")[1].performClick()
             onNode(isDialog()).assertDoesNotExist()
             onNodeWithText("Creating shortcut needs a die").assertIsDisplayed()
             composeTestRule.mainClock.advanceTimeBy(4500L)

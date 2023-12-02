@@ -7,6 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.krystianrymonlipinski.dicepouch.ui.components.icons.MinusIcon
+import com.krystianrymonlipinski.dicepouch.ui.components.icons.PlusIcon
 
 @Composable
 fun RollSettingRow(

@@ -16,14 +16,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -50,6 +44,9 @@ import com.krystianrymonlipinski.dicepouch.model.DiceSetInfo
 import com.krystianrymonlipinski.dicepouch.model.PouchScreenState
 import com.krystianrymonlipinski.dicepouch.room.AppDatabase
 import com.krystianrymonlipinski.dicepouch.ui.TAB_POUCH
+import com.krystianrymonlipinski.dicepouch.ui.components.icons.ArrowBack
+import com.krystianrymonlipinski.dicepouch.ui.components.icons.DeleteSetIcon
+import com.krystianrymonlipinski.dicepouch.ui.components.icons.EditSetIcon
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.DiceSetConfigurationDialog
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.conditionalBorder
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
@@ -97,38 +94,16 @@ fun PouchScreen(
         topBar = { AnimatedVisibility(visible = setInEditMode != null) {
             DicePouchTopBar(
                 title = setInEditMode?.name ?: "",
-                navigationIcon = {
-                    IconButton(onClick = { setInEditMode = null }) {
-                        Icon(
-                            imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = "arrow_back",
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                },
+                navigationIcon = { ArrowBack(onIconClicked = { setInEditMode = null }) },
                 actions = {
-                    IconButton(onClick = { onEditSetClicked(setInEditMode!!) }) {
-                        Icon(
-                            imageVector = Icons.Filled.Edit,
-                            contentDescription = "edit_set",
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                    IconButton(onClick = {
+                    EditSetIcon(onIconClicked = { onEditSetClicked(setInEditMode!!) })
+                    DeleteSetIcon(onIconClicked = {
                         onSetDeleted(setInEditMode!!)
                         setInEditMode = null
-                    }) {
-                        Icon(
-                            imageVector = Icons.Filled.Delete,
-                            contentDescription = "delete_set",
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
+                    })
                 }
             )
-        }
-
-        },
+        } },
     ) { paddingValues ->
         Column(modifier = Modifier
             .padding(paddingValues)
