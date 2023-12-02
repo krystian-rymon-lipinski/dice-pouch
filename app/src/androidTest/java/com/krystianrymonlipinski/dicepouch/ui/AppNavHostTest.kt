@@ -1,14 +1,11 @@
 package com.krystianrymonlipinski.dicepouch.ui
 
-import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.longClick
-import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.onParent
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTouchInput
 import com.krystianrymonlipinski.dicepouch.MainActivity
@@ -71,7 +68,7 @@ class AppNavHostTest {
             onNodeWithText("Pouch").performClick()
             onNodeWithContentDescription("edit_set").assertDoesNotExist()
 
-            onNodeWithText(text = "Basic set", useUnmergedTree = true).onParent().performTouchInput { longClick() }
+            onNodeWithText(text = "Basic set").performTouchInput { longClick() }
             awaitIdle()
 
             onNodeWithContentDescription("edit_set").assertIsDisplayed()
@@ -92,7 +89,7 @@ class AppNavHostTest {
             onNodeWithText("Pouch").performClick()
             onNodeWithContentDescription("edit_set").assertDoesNotExist()
 
-            onNodeWithText("Basic set").performTouchInput { longClick(durationMillis = 1000L) }
+            onNodeWithText("Basic set").performTouchInput { longClick() }
             onNodeWithContentDescription("edit_set").assertIsDisplayed()
 
             onNodeWithContentDescription("edit_set").performClick()
@@ -131,7 +128,7 @@ class AppNavHostTest {
         composeTestRule.apply {
             onNodeWithContentDescription("arrow_back").assertIsDisplayed()
             onNodeWithText("Basic set").assertIsDisplayed()
-            onAllNodesWithContentDescription("edit_set").assertCountEquals(2)
+            onNodeWithContentDescription("edit_set").assertIsDisplayed()
         }
     }
 }
