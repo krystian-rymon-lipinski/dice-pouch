@@ -40,7 +40,7 @@ class MainActivityViewModel @Inject constructor(
 
 
     val isLoadingFinishedState: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val currentSetIdState: MutableStateFlow<Int?> = MutableStateFlow(null) //TODO: refactor; to stream
+    val currentSetIdState: MutableStateFlow<Int?> = MutableStateFlow(null)
     val currentSetState: MutableStateFlow<DiceSet?> = MutableStateFlow(null)
 
     private val allSetsInfoStream: StateFlow<List<DiceSetInfo>> = setsLocalDataSource.retrieveAllSetsInfo()
@@ -87,7 +87,6 @@ class MainActivityViewModel @Inject constructor(
             ).also { setId ->
                 val savedSet = setsLocalDataSource.retrieveSetWithId(setId).take(1).singleOrNull()
                 currentSetState.value = savedSet
-                println("set = ${currentSetState.value}")
             }
             isLoadingFinishedState.value = true
         }
@@ -182,7 +181,6 @@ class MainActivityViewModel @Inject constructor(
     }
 
     private suspend fun refreshSetState() {
-        //TODO: try refactoring it using .stateIn operator
         currentSetIdState.value?.let { setId ->
             val currentSetState = setsLocalDataSource.retrieveSetWithId(setId).take(1).single()
             this@MainActivityViewModel.currentSetState.value = currentSetState

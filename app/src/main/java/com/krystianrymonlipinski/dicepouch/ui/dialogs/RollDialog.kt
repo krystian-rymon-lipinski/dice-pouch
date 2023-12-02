@@ -252,7 +252,6 @@ fun DiceSum(setting: RollSetting, throws: List<Int?>, isCurrentTry: Boolean, cur
                         color = MaterialTheme.colorScheme.primary,
                         shape = MaterialTheme.shapes.extraSmall
                     ),
-                //TODO: animate border hopping from die to die
                 textStyle = MaterialTheme.typography.bodyMedium
             )
         }

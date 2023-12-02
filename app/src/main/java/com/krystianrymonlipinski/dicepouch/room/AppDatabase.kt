@@ -30,10 +30,9 @@ abstract class AppDatabase : RoomDatabase() {
 
         val databaseCallback: Callback = object : Callback() {
             override fun onCreate(db: SupportSQLiteDatabase) {
-                prepopulateSet(db)
-                prepopulateDice(db)
-                prepopulateShortcuts(db)
-                //TODO: prepopulate database within coroutine
+                    prepopulateSet(db)
+                    prepopulateDice(db)
+                    prepopulateShortcuts(db)
             }
         }
 
