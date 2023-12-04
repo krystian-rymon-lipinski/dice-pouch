@@ -15,7 +15,7 @@ open class BaseDaoTest {
     fun setUp() {
         db = Room.inMemoryDatabaseBuilder(
             context = ApplicationProvider.getApplicationContext(),
-            AppDatabase::class.java
+            klass = AppDatabase::class.java
         ).build()
         setDao = db.setDao()
         dieDao = db.dieDao()
