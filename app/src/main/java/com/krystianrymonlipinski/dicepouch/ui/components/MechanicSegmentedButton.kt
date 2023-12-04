@@ -2,7 +2,6 @@ package com.krystianrymonlipinski.dicepouch.ui.components
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,7 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -34,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import com.krystianrymonlipinski.dicepouch.R
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
+import com.krystianrymonlipinski.dicepouch.ui.conditionalBackground
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
 import com.krystianrymonlipinski.dicepouch.ui.theme.dieDisadvantage
 import com.krystianrymonlipinski.dicepouch.ui.theme.dieAdvantage
@@ -44,7 +44,7 @@ fun MechanicSegmentedButton(
     onSelectedButtonChanged: (RollSetting.Mechanic) -> Unit = {},
     die: Die = Die(4)
 ) {
-    var selectedButtonIndex by rememberSaveable { mutableStateOf(when (selectedState) {
+    var selectedButtonIndex by rememberSaveable { mutableIntStateOf(when (selectedState) {
         RollSetting.Mechanic.DISADVANTAGE -> 0
         RollSetting.Mechanic.NORMAL -> 1
         RollSetting.Mechanic.ADVANTAGE -> 2
@@ -62,6 +62,7 @@ fun MechanicSegmentedButton(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             SingleOption(
+                modifier = Modifier.weight(1f),
                 isSelected = selectedButtonIndex == 0,
                 onOptionSelected = {
                     selectedButtonIndex = 0
@@ -71,7 +72,8 @@ fun MechanicSegmentedButton(
                 mechanic = RollSetting.Mechanic.DISADVANTAGE
             )
             VerticalDivider()
-            SingleOption( //TODO: make the middle button the same width as the others
+            SingleOption(
+                modifier = Modifier.weight(1f),
                 isSelected = selectedButtonIndex == 1,
                 onOptionSelected = {
                     selectedButtonIndex = 1
@@ -82,6 +84,7 @@ fun MechanicSegmentedButton(
             )
             VerticalDivider()
             SingleOption(
+                modifier = Modifier.weight(1f),
                 isSelected = selectedButtonIndex == 2,
                 onOptionSelected = {
                     selectedButtonIndex = 2
@@ -96,17 +99,16 @@ fun MechanicSegmentedButton(
 
 @Composable
 fun SingleOption(
+    modifier: Modifier,
     isSelected: Boolean,
     onOptionSelected: () -> Unit,
     die: Die,
     mechanic: RollSetting.Mechanic
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxHeight()
-            .conditionalBackground(isSelected) {
-                this.background(MaterialTheme.colorScheme.secondaryContainer)
-            }
+            .conditionalBackground(condition = isSelected, color = MaterialTheme.colorScheme.secondaryContainer)
             .clickable { onOptionSelected() }
             .padding(horizontal = 24.dp)
             .semantics { contentDescription = "mechanics_option" },
@@ -130,9 +132,7 @@ fun DieImage(die: Die, mechanic: RollSetting.Mechanic) {
     )
 }
 
-@Composable
-fun Modifier.conditionalBackground(condition: Boolean, modifier: @Composable Modifier.() -> Modifier) =
-    then(if (condition) modifier.invoke(this) else this)
+
 
 
 @DrawableRes

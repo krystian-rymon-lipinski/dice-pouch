@@ -23,8 +23,8 @@ import com.krystianrymonlipinski.dicepouch.R
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.ui.components.CenteredDialogConfirmButton
 import com.krystianrymonlipinski.dicepouch.ui.components.DieImage
-import com.krystianrymonlipinski.dicepouch.ui.components.MinusIcon
-import com.krystianrymonlipinski.dicepouch.ui.components.PlusIcon
+import com.krystianrymonlipinski.dicepouch.ui.components.icons.MinusIcon
+import com.krystianrymonlipinski.dicepouch.ui.components.icons.PlusIcon
 
 @Composable
 fun NewDieDialog(

@@ -30,9 +30,7 @@ open class BaseDaoTest {
                 die = DieEntity(
                     timestampId = dieId,
                     setId = setId,
-                    sides = 3,
-                    sidesColorArgb = 23,
-                    numberColorArgb = 19
+                    sides = 3
                 ),
                 shortcuts = listOf(
                     ShortcutEntity(
@@ -57,9 +55,7 @@ open class BaseDaoTest {
                 die = DieEntity(
                     timestampId = dieId2,
                     setId = setId,
-                    sides = 10,
-                    sidesColorArgb = 120,
-                    numberColorArgb = 987
+                    sides = 10
                 ),
                 shortcuts = listOf(
                     ShortcutEntity(

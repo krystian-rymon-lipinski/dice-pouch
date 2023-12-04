@@ -9,5 +9,6 @@ interface SetsLocalDataSource {
     fun retrieveAllSetsInfo() : Flow<List<DiceSetInfo>>
     fun retrieveSetWithId(id: Int) : Flow<DiceSet?>
     suspend fun addDiceSet(set: DiceSetInfo)
+    suspend fun changeSetInfo(newInfo: DiceSetInfo)
     suspend fun deleteDiceSet(set: DiceSetInfo)
 }

@@ -1,5 +1,6 @@
 package com.krystianrymonlipinski.dicepouch.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,17 +13,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Delete
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
@@ -32,7 +30,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,48 +39,52 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.krystianrymonlipinski.dicepouch.viewmodels.CurrentSetViewModel
 import com.krystianrymonlipinski.dicepouch.ui.DicePouchTopBar
 import com.krystianrymonlipinski.dicepouch.R
-import com.krystianrymonlipinski.dicepouch.model.ChosenSetScreenState
 import com.krystianrymonlipinski.dicepouch.model.DiceSet
 import com.krystianrymonlipinski.dicepouch.model.DiceSetInfo
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
 import com.krystianrymonlipinski.dicepouch.model.RollShortcut
+import com.krystianrymonlipinski.dicepouch.ui.components.icons.ArrowBack
 import com.krystianrymonlipinski.dicepouch.ui.components.DieImage
+import com.krystianrymonlipinski.dicepouch.ui.components.icons.EditSetIcon
+import com.krystianrymonlipinski.dicepouch.ui.components.LoadingScreen
 import com.krystianrymonlipinski.dicepouch.ui.components.NoDiceCaption
 import com.krystianrymonlipinski.dicepouch.ui.components.NoShortcutsCaption
+import com.krystianrymonlipinski.dicepouch.ui.components.SecondaryCaptionWithAddIcon
+import com.krystianrymonlipinski.dicepouch.ui.components.icons.DeleteElementIcon
+import com.krystianrymonlipinski.dicepouch.ui.dialogs.DiceSetConfigurationDialog
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.NewDieDialog
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollShortcutDialog
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
+import com.krystianrymonlipinski.dicepouch.viewmodels.MainActivityViewModel
 import kotlinx.coroutines.launch
 
 
 @Composable
 fun DiceSetEditRoute(
-    viewModel: CurrentSetViewModel = hiltViewModel(),
+    viewModel: MainActivityViewModel = hiltViewModel(),
     chosenSetId: Int,
     onUpClicked: () -> Unit
 ) {
-    val screenState by viewModel.chosenSetScreenState.collectAsStateWithLifecycle()
-    LaunchedEffect(key1 = Unit) {
-        viewModel.setCurrentSet(chosenSetId)
-    }
+
+    val setBeingEdited by viewModel.retrieveSetWithChosenId(chosenSetId).collectAsStateWithLifecycle(
+        initialValue = null
+    )
 
     DiceSetEditScreen(
-        screenState = screenState,
+        setBeingEdited = setBeingEdited,
         onUpClicked = onUpClicked,
-        onNewDieAdded = { numberOfSides -> viewModel.addNewDieToSet(numberOfSides) },
-        onDeleteDieClicked = { die -> viewModel.deleteDieFromSet(die) },
+        onSetInfoChanged = { newInfo -> viewModel.changeSetInfo(newInfo) },
+        onNewDieAdded = { numberOfSides -> viewModel.addNewDieToSet(chosenSetId, numberOfSides) },
+        onDeleteDieClicked = { die -> viewModel.deleteDieFromSet(chosenSetId, die) },
         onNewShortcutAdded = { name, setting -> viewModel.addNewShortcutToSet(name, setting) },
         onShortcutUpdated = { shortcut -> viewModel.updateShortcut(shortcut) },
         onDeleteShortcutClicked = { shortcut -> viewModel.deleteShortcut(shortcut) }
@@ -92,10 +93,9 @@ fun DiceSetEditRoute(
 
 @Composable
 fun DiceSetEditScreen(
-    screenState: ChosenSetScreenState = ChosenSetScreenState(
-        chosenSet = DiceSet(DiceSetInfo(0, "A set"), listOf(Die(20), Die(15)), listOf(RollShortcut(name = "Some check"))),
-    ),
+    setBeingEdited: DiceSet? = DiceSet(DiceSetInfo(0, "A set"), listOf(Die(20), Die(15)), listOf(RollShortcut(name = "Some check"))),
     onUpClicked: () -> Unit = { },
+    onSetInfoChanged: (DiceSetInfo) -> Unit = { },
     onNewDieAdded: (Int) -> Unit = {},
     onDeleteDieClicked: (Die) -> Unit = {},
     onNewShortcutAdded: (String, RollSetting) -> Unit = { _, _ -> /* Nothing by default */},
@@ -103,6 +103,7 @@ fun DiceSetEditScreen(
     onDeleteShortcutClicked: (RollShortcut) -> Unit = {}
 ) {
 
+    var showSetNameChangeDialog by rememberSaveable { mutableStateOf(false) }
     var showNewDieDialog by rememberSaveable { mutableStateOf(false) }
     var showNewShortcutDialog by rememberSaveable { mutableStateOf(false) }
     var showUpdateShortcutDialog by rememberSaveable { mutableStateOf<RollShortcut?>(null) }
@@ -115,17 +116,14 @@ fun DiceSetEditScreen(
     Scaffold(
         snackbarHost = { SnackbarHost(snackBarHostState) },
         topBar = { DicePouchTopBar(
-            title = screenState.chosenSet?.info?.name ?: "",
-            navigationIcon = { IconButton(onClick = onUpClicked ) {
-                Icon(
-                    imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = "arrow_back",
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            } }
+            title = setBeingEdited?.info?.name ?: "",
+            navigationIcon = { ArrowBack(onIconClicked = onUpClicked) },
+            actions = {
+                EditSetIcon(onIconClicked = { showSetNameChangeDialog = true })
+            }
         ) }
     ) { paddingValues ->
-        screenState.chosenSet?.let { diceSet ->
+        setBeingEdited?.let { diceSet ->
             ChosenSetElementsLayout(
                 paddingValues = paddingValues,
                 chosenSet = diceSet,
@@ -146,6 +144,17 @@ fun DiceSetEditScreen(
                 },
                 onShortcutClicked = { shortcutClicked -> showUpdateShortcutDialog = shortcutClicked},
                 onDeleteShortcutClicked = onDeleteShortcutClicked
+            )
+        } ?: LoadingScreen(modifier = Modifier.fillMaxSize())
+
+        if (showSetNameChangeDialog) {
+            DiceSetConfigurationDialog(
+                currentConfiguration = setBeingEdited?.info,
+                onDialogDismissed = { showSetNameChangeDialog = false },
+                onSetConfigurationConfirmed = { setInfo ->
+                    onSetInfoChanged(setInfo)
+                    showSetNameChangeDialog = false
+                }
             )
         }
 
@@ -172,7 +181,7 @@ fun DiceSetEditScreen(
         if (showNewShortcutDialog || showUpdateShortcutDialog != null) {
             RollShortcutDialog(
                 shortcut = showUpdateShortcutDialog,
-                diceInSet = screenState.chosenSet?.dice ?: emptyList(),
+                diceInSet = setBeingEdited?.dice ?: emptyList(),
                 onDialogDismissed = {
                     showNewShortcutDialog = false
                     showUpdateShortcutDialog = null
@@ -202,27 +211,32 @@ fun ChosenSetElementsLayout(
     Column(modifier = Modifier
         .padding(
             top = paddingValues.calculateTopPadding(),
-            bottom = paddingValues.calculateBottomPadding(),
+            bottom = 16.dp,
             start = 16.dp,
             end = 16.dp
         )
         .fillMaxWidth()
+        .background(color = MaterialTheme.colorScheme.background)
     ) {
-        DiceCaption(onAddNewDieClicked = onAddNewDieClicked)
-
-        Spacer(modifier = Modifier.height(8.dp))
-        if (chosenSet.dice.isEmpty()) NoDiceCaption()
-        else EditableDiceGrid(
+        SecondaryCaptionWithAddIcon(
+            text = stringResource(id = R.string.dice_caption),
+            onIconClicked = onAddNewDieClicked
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        EditableDiceGrid(
+            modifier = Modifier.weight(1f),
             diceSet = chosenSet.dice,
             onDeleteDieClicked = onDeleteDieClicked
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
-        ShortcutsCaption(onAddShortcutClicked = onAddShortcutClicked)
-
-        Spacer(modifier = Modifier.height(8.dp))
-        if (chosenSet.shortcuts.isEmpty()) NoShortcutsCaption()
-        else EditableShortcutsGrid(
+        Spacer(modifier = Modifier.height(16.dp))
+        SecondaryCaptionWithAddIcon(
+            text = stringResource(id = R.string.shortcuts_caption),
+            onIconClicked = onAddShortcutClicked
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        EditableShortcutsGrid(
+            modifier = Modifier.weight(1f),
             shortcuts = chosenSet.shortcuts,
             onShortcutClicked = onShortcutClicked,
             onDeleteShortcutClicked = onDeleteShortcutClicked
@@ -253,28 +267,28 @@ fun DeleteDieAlertDialog(
 }
 
 @Composable
-fun DiceCaption(onAddNewDieClicked: () -> Unit) {
-    RowWithCaptionAndPlusIcon(
-        captionText = stringResource(id = R.string.dice_caption),
-        onPlusIconClicked = onAddNewDieClicked
-    )
-}
-
-@Composable
 fun EditableDiceGrid(
+    modifier: Modifier,
     diceSet: List<Die>,
     onDeleteDieClicked: (Die) -> Unit
 ) {
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(120.dp),
+        modifier = modifier,
+        columns = GridCells.Adaptive(130.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        items(diceSet.size) {dieIndex: Int ->
-            DeletableDieImage(
-                die = diceSet[dieIndex],
-                onDeleteDieClicked = onDeleteDieClicked
-            )
+        if (diceSet.isEmpty()) {
+            item(span = { GridItemSpan(maxCurrentLineSpan) }) {
+                NoDiceCaption()
+            }
+        } else {
+            items(diceSet.size) {dieIndex: Int ->
+                DeletableDieImage(
+                    die = diceSet[dieIndex],
+                    onDeleteDieClicked = onDeleteDieClicked
+                )
+            }
         }
     }
 }
@@ -290,51 +304,41 @@ fun DeletableDieImage(die: Die, onDeleteDieClicked: (Die) -> Unit) {
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            DieImage(
-                die = die,
-                textStyle = MaterialTheme.typography.headlineMedium
-            )
-            IconButton(
+            DieImage(die = die)
+            DeleteElementIcon(
                 modifier = Modifier.align(Alignment.TopEnd),
-                onClick = { onDeleteDieClicked(die) }
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Delete,
-                    contentDescription = "delete_die_icon",
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            }
+                iconColor = die.numberColor,
+                onIconClicked = { onDeleteDieClicked(die) }
+            )
         }
     }
 }
 
-
-
-@Composable
-fun ShortcutsCaption(onAddShortcutClicked: () -> Unit) {
-    RowWithCaptionAndPlusIcon(
-        captionText = stringResource(id = R.string.shortcuts_caption),
-        onPlusIconClicked = onAddShortcutClicked
-    )
-}
-
 @Composable
 fun EditableShortcutsGrid(
+    modifier: Modifier,
     shortcuts: List<RollShortcut>,
     onShortcutClicked: (RollShortcut) -> Unit,
     onDeleteShortcutClicked: (RollShortcut) -> Unit
 ) {
-    LazyVerticalGrid(
-        columns = GridCells.Adaptive(80.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+    LazyVerticalStaggeredGrid(
+        modifier = modifier,
+        columns = StaggeredGridCells.Fixed(3),
+        verticalItemSpacing = 8.dp,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        items(shortcuts.size) { index ->
-            DeletableShortcutCard(
-                shortcut = shortcuts[index],
-                onShortcutClicked = onShortcutClicked,
-                onDeleteShortcutClicked = onDeleteShortcutClicked
-            )
+        if (shortcuts.isEmpty()) {
+            item(key = -1, span = StaggeredGridItemSpan.FullLine) {
+                NoShortcutsCaption()
+            }
+        } else {
+            items(shortcuts.size) { index ->
+                DeletableShortcutCard(
+                    shortcut = shortcuts[index],
+                    onShortcutClicked = onShortcutClicked,
+                    onDeleteShortcutClicked = onDeleteShortcutClicked
+                )
+            }
         }
     }
 }
@@ -354,51 +358,19 @@ fun DeletableShortcutCard(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(4.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .padding(start = 4.dp, top = 4.dp, bottom = 4.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 text = shortcut.name,
                 modifier = Modifier.weight(1f),
                 color = shortcut.setting.die.numberColor,
                 textAlign = TextAlign.Center,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.titleSmall
             )
-            IconButton(onClick = { onDeleteShortcutClicked(shortcut) }) {
-                Icon(
-                    imageVector = Icons.Filled.Close,
-                    contentDescription = "delete_shortcut",
-                    tint = shortcut.setting.die.numberColor
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun RowWithCaptionAndPlusIcon(
-    captionText: String,
-    onPlusIconClicked: () -> Unit
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            modifier = Modifier.weight(1f),
-            text = captionText,
-            color = MaterialTheme.colorScheme.primary,
-            style = MaterialTheme.typography.titleMedium.copy(
-                fontWeight = FontWeight.Bold
-            )
-        )
-        IconButton(onClick = onPlusIconClicked) {
-            Icon( //TODO: improve all icon buttons; for their selected state is not highlighted; also use icons, not images
-                imageVector = Icons.Filled.Add,
-                contentDescription = "add_icon",
-                tint = MaterialTheme.colorScheme.primary
+            DeleteElementIcon(
+                onIconClicked = { onDeleteShortcutClicked(shortcut) },
+                iconColor = shortcut.setting.die.numberColor
             )
         }
     }

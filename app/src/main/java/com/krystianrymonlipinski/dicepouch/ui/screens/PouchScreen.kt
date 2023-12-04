@@ -4,7 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.border
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,18 +12,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -45,24 +38,27 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.krystianrymonlipinski.dicepouch.ui.DicePouchTabRow
 import com.krystianrymonlipinski.dicepouch.ui.DicePouchTopBar
-import com.krystianrymonlipinski.dicepouch.viewmodels.PouchViewModel
 import com.krystianrymonlipinski.dicepouch.R
 import com.krystianrymonlipinski.dicepouch.model.DiceSetInfo
 import com.krystianrymonlipinski.dicepouch.model.PouchScreenState
 import com.krystianrymonlipinski.dicepouch.room.AppDatabase
 import com.krystianrymonlipinski.dicepouch.ui.TAB_POUCH
-import com.krystianrymonlipinski.dicepouch.ui.dialogs.NewSetDialog
-import com.krystianrymonlipinski.dicepouch.ui.dialogs.conditionalBorder
+import com.krystianrymonlipinski.dicepouch.ui.components.icons.ArrowBack
+import com.krystianrymonlipinski.dicepouch.ui.components.icons.DeleteSetIcon
+import com.krystianrymonlipinski.dicepouch.ui.components.icons.EditSetIcon
+import com.krystianrymonlipinski.dicepouch.ui.conditionalBorder
+import com.krystianrymonlipinski.dicepouch.ui.dialogs.DiceSetConfigurationDialog
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
+import com.krystianrymonlipinski.dicepouch.viewmodels.MainActivityViewModel
 
 @Composable
 fun PouchRoute(
-    viewModel: PouchViewModel = hiltViewModel(),
+    viewModel: MainActivityViewModel = hiltViewModel(),
     onTabClicked: (Int) -> Unit,
     onBackStackPopped: () -> Unit,
     onEditSetClicked: (DiceSetInfo) -> Unit
 ) {
-    val screenState by viewModel.allSetsState.collectAsStateWithLifecycle()
+    val screenState by viewModel.pouchScreenState.collectAsStateWithLifecycle()
 
     PouchScreen(
         screenState = screenState,
@@ -97,45 +93,22 @@ fun PouchScreen(
         topBar = { AnimatedVisibility(visible = setInEditMode != null) {
             DicePouchTopBar(
                 title = setInEditMode?.name ?: "",
-                navigationIcon = {
-                    IconButton(onClick = { setInEditMode = null }) {
-                        Icon(
-                            imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = "arrow_back",
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                },
+                navigationIcon = { ArrowBack(onIconClicked = { setInEditMode = null }) },
                 actions = {
-                    IconButton(onClick = {
-                        onEditSetClicked(setInEditMode!!)
-                        setInEditMode = null
-                    }) {
-                        Icon(
-                            imageVector = Icons.Filled.Edit,
-                            contentDescription = "edit_set",
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                    IconButton(onClick = {
+                    EditSetIcon(onIconClicked = { onEditSetClicked(setInEditMode!!) })
+                    DeleteSetIcon(onIconClicked = {
                         onSetDeleted(setInEditMode!!)
                         setInEditMode = null
-                    }) {
-                        Icon(
-                            imageVector = Icons.Filled.Delete,
-                            contentDescription = "delete_set",
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
+                    })
                 }
             )
-        }
-
-        },
+        } },
     ) { paddingValues ->
         Column(modifier = Modifier
             .padding(paddingValues)
-            .fillMaxWidth()) {
+            .fillMaxSize()
+            .background(color = MaterialTheme.colorScheme.background)
+        ) {
             DicePouchTabRow(
                 selectedTabIndex = TAB_POUCH,
                 onTabClicked = { tabIndex -> onTabClicked(tabIndex) }
@@ -149,9 +122,9 @@ fun PouchScreen(
             )
 
             if (shouldShowNewSetDialog) {
-                NewSetDialog(
+                DiceSetConfigurationDialog(
                     onDialogDismissed = { shouldShowNewSetDialog = false },
-                    onNewSetAdded = { newSet ->
+                    onSetConfigurationConfirmed = { newSet ->
                         onNewSetAdded(newSet)
                         shouldShowNewSetDialog = false
                     }
@@ -171,7 +144,7 @@ fun SetsGrid(
 ) {
     LazyVerticalGrid(
         modifier = Modifier
-            .padding(top = 16.dp, start = 16.dp, end = 16.dp)
+            .padding(16.dp)
             .fillMaxSize(),
         columns = GridCells.Adaptive(120.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -222,13 +195,12 @@ fun DiceSetGridElement(
                     haptics.performHapticFeedback(HapticFeedbackType.LongPress)
                     onSetLongPressed(diceSetInfo)
                 })
-            .conditionalBorder(isCurrentSet) {
-                this.border(
-                    width = 4.dp,
-                    color = MaterialTheme.colorScheme.primary,
-                    shape = MaterialTheme.shapes.extraLarge
-                )
-            },
+            .conditionalBorder(
+                condition = isCurrentSet,
+                width = 4.dp,
+                color = MaterialTheme.colorScheme.primary,
+                shape = MaterialTheme.shapes.extraLarge
+            ),
         shape = MaterialTheme.shapes.extraLarge,
         colors = CardDefaults.cardColors(containerColor = diceSetInfo.diceColor),
         elevation = CardDefaults.cardElevation(4.dp)
@@ -260,7 +232,10 @@ fun AddNewSetGridElement(
     ElevatedCard(
         modifier = Modifier
             .alpha(alpha)
-            .clickable(onClick = onClicked),
+            .clickable(
+                enabled = isEnabled,
+                onClick = onClicked
+            ),
         shape = MaterialTheme.shapes.extraLarge,
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(4.dp)

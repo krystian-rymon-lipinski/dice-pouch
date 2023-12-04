@@ -2,7 +2,6 @@ package com.krystianrymonlipinski.dicepouch.ui.dialogs
 
 import RollDescription
 import android.media.MediaPlayer
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -45,6 +44,7 @@ import com.krystianrymonlipinski.dicepouch.model.RollingSettings
 import com.krystianrymonlipinski.dicepouch.model.TryState
 import com.krystianrymonlipinski.dicepouch.ui.components.DieImage
 import com.krystianrymonlipinski.dicepouch.ui.components.CenteredDialogConfirmButton
+import com.krystianrymonlipinski.dicepouch.ui.conditionalBorder
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -204,13 +204,12 @@ fun TryResult(result: Int?, isChosen: Boolean) {
         modifier = Modifier
             .fillMaxWidth(0.15f)
             .height(48.dp)
-            .conditionalBorder(isChosen) {
-                this.border(
-                    width = 2.dp,
-                    color = MaterialTheme.colorScheme.primary,
-                    shape = MaterialTheme.shapes.extraSmall
-                )
-            },
+            .conditionalBorder(
+                condition = isChosen,
+                width = 2.dp,
+                color = MaterialTheme.colorScheme.primary,
+                shape = MaterialTheme.shapes.extraSmall
+            ),
         shape = MaterialTheme.shapes.extraSmall,
         color = MaterialTheme.colorScheme.secondaryContainer
 
@@ -247,24 +246,17 @@ fun DiceSum(setting: RollSetting, throws: List<Int?>, isCurrentTry: Boolean, cur
                 valueShown = throws[throwNumber]?.toString() ?: "",
                 modifier = Modifier
                     .size(48.dp)
-                    .conditionalBorder(isCurrentTry && currentThrow - 1 == throwNumber) {
-                        //TODO: animate border hopping from die to die
-                        this.border(
-                            width = 2.dp,
-                            color = MaterialTheme.colorScheme.primary,
-                            shape = MaterialTheme.shapes.extraSmall
-                        )
-                    },
+                    .conditionalBorder(
+                        condition = isCurrentTry && currentThrow - 1 == throwNumber,
+                        width = 2.dp,
+                        color = MaterialTheme.colorScheme.primary,
+                        shape = MaterialTheme.shapes.extraSmall
+                    ),
                 textStyle = MaterialTheme.typography.bodyMedium
             )
         }
     }
 }
-
-
-@Composable //TODO: clean up all conditional modifiers
-fun Modifier.conditionalBorder(condition: Boolean, modifier: @Composable Modifier.() -> Modifier) =
-    then(if (condition) modifier.invoke(this) else this)
 
 
 @Composable

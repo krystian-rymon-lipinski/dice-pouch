@@ -6,19 +6,21 @@
     android:viewportHeight="100">
 
     <group>
+
         <path
-            android:pathData="M50,5 l-26.44,8.59, l-16.34,22.49 v27.8 l16.34,22.49 l26.44,8.59  l26.44,-8.59 l16.34,-22.49 v-27.8 l-16.34,-22.49Z"
+            android:pathData="M50,50 m-45,0 a45,45 0 1,0 90,0 a45,45 0 1,0 -90,0"
             android:strokeWidth="2.2"
             android:strokeColor="@color/black"
             android:fillColor="@color/white"/>
 
         <path
-            android:pathData="M50,5 v17.5 M92.78,36.08 L76.13,41.49 M76.44,86.41 L66.15,70.25 M23.56,86.41 L33.85,70.25 M7.22,36.08 L23.86,41.49"
+            android:pathData="M50,5 l-33,15 L11,72.5 l27,20 L89,72.5 l4,-32 Z"
             android:strokeWidth="1.2"
-            android:strokeColor="@color/black"/>
+            android:strokeColor="@color/black"
+            android:fillColor="@color/white"/>
 
         <path
-            android:pathData="M50,22.5 L76.13,41.49 L66.15,70.25 L33.85,70.25 L23.86,41.49Z"
+            android:pathData="M50,5 L11,72.5, L89,72.5 Z"
             android:strokeWidth="1.2"
             android:strokeColor="@color/black"/>
     </group>

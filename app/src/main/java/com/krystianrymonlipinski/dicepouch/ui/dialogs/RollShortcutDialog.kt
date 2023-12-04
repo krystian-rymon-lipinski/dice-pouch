@@ -27,9 +27,9 @@ import com.krystianrymonlipinski.dicepouch.model.RollSetting
 import com.krystianrymonlipinski.dicepouch.model.RollShortcut
 import com.krystianrymonlipinski.dicepouch.ui.components.CenteredDialogConfirmButton
 import com.krystianrymonlipinski.dicepouch.ui.components.DieImage
-import com.krystianrymonlipinski.dicepouch.ui.components.LeftArrow
+import com.krystianrymonlipinski.dicepouch.ui.components.icons.LeftArrow
 import com.krystianrymonlipinski.dicepouch.ui.components.MechanicSegmentedButton
-import com.krystianrymonlipinski.dicepouch.ui.components.RightArrow
+import com.krystianrymonlipinski.dicepouch.ui.components.icons.RightArrow
 import com.krystianrymonlipinski.dicepouch.ui.components.RollSettingRow
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
 

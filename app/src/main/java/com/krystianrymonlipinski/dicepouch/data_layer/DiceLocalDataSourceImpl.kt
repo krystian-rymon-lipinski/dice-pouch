@@ -1,6 +1,5 @@
 package com.krystianrymonlipinski.dicepouch.data_layer
 
-import androidx.compose.ui.graphics.toArgb
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.room.DieDao
 import com.krystianrymonlipinski.dicepouch.room.DieEntity
@@ -26,9 +25,7 @@ class DiceLocalDataSourceImpl @Inject constructor(
         return DieEntity(
             die.timestampId,
             setId,
-            die.sides,
-            die.sideColor.toArgb(),
-            die.numberColor.toArgb()
+            die.sides
         )
     }
 

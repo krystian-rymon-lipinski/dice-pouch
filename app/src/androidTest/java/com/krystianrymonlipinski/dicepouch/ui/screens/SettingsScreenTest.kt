@@ -26,10 +26,10 @@ class SettingsScreenTest : BaseAndroidTest() {
     fun checkAutodismissRollPopup() {
         composeTestRule.apply {
             onNodeWithTag(testTag = "popup_autodismiss_switch").performClick()
-            onNodeWithText(text = "After: 500 ms", substring = true).assertIsDisplayed()
+            onNodeWithText(text = "after finishing roll", substring = true).assertIsDisplayed()
 
             onNodeWithTag(testTag = "popup_autodismiss_switch").performClick()
-            onNodeWithText(text = "After: 500 ms", substring = true).assertDoesNotExist()
+            onNodeWithText(text = "after finishing roll", substring = true).assertDoesNotExist()
         }
 
     }

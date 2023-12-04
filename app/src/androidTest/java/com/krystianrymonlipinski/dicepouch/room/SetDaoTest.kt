@@ -49,15 +49,15 @@ class SetDaoTest : BaseDaoTest() {
     @Test
     fun updateDiceSet() = runTest {
         val diceSetToAdd = SetEntity(name = "a_name", diceSideColorArgb = 0, diceNumberColorArgb = 0)
-        val setUpdate = diceSetToAdd.copy(name = "f_name", diceNumberColorArgb = 99)
         val diceSetAfterAdding = diceSetToAdd.copy(id = 1)
+        val updatedSet = diceSetAfterAdding.copy(name = "f_name", diceSideColorArgb = 32, diceNumberColorArgb = 99)
 
         setDao.add(diceSetToAdd)
-        setDao.update(setUpdate)
+        setDao.update(updatedSet)
 
         val retrievedSets = setDao.retrieveAll().take(1).single()
         assertEquals(1, retrievedSets.size)
-        assertEquals(diceSetAfterAdding, retrievedSets[0])
+        assertEquals(updatedSet, retrievedSets[0])
     }
 
     @Test

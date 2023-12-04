@@ -1,6 +1,7 @@
 package com.krystianrymonlipinski.dicepouch.ui.screens
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -8,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
@@ -31,20 +31,21 @@ import com.krystianrymonlipinski.dicepouch.R
 import com.krystianrymonlipinski.dicepouch.model.RollingSettings
 import com.krystianrymonlipinski.dicepouch.ui.DicePouchTabRow
 import com.krystianrymonlipinski.dicepouch.ui.TAB_SETTINGS
+import com.krystianrymonlipinski.dicepouch.ui.components.SecondaryCaption
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
-import com.krystianrymonlipinski.dicepouch.viewmodels.SettingsViewModel
+import com.krystianrymonlipinski.dicepouch.viewmodels.MainActivityViewModel
 
 @Composable
 fun SettingsRoute(
-    settingsViewModel: SettingsViewModel = hiltViewModel(),
+    viewModel: MainActivityViewModel = hiltViewModel(),
     onTabClicked: (Int) -> Unit
 ) {
 
     SettingsScreen(
         onTabClicked = { tabIndex -> onTabClicked(tabIndex) },
-        settingsScreenState = settingsViewModel.retrieveSettings(),
+        settingsScreenState = viewModel.retrieveSettings(),
         onSettingsChanged = { newSettings ->
-            settingsViewModel.saveSettings(newSettings)
+            viewModel.saveSettings(newSettings)
         }
     )
 }
@@ -60,8 +61,10 @@ fun SettingsScreen(
 
     Scaffold { paddingValues ->
         Column(modifier = Modifier
+            .padding(paddingValues)
             .fillMaxSize()
-            .padding(paddingValues)) {
+            .background(color = MaterialTheme.colorScheme.background)
+        ) {
             DicePouchTabRow(
                 selectedTabIndex = TAB_SETTINGS,
                 onTabClicked = { tabIndex -> onTabClicked(tabIndex) }
@@ -102,15 +105,7 @@ fun SettingsElementsLayout(
     Column(
         modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)
     ) {
-        RollingSettingsCaption()
-        Spacer(modifier = Modifier.height(2.dp))
-        Divider(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(2.dp),
-            thickness = 2.dp,
-            color = MaterialTheme.colorScheme.secondary
-        )
+        SecondaryCaption(text = stringResource(id = R.string.rolling_dice_caption))
         Spacer(modifier = Modifier.height(16.dp))
 
         RollSoundSettingRow(
@@ -138,15 +133,6 @@ fun SettingsElementsLayout(
             onPopupDismissTimeChangeFinished = onPopupDismissTimeChangeFinished
         )
     }
-}
-
-@Composable
-fun RollingSettingsCaption() {
-    Text(
-        text = stringResource(id = R.string.rolling_dice_caption),
-        color = MaterialTheme.colorScheme.secondary,
-        style = MaterialTheme.typography.titleMedium
-    )
 }
 
 @Composable
@@ -263,17 +249,17 @@ fun SettingsScreenPreview() {
     }
 }
 
-private const val MIN_ROLL_TIME_MILLIS = 500f
-private const val MAX_ROLL_TIME_MILLIS = 5000f
-private const val ROLL_TIME_STEP_MILLIS = 10f
+private const val MIN_ROLL_TIME_MILLIS = 200f
+private const val MAX_ROLL_TIME_MILLIS = 3000f
+private const val ROLL_TIME_STEP_MILLIS = 50f
 private const val ROLL_TIME_STEPS_NUMBER = ((MAX_ROLL_TIME_MILLIS - MIN_ROLL_TIME_MILLIS) / ROLL_TIME_STEP_MILLIS).toInt() - 1
 
-private const val MIN_THROW_DELAY_TIME_MILLIS = 10f
+private const val MIN_THROW_DELAY_TIME_MILLIS = 50f
 private const val MAX_THROW_DELAY_TIME_MILLIS = 2000f
-private const val THROW_DELAY_STEP_MILLIS = 10f
+private const val THROW_DELAY_STEP_MILLIS = 50f
 private const val THROW_DELAY_STEPS_NUMBER = ((MAX_THROW_DELAY_TIME_MILLIS - MIN_THROW_DELAY_TIME_MILLIS) / THROW_DELAY_STEP_MILLIS).toInt() - 1
 
-private const val MIN_POPUP_DISMISS_TIME_MILLIS = 200f
+private const val MIN_POPUP_DISMISS_TIME_MILLIS = 500f
 private const val MAX_POPUP_DISMISS_TIME_MILLIS = 3000f
-private const val POPUP_DISMISS_TIME_STEP_MILLIS = 10f
+private const val POPUP_DISMISS_TIME_STEP_MILLIS = 50f
 private const val POPUP_DISMISS_TIME_STEPS_NUMBER = ((MAX_POPUP_DISMISS_TIME_MILLIS - MIN_POPUP_DISMISS_TIME_MILLIS) / POPUP_DISMISS_TIME_STEP_MILLIS).toInt() - 1

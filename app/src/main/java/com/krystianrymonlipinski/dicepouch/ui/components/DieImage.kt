@@ -23,7 +23,7 @@ fun DieImage(
     modifier: Modifier = Modifier,
     die: Die = Die(6),
     valueShown: String? = die.sides.toString(),
-    textStyle: TextStyle = MaterialTheme.typography.headlineMedium
+    textStyle: TextStyle = MaterialTheme.typography.headlineSmall
 ) {
     Box(
         modifier = modifier,
@@ -52,7 +52,7 @@ private fun getDieImage(numberOfSides: Int): Int {
         10 -> R.drawable.d10
         12 -> R.drawable.d12
         20 -> R.drawable.d20
-        else -> R.drawable.d6 //TODO: define different drawable for unusual dice
+        else -> R.drawable.dice_default
     }
 }
 

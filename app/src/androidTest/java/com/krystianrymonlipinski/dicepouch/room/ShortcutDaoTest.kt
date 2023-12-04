@@ -1,7 +1,5 @@
 package com.krystianrymonlipinski.dicepouch.room
 
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.single
@@ -50,9 +48,7 @@ class ShortcutDaoTest : BaseDaoTest() {
     private val dieExample = DieEntity(
         timestampId = dieId,
         setId = setId,
-        sides = 6,
-        sidesColorArgb = Color.White.toArgb(),
-        numberColorArgb = Color.Black.toArgb()
+        sides = 6
     )
 
 

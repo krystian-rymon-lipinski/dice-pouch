@@ -58,6 +58,16 @@ class SetsLocalDataSourceImplTest {
     }
 
     @Test
+    fun changeSetName() = runTest {
+        val setToBeChanged = DiceSetInfo(name = "another_name", diceColor = Color.Magenta, numbersColor = Color.LightGray)
+        val setEntity = SetEntity(name = "another_name", diceSideColorArgb = Color.Magenta.toArgb(), diceNumberColorArgb = Color.LightGray.toArgb())
+
+        testObj.changeSetInfo(setToBeChanged)
+        verify(setDao).update(capture(setEntityCaptor))
+        assertEquals(setEntity, setEntityCaptor.value)
+    }
+
+    @Test
     fun deleteSet() = runTest {
         val setToBeDeleted = DiceSetInfo(name = "f_name", diceColor = Color.Blue, numbersColor = Color.LightGray)
         val entityToBeDeleted = SetEntity(name = "f_name", diceSideColorArgb = Color.Blue.toArgb(), diceNumberColorArgb = Color.LightGray.toArgb())
@@ -84,17 +94,17 @@ class SetsLocalDataSourceImplTest {
         val setWithDice = SetWithDice(
             set = SetEntity(id = 4, name = "g_name", diceSideColorArgb = 23, diceNumberColorArgb = 10),
             diceWithShortcuts = listOf(DieWithShortcuts(
-                die = DieEntity(timestampId = 1L, setId = 4, sides = 5, sidesColorArgb = 2, numberColorArgb = 99),
+                die = DieEntity(timestampId = 1L, setId = 4, sides = 5),
                 shortcuts = listOf(ShortcutEntity(timestampId = 100L, name = "short", diceNumber = 12,
                     dieId = 1L, modifier = -2, mechanic = "NORMAL"))
             ))
         )
         val setToBeRetrieved = DiceSet(
             info = DiceSetInfo(id = 4, name = "g_name", diceColor = Color(23), numbersColor = Color(10)),
-            dice = listOf(Die(timestampId = 1L, sides = 5, sideColor = Color(2), numberColor = Color(99))),
+            dice = listOf(Die(timestampId = 1L, sides = 5, sideColor = Color(23), numberColor = Color(10))),
             shortcuts = listOf(RollShortcut(timestampId = 100L, name = "short",
                 setting = RollSetting(
-                    die = Die(timestampId = 1L, sides = 5, sideColor = Color(2), numberColor = Color(99)),
+                    die = Die(timestampId = 1L, sides = 5, sideColor = Color(23), numberColor = Color(10)),
                     diceNumber = 12,
                     modifier = -2,
                     mechanic = RollSetting.Mechanic.NORMAL
