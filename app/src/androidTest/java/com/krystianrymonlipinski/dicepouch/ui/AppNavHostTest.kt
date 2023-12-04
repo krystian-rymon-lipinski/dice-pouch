@@ -2,8 +2,6 @@ package com.krystianrymonlipinski.dicepouch.ui
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsSelected
-import androidx.compose.ui.test.isRoot
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.longClick
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -12,8 +10,7 @@ import androidx.compose.ui.test.onSiblings
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTouchInput
-import androidx.compose.ui.test.printToLog
-import com.krystianrymonlipinski.dicepouch.MainActivity
+import com.krystianrymonlipinski.dicepouch.BaseIntegrationTest
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -22,14 +19,10 @@ import org.junit.Rule
 import org.junit.Test
 
 @HiltAndroidTest
-class AppNavHostTest {
+class AppNavHostTest : BaseIntegrationTest() {
 
-    @get:Rule
-    val composeTestRule = createAndroidComposeRule<MainActivity>()
-
-    @get:Rule
+    @get:Rule(order = 0)
     var hiltRule = HiltAndroidRule(this)
-
 
     @Test
     fun appNavigation_startDestination() {
@@ -38,7 +31,7 @@ class AppNavHostTest {
 
     @Test
     fun appNavigation_navigateThroughTabs() {
-        composeTestRule.apply {
+        composeActivityTestRule.apply {
             onNodeWithText("Pouch").performClick()
             checkIfTabSelected("Pouch")
 
@@ -69,12 +62,11 @@ class AppNavHostTest {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun appNavigation_navigateToEditSetScreen_andBack_byOnBackPressed() = runTest {
-        composeTestRule.apply {
+        composeActivityTestRule.apply {
             onNodeWithText("Pouch").performClick()
             onNodeWithContentDescription("edit_set").assertDoesNotExist()
 
             createNewSet() //to ensure there is at least one sibling
-                onNode(isRoot()).printToLog("log before")
             onNodeWithText("+").onSiblings()[0].performTouchInput { longClick() }
             checkIfPouchScreenIsInEditMode()
 
@@ -86,14 +78,13 @@ class AppNavHostTest {
             }
             checkIfTabSelected("Pouch")
             checkIfPouchScreenIsInEditMode()
-                onNode(isRoot()).printToLog("log after")
             deleteSet() // reset app state to before this test
         }
     }
 
     @Test
     fun appNavigation_navigateToEditSetScreen_andBack_byUp() {
-        composeTestRule.apply {
+        composeActivityTestRule.apply {
             onNodeWithText("Pouch").performClick()
             onNodeWithContentDescription("edit_set").assertDoesNotExist()
 
@@ -113,7 +104,7 @@ class AppNavHostTest {
     }
 
     private fun checkIfTabSelected(tab: String) {
-        composeTestRule.apply {
+        composeActivityTestRule.apply {
             onNodeWithText(tab)
                 .assertIsDisplayed()
                 .assertIsSelected()
@@ -121,24 +112,16 @@ class AppNavHostTest {
     }
 
     private fun checkIfPouchScreenIsInEditMode() {
-        composeTestRule.apply {
+        composeActivityTestRule.apply {
             onNodeWithContentDescription("arrow_back").assertIsDisplayed()
             onNodeWithContentDescription("edit_set").assertIsDisplayed()
             onNodeWithContentDescription("delete_set").assertIsDisplayed()
         }
     }
 
-    private fun checkIfDiceSetEditScreenOn() {
-        composeTestRule.apply {
-            onNodeWithContentDescription("arrow_back").assertIsDisplayed()
-            onNodeWithContentDescription("edit_set").assertIsDisplayed()
-            onNodeWithContentDescription("delete_set").assertDoesNotExist()
-        }
-    }
-
     private fun createNewSet() {
         /* Assuming we're currently on Pouch tab */
-        composeTestRule.apply {
+        composeActivityTestRule.apply {
             onNodeWithText("+").performClick()
             onAllNodesWithText("New set")[0].performClick()
             onAllNodesWithText("New set")[0].performTextInput(EXAMPLE_SET_NAME)
@@ -147,16 +130,11 @@ class AppNavHostTest {
     }
 
     private fun deleteSet() {
-        composeTestRule.apply {
+        composeActivityTestRule.apply {
             onNodeWithContentDescription("arrow_back").performClick()
             onNodeWithText(CONCATENATED_SET_NAME_INPUT).performTouchInput { longClick() }
             onNodeWithContentDescription("delete_set").performClick()
         }
-    }
-
-    companion object {
-        private const val EXAMPLE_SET_NAME = "_Set 12345"
-        private const val CONCATENATED_SET_NAME_INPUT = "New set$EXAMPLE_SET_NAME"
     }
 
 }

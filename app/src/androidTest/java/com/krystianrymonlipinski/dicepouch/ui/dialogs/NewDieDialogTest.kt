@@ -29,7 +29,7 @@ class NewDieDialogTest : BaseAndroidTest() {
             onNodeWithContentDescription("die_sides_slider").performTouchInput {
                 slideOutHorizontally { fullWidth -> fullWidth }
             }
-            onNodeWithText("100")
+            onNodeWithText("100").assertIsDisplayed()
         }
     }
 
