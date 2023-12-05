@@ -1,6 +1,8 @@
 package com.krystianrymonlipinski.dicepouch
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasImeAction
+import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.longClick
 import androidx.compose.ui.test.onAllNodesWithContentDescription
@@ -11,6 +13,8 @@ import androidx.compose.ui.test.onSiblings
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.printToLog
+import androidx.compose.ui.text.input.ImeAction
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Rule
 
@@ -33,10 +37,19 @@ open class BaseIntegrationTest() {
 
     protected fun createSet(setName: String) {
         composeActivityTestRule.apply {
-            onNodeWithText("+").performClick()
+            onAllNodesWithText("+")[0].performClick() // hot-fixed: test sees here 2 cards with "+", choose the first one
             onAllNodesWithText("New set")[0].performClick()
             onAllNodesWithText("New set")[0].performTextInput(setName)
             onNodeWithText("Add").performClick()
+        }
+    }
+
+    protected fun updateSetName(newName: String) {
+        composeActivityTestRule.apply {
+            onNodeWithContentDescription("edit_set").performClick()
+            onNode(hasImeAction(ImeAction.Default)).performClick()
+            onNode(hasImeAction(ImeAction.Default)).performTextInput(newName)
+            onNodeWithText("Save").performClick()
         }
     }
 
@@ -64,14 +77,15 @@ open class BaseIntegrationTest() {
     protected fun addShortcutToSet() {
         composeActivityTestRule.apply {
             onAllNodesWithContentDescription("add_set_element_icon")[1].performClick()
+                onAllNodes(isRoot())[1].printToLog("tag")
             onNodeWithText("Add").performClick()
         }
     }
 
     protected fun updateShortcut(shortcutName: String) {
         composeActivityTestRule.apply {
-            onNodeWithText("New shortcut").performClick()
-            onNodeWithText("New shortcut").performTextInput(shortcutName)
+            onNode(hasImeAction(ImeAction.Default)).performClick()
+            onNode(hasImeAction(ImeAction.Default)).performTextInput(shortcutName)
             onAllNodesWithContentDescription("plus")[0].performClick()
             onAllNodesWithContentDescription("minus")[1].performClick()
             onNodeWithText("Save").performClick()
@@ -80,7 +94,7 @@ open class BaseIntegrationTest() {
 
     protected fun navigateUp() {
         composeActivityTestRule.apply {
-            onNodeWithContentDescription("arrow_back")
+            onNodeWithContentDescription("arrow_back").performClick()
         }
     }
 
@@ -96,7 +110,7 @@ open class BaseIntegrationTest() {
             val existingSets = onNodeWithText("+").onSiblings()
                 .fetchSemanticsNodes(atLeastOneRootRequired = false)
             for (i in existingSets.indices) {
-                onNodeWithText("+").onSiblings()[0].performTouchInput { longClick() }
+                onNodeWithText("+").onSiblings()[i].performTouchInput { longClick() }
                 onNodeWithContentDescription("delete_set").performClick()
             }
         }
@@ -113,7 +127,7 @@ open class BaseIntegrationTest() {
 
     @HiltAndroidTest
     companion object {
-        @JvmStatic protected val EXAMPLE_SET_NAME = "_Set 12345"
+        @JvmStatic protected val EXAMPLE_SET_NAME = "_v2"
         @JvmStatic protected val CONCATENATED_SET_NAME_INPUT = "New set$EXAMPLE_SET_NAME"
     }
 }
