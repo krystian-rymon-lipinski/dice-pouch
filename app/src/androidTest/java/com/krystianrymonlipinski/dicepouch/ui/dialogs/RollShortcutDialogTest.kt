@@ -105,9 +105,9 @@ class RollShortcutDialogTest : BaseAndroidTest() {
             setContent { DicePouchTheme { RollShortcutDialog(
                 currentShortcut = null, diceInSet = listOf(Die(20))) } }
 
-            onNodeWithText("Save").assertIsEnabled()
+            onNodeWithText("Add").assertIsEnabled()
             onNodeWithText("New shortcut").performTextReplacement("  ")
-            onNodeWithText("Save").assertIsNotEnabled()
+            onNodeWithText("Add").assertIsNotEnabled()
         }
     }
 
