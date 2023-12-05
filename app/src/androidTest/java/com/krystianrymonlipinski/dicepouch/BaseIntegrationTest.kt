@@ -19,21 +19,20 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Rule
 
 @HiltAndroidTest
-open class BaseIntegrationTest() {
+open class BaseIntegrationTest {
 
 
     @get:Rule(order = 1)
-    val composeActivityTestRule = createAndroidComposeRule<MainActivity>()
+    val composeActivityTestRule by lazy { createAndroidComposeRule<MainActivity>() }
     
-
-    protected fun selectTab(tab: String) {
-        composeActivityTestRule.apply {
-            onNodeWithText(tab).performClick()
-        }
-    }
 
     protected fun getConcatenatedSetNameInput(input: String) = "New set$input"
     protected fun getConcatenatedShortcutNameInput(input: String) = "New shortcut$input"
+
+    protected fun selectTab(tab: String) {
+        composeActivityTestRule.onNodeWithText(tab).performClick()
+    }
+
 
     protected fun createSet(setName: String) {
         composeActivityTestRule.apply {
@@ -93,15 +92,11 @@ open class BaseIntegrationTest() {
     }
 
     protected fun navigateUp() {
-        composeActivityTestRule.apply {
-            onNodeWithContentDescription("arrow_back").performClick()
-        }
+        composeActivityTestRule.onNodeWithContentDescription("arrow_back").performClick()
     }
 
     protected fun dismissRollingDialog() {
-        composeActivityTestRule.apply {
-            onNodeWithText(text = ", got it!", substring = true).performClick()
-        }
+        composeActivityTestRule.onNodeWithText(text = ", got it!", substring = true).performClick()
     }
 
     protected fun clearAllSets() {
