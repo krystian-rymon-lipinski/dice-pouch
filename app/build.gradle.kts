@@ -15,7 +15,7 @@ android {
     defaultConfig {
         applicationId = "com.krystianrymonlipinski.dicepouch"
         minSdk = 26
-        targetSdk = 33 //TODO: bump up to API 34
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
