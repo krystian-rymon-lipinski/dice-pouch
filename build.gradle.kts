@@ -1,9 +1,8 @@
+import org.jetbrains.kotlin.gradle.plugin.extraProperties
+
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
-ext {
-    /* Plugins block does not work with variables. Every hilt version update must be reflected there as well. */
-    setProperty("hiltVersion", "2.46")
-}
+rootProject.extraProperties.set("hiltVersion", "2.46")
 
 plugins {
     val agpVersion = "8.2.0"
