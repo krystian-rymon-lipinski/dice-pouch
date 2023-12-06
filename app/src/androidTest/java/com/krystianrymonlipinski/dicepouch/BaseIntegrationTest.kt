@@ -2,7 +2,6 @@ package com.krystianrymonlipinski.dicepouch
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasImeAction
-import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.longClick
 import androidx.compose.ui.test.onAllNodesWithContentDescription
@@ -13,7 +12,6 @@ import androidx.compose.ui.test.onSiblings
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTouchInput
-import androidx.compose.ui.test.printToLog
 import androidx.compose.ui.text.input.ImeAction
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Rule
@@ -52,6 +50,10 @@ open class BaseIntegrationTest {
         }
     }
 
+    protected fun selectCurrentSet(setName: String) {
+        composeActivityTestRule.onNodeWithText(setName).performClick()
+    }
+
     protected fun deleteSet(setName: String) {
         composeActivityTestRule.apply {
             onNodeWithText(setName).performTouchInput { longClick() }
@@ -76,15 +78,15 @@ open class BaseIntegrationTest {
     protected fun addShortcutToSet() {
         composeActivityTestRule.apply {
             onAllNodesWithContentDescription("add_set_element_icon")[1].performClick()
-                onAllNodes(isRoot())[1].printToLog("tag")
             onNodeWithText("Add").performClick()
         }
     }
 
-    protected fun updateShortcut(shortcutName: String) {
+    protected fun updateShortcut(oldName: String, input: String) {
         composeActivityTestRule.apply {
+            onNodeWithText(oldName).performClick()
             onNode(hasImeAction(ImeAction.Default)).performClick()
-            onNode(hasImeAction(ImeAction.Default)).performTextInput(shortcutName)
+            onNode(hasImeAction(ImeAction.Default)).performTextInput(input)
             onAllNodesWithContentDescription("plus")[0].performClick()
             onAllNodesWithContentDescription("minus")[1].performClick()
             onNodeWithText("Save").performClick()
@@ -93,10 +95,6 @@ open class BaseIntegrationTest {
 
     protected fun navigateUp() {
         composeActivityTestRule.onNodeWithContentDescription("arrow_back").performClick()
-    }
-
-    protected fun dismissRollingDialog() {
-        composeActivityTestRule.onNodeWithText(text = ", got it!", substring = true).performClick()
     }
 
     protected fun clearAllSets() {

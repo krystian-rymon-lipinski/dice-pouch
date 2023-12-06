@@ -1,6 +1,8 @@
 package com.krystianrymonlipinski.dicepouch.integration
 
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -51,12 +53,12 @@ class SetManipulationTest : BaseIntegrationTest() {
             onNodeWithText(getConcatenatedSetNameInput("set1")).assertIsDisplayed()
             onNodeWithText(getConcatenatedSetNameInput("set2")).assertIsDisplayed()
 
-            onNodeWithText(getConcatenatedSetNameInput("set1")).performClick()
+            selectCurrentSet(getConcatenatedSetNameInput("set1"))
             selectTab("Table")
             onNodeWithText(getConcatenatedSetNameInput("set1")).assertIsDisplayed()
 
             selectTab("Pouch")
-            onNodeWithText(getConcatenatedSetNameInput("set2")).performClick()
+            selectCurrentSet(getConcatenatedSetNameInput("set2"))
             selectTab("Table")
             onNodeWithText(getConcatenatedSetNameInput("set2")).assertIsDisplayed()
 
@@ -72,7 +74,7 @@ class SetManipulationTest : BaseIntegrationTest() {
         composeActivityTestRule.apply {
             createSet("set1")
             createSet("set2")
-            onNodeWithText(getConcatenatedSetNameInput("set1")).performClick()
+            selectCurrentSet(getConcatenatedSetNameInput("set1"))
 
             navigateToEditSet(getConcatenatedSetNameInput("set1"))
             checkIfDiceSetEditScreenOn()
@@ -84,16 +86,12 @@ class SetManipulationTest : BaseIntegrationTest() {
             checkIfDiceSetEditScreenOn()
             onNodeWithText(getConcatenatedSetNameInput("set2")).assertIsDisplayed()
         }
-
-
     }
 
     @Test
-    fun addDieToSet_chooseItToRoll_andDeleteItAfterwards() {
+    fun addDieToSet_AndChooseItToRoll() {
         composeActivityTestRule.apply {
-            createSet(EXAMPLE_SET_NAME)
-            navigateToEditSet(getConcatenatedSetNameInput(EXAMPLE_SET_NAME))
-            addDieToSet()
+            prepareSetWithDie()
             onNodeWithText("20").assertIsDisplayed()
 
             navigateUp()
@@ -105,77 +103,86 @@ class SetManipulationTest : BaseIntegrationTest() {
             onNodeWithText("20").performClick()
             onNode(isDialog()).assertIsDisplayed()
             onNodeWithText("1d20").assertIsDisplayed()
-
-            navigateBack()
-            selectTab("Pouch")
-            navigateToEditSet(getConcatenatedSetNameInput(EXAMPLE_SET_NAME))
-            onNodeWithContentDescription("delete_set_element_icon").performClick()
-            onNodeWithText("20").assertDoesNotExist()
-            onNodeWithText("No dice added").assertIsDisplayed()
-
-            navigateUp()
-            selectTab("Table")
-            onNodeWithText("20").assertDoesNotExist()
-            onNodeWithText("No dice added").assertIsDisplayed()
-
-
         }
     }
 
+    @OptIn(ExperimentalTestApi::class)
     @Test
-    fun addShortcutToSet_chooseItToRoll_thenUpdateItAndCheckForChanges_byChoosingToRollAgain_thenDeleteIt() {
+    fun addDieToSet_andDeleteIt() {
         composeActivityTestRule.apply {
-            createSet(EXAMPLE_SET_NAME)
-            navigateToEditSet(getConcatenatedSetNameInput(EXAMPLE_SET_NAME))
-            addDieToSet() // every shortcut is based on a die
-            addShortcutToSet()
+            prepareSetWithDie()
+            onNodeWithText("20").assertIsDisplayed()
+
+            onNodeWithContentDescription("delete_set_element_icon").performClick()
+            waitUntilDoesNotExist(matcher = hasText("20"), timeoutMillis = 5_000)
+            onNodeWithText("20").assertDoesNotExist()
+            onNodeWithText("No dice added").assertIsDisplayed()
+        }
+
+    }
+
+    @Test
+    fun addShortcutToSet_andChooseItToRoll() {
+        composeActivityTestRule.apply {
+            prepareSetWithShortcut()
             onNodeWithText("New shortcut").assertIsDisplayed()
 
             navigateUp()
             navigateUp()
-            onNodeWithText(getConcatenatedSetNameInput(EXAMPLE_SET_NAME)).performClick() //select current set
+            selectCurrentSet(getConcatenatedSetNameInput(EXAMPLE_SET_NAME))
             selectTab("Table")
             onNodeWithText("New shortcut").assertIsDisplayed()
 
             onNodeWithText("New shortcut").performClick()
             onNode(isDialog()).assertIsDisplayed()
             onNodeWithText("1d20").assertIsDisplayed()
+        }
 
-            composeActivityTestRule.mainClock.advanceTimeBy(milliseconds = 4_000)
-            dismissRollingDialog()
-            selectTab("Pouch")
-            navigateToEditSet(getConcatenatedSetNameInput(EXAMPLE_SET_NAME))
-            onNodeWithText("New shortcut").performClick()
-            onNode(isDialog()).assertIsDisplayed()
-            updateShortcut("Shortcut 23")
-            onNodeWithText(getConcatenatedShortcutNameInput("Shortcut 23")).assertIsDisplayed()
+    }
+
+    @Test
+    fun addShortcutToSet_andDeleteIt() {
+        composeActivityTestRule.apply {
+            prepareSetWithShortcut()
+            onNodeWithText("New shortcut").assertIsDisplayed()
+
+            onAllNodesWithContentDescription("delete_set_element_icon")[1].performClick()
+            waitForIdle()
+            onNodeWithText("1d20").assertDoesNotExist()
+            onNodeWithText("No shortcuts added").assertIsDisplayed()
+        }
+    }
+
+    @Test
+    fun createShortcut_updateIt_andChooseItToRoll() {
+        val nameInput = "_v2"
+
+        composeActivityTestRule.apply {
+            prepareSetWithShortcut()
+            updateShortcut("New shortcut", nameInput)
 
             navigateUp()
+            navigateUp()
+            selectCurrentSet(getConcatenatedSetNameInput(EXAMPLE_SET_NAME))
             selectTab("Table")
-            onNodeWithText(getConcatenatedShortcutNameInput("Shortcut 23")).assertIsDisplayed()
-            onNodeWithText(getConcatenatedShortcutNameInput("Shortcut 23")).performClick()
+            onNodeWithText(getConcatenatedShortcutNameInput(nameInput)).assertIsDisplayed()
+
+            onNodeWithText(getConcatenatedShortcutNameInput(nameInput)).performClick()
             onNode(isDialog()).assertIsDisplayed()
             onNodeWithText("2d20 - 1").assertIsDisplayed()
-
-            composeActivityTestRule.mainClock.advanceTimeBy(milliseconds = 10_000)
-            dismissRollingDialog()
-            selectTab("Pouch")
-            navigateToEditSet(getConcatenatedSetNameInput(EXAMPLE_SET_NAME))
-            onAllNodesWithContentDescription("delete_set_element_icon")[1].performClick()
-            onNodeWithText("2d20 - 1").assertDoesNotExist()
-
-            navigateUp()
-            selectTab("Table")
-            onNodeWithText("2d20 - 1").assertDoesNotExist()
-            onNodeWithText("No shortcuts added")
         }
     }
 
 
-    private fun navigateBack() {
-         composeActivityTestRule.activityRule.scenario.onActivity {
-            it.onBackPressedDispatcher.onBackPressed()
-        }
+    private fun prepareSetWithDie() {
+        createSet(EXAMPLE_SET_NAME)
+        navigateToEditSet(getConcatenatedSetNameInput(EXAMPLE_SET_NAME))
+        addDieToSet()
+    }
+
+    private fun prepareSetWithShortcut() {
+        prepareSetWithDie() // every shortcut needs a die
+        addShortcutToSet()
     }
 
 }
