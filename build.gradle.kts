@@ -2,7 +2,7 @@
 
 ext {
     /* Plugins block does not work with variables. Every hilt version update must be reflected there as well. */
-    set("hiltVersion", "2.46")
+    setProperty("hiltVersion", "2.46")
 }
 
 plugins {
