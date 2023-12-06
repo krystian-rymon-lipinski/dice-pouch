@@ -1,7 +1,10 @@
 package com.krystianrymonlipinski.dicepouch.room
 
+import androidx.room.Room
+import androidx.test.core.app.ApplicationProvider
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.single
+import kotlinx.coroutines.flow.singleOrNull
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -11,6 +14,36 @@ import org.junit.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class SetDaoTest : BaseDaoTest() {
 
+
+    @Test
+    fun checkInitialDatabaseSetup() = runTest {
+        db = Room.inMemoryDatabaseBuilder( // overwrite base setup to add database callback
+            context = ApplicationProvider.getApplicationContext(),
+            klass = AppDatabase::class.java
+        )
+            .addCallback(AppDatabase.databaseCallback)
+            .build()
+        setDao = db.setDao()
+
+        val retrievedSets = setDao.retrieveAll().take(1).single()
+
+        assertEquals(1, retrievedSets.size)
+        val set = retrievedSets[0]
+
+        val setDetails = setDao.retrieveSetWithId(set.id).take(1).singleOrNull()
+        setDetails?.let {
+            assertEquals("Basic set", it.set.name)
+            assertEquals(6, it.diceWithShortcuts.size)
+            for (die in it.diceWithShortcuts) {
+                if (die.die.sides != 20) {
+                    assertEquals(0, die.shortcuts.size)
+                } else {
+                    assertEquals(1, die.shortcuts.size)
+                    assertEquals("1d20 + 4 (A)", die.shortcuts[0].name)
+                }
+            }
+        } ?: fail()
+    }
 
     @Test
     fun addDiceSet() = runTest {

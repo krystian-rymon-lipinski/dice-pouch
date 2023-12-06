@@ -23,7 +23,7 @@ class RollShortcutDialogTest : BaseAndroidTest() {
     fun shortcutDialog_newShortcut() {
         composeTestRule.apply {
             setContent { DicePouchTheme { RollShortcutDialog(
-                shortcut = null,
+                currentShortcut = null,
                 diceInSet = listOf(Die(6), Die(10))
             )}}
 
@@ -38,7 +38,7 @@ class RollShortcutDialogTest : BaseAndroidTest() {
         val dieInShortcut = Die(20)
         composeTestRule.apply {
             setContent { DicePouchTheme { RollShortcutDialog(
-                shortcut = RollShortcut(
+                currentShortcut = RollShortcut(
                     name = "Shortcut name",
                     setting = RollSetting(die = dieInShortcut, modifier = -4)
                 ),
@@ -55,7 +55,7 @@ class RollShortcutDialogTest : BaseAndroidTest() {
     fun rollShortcut_changeName() {
         composeTestRule.apply {
             setContent { DicePouchTheme { RollShortcutDialog(
-                    shortcut = null,
+                    currentShortcut = null,
                     diceInSet = listOf(Die(6))
                 )
             } }
@@ -71,7 +71,7 @@ class RollShortcutDialogTest : BaseAndroidTest() {
     fun rollShortcut_changeSettings_checkAllControls() {
         composeTestRule.apply {
             setContent { DicePouchTheme { RollShortcutDialog(
-                shortcut = null,
+                currentShortcut = null,
                 diceInSet = listOf(Die(8), Die(12), Die(15))
             )}}
             onNodeWithText("1d8").assertIsDisplayed()
@@ -103,11 +103,11 @@ class RollShortcutDialogTest : BaseAndroidTest() {
     fun rollShortcutDialog_saveButtonDisabled_whenNameBlank() {
         composeTestRule.apply {
             setContent { DicePouchTheme { RollShortcutDialog(
-                shortcut = null, diceInSet = listOf(Die(20))) } }
+                currentShortcut = null, diceInSet = listOf(Die(20))) } }
 
-            onNodeWithText("Save").assertIsEnabled()
+            onNodeWithText("Add").assertIsEnabled()
             onNodeWithText("New shortcut").performTextReplacement("  ")
-            onNodeWithText("Save").assertIsNotEnabled()
+            onNodeWithText("Add").assertIsNotEnabled()
         }
     }
 
@@ -115,7 +115,7 @@ class RollShortcutDialogTest : BaseAndroidTest() {
     @Test
     fun rollShortcutDialog_restoreState() {
         restorationTester.setContent { DicePouchTheme { RollShortcutDialog(
-            shortcut = null,
+            currentShortcut = null,
             diceInSet = listOf(Die(8), Die(12), Die(15))
         )}}
 

@@ -27,22 +27,22 @@ import com.krystianrymonlipinski.dicepouch.model.RollSetting
 import com.krystianrymonlipinski.dicepouch.model.RollShortcut
 import com.krystianrymonlipinski.dicepouch.ui.components.CenteredDialogConfirmButton
 import com.krystianrymonlipinski.dicepouch.ui.components.DieImage
-import com.krystianrymonlipinski.dicepouch.ui.components.icons.LeftArrow
 import com.krystianrymonlipinski.dicepouch.ui.components.MechanicSegmentedButton
-import com.krystianrymonlipinski.dicepouch.ui.components.icons.RightArrow
 import com.krystianrymonlipinski.dicepouch.ui.components.RollSettingRow
+import com.krystianrymonlipinski.dicepouch.ui.components.icons.LeftArrow
+import com.krystianrymonlipinski.dicepouch.ui.components.icons.RightArrow
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
 
 @Composable
 fun RollShortcutDialog(
-    shortcut: RollShortcut? = null,
+    currentShortcut: RollShortcut? = null,
     diceInSet: List<Die> = emptyList(),
     onDialogDismissed: () -> Unit = { },
     onSaveShortcutClicked: (RollShortcut) -> Unit = { }
 ) {
     val newShortcutString = stringResource(id = R.string.new_shortcut)
     var shortcutState by rememberSaveable {
-        mutableStateOf(shortcut ?: run {
+        mutableStateOf(currentShortcut ?: run {
                 RollShortcut(
                     timestampId = 0L, /* Correct timestamp will be assigned in view model after confirming shortcut setting */
                     name = newShortcutString,
@@ -54,7 +54,10 @@ fun RollShortcutDialog(
     AlertDialog(
         onDismissRequest = onDialogDismissed,
         confirmButton = { CenteredDialogConfirmButton(
-            text = stringResource(id = R.string.btn_dialog_save),
+            text = stringResource(id =
+                if (currentShortcut != null) R.string.btn_dialog_save
+                else R.string.btn_dialog_add
+            ),
             onClick = { onSaveShortcutClicked(shortcutState) },
             isEnabled = shortcutState.name.isNotBlank()
         )},

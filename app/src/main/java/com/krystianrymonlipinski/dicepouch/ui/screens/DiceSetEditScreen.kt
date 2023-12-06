@@ -45,21 +45,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.krystianrymonlipinski.dicepouch.ui.DicePouchTopBar
 import com.krystianrymonlipinski.dicepouch.R
 import com.krystianrymonlipinski.dicepouch.model.DiceSet
 import com.krystianrymonlipinski.dicepouch.model.DiceSetInfo
 import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
 import com.krystianrymonlipinski.dicepouch.model.RollShortcut
-import com.krystianrymonlipinski.dicepouch.ui.components.icons.ArrowBack
+import com.krystianrymonlipinski.dicepouch.ui.DicePouchTopBar
 import com.krystianrymonlipinski.dicepouch.ui.components.DieImage
-import com.krystianrymonlipinski.dicepouch.ui.components.icons.EditSetIcon
 import com.krystianrymonlipinski.dicepouch.ui.components.LoadingScreen
 import com.krystianrymonlipinski.dicepouch.ui.components.NoDiceCaption
 import com.krystianrymonlipinski.dicepouch.ui.components.NoShortcutsCaption
 import com.krystianrymonlipinski.dicepouch.ui.components.SecondaryCaptionWithAddIcon
+import com.krystianrymonlipinski.dicepouch.ui.components.icons.ArrowBack
 import com.krystianrymonlipinski.dicepouch.ui.components.icons.DeleteElementIcon
+import com.krystianrymonlipinski.dicepouch.ui.components.icons.EditSetIcon
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.DiceSetConfigurationDialog
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.NewDieDialog
 import com.krystianrymonlipinski.dicepouch.ui.dialogs.RollShortcutDialog
@@ -180,7 +180,7 @@ fun DiceSetEditScreen(
 
         if (showNewShortcutDialog || showUpdateShortcutDialog != null) {
             RollShortcutDialog(
-                shortcut = showUpdateShortcutDialog,
+                currentShortcut = showUpdateShortcutDialog,
                 diceInSet = setBeingEdited?.dice ?: emptyList(),
                 onDialogDismissed = {
                     showNewShortcutDialog = false
