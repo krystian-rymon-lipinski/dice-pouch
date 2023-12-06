@@ -6,8 +6,8 @@ ext {
 }
 
 plugins {
-    val agpVersion = "8.1.0"
-    val kotlinVersion = "1.8.10"
+    val agpVersion = "8.2.0"
+    val kotlinVersion = "1.9.10"
 
     id("com.android.application") version agpVersion apply false
     id("org.jetbrains.kotlin.android") version kotlinVersion apply false
