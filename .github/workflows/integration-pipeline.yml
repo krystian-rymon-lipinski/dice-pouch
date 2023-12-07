@@ -8,4 +8,4 @@ on:
 
 jobs:
   integrate:
-    uses: ./.github/workflows/integration-steps.yml@v1
+    uses: ./.github/workflows/integration-steps.yml
