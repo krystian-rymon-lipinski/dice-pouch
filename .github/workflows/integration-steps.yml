@@ -1,0 +1,58 @@
+name: Integration Pipeline
+
+on:
+  workflow_call:
+
+jobs:
+  integrate:
+    runs-on: macos-latest
+    permissions:
+      contents: read
+      issues: read
+      checks: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout project sources
+        uses: actions/checkout@v3
+
+      - name: Setup Java distribution
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Add permissions for Gradle
+        run: chmod +x gradlew
+
+      - name: Assemble
+        id: 'assemble'
+        run: ./gradlew assembleDebug
+
+      - name: Unit Tests
+        id: unit_tests
+        run: ./gradlew testDebugUnitTest
+        continue-on-error: true
+
+      - name: Instrumented Tests
+        id: instrumented_tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 26
+          script: ./gradlew connectedDebugAndroidTest
+        continue-on-error: true
+
+      - name: Test Results Upload
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: app/build/**/TEST-*.xml
+
+      - name: Test Results Presentation
+        uses: EnricoMi/publish-unit-test-result-action/composite@v2
+        with:
+          files: app/build/**/TEST-*.xml
+
+      - name: Check for failures
+        if: steps.unit_tests.outcome == 'failure' || steps.instrumented_tests.outcome == 'failure'
+        run: exit 1
