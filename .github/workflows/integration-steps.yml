@@ -44,12 +44,7 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 26
-          script: |
-            if [[ ${{ github.ref_name }} != release/* ]]; then
-              ./gradlew connectedDebugAndroidTest
-            else
-              ./gradlew connectedReleaseAndroidTest
-            fi
+          script: if [[ ${{ github.ref_name }} != "release/*" ]]; then ./gradlew connectedDebugAndroidTest; else ./gradlew connectedReleaseAndroidTest; fi
         continue-on-error: true
 
       - name: Test Results Upload
