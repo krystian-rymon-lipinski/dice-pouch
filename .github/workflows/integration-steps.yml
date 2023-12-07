@@ -45,7 +45,7 @@ jobs:
         with:
           api-level: 26
           script: |
-            if [[ ${{ github.ref_name }} != "release/*" ]]; then
+            if [[ ${{ github.ref_name }} != release/* ]]; then
               ./gradlew connectedDebugAndroidTest
             else
               ./gradlew connectedReleaseAndroidTest
