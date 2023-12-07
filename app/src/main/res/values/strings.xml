@@ -36,8 +36,7 @@
     <string name="btn_no">No</string>
 
     <!-- DiceSetEditScreen -->
-    <string name="placeholder_set_name">Set name</string>
-    <string name="no_dice_snackbar_message">Creating shortcut needs a die</string>
+    <string name="no_dice_snack_bar_message">Creating shortcut needs a die</string>
     <string name="delete_die_dialog_message">Die chosen to be deleted is a base of at least one
         shortcut. Deleting it will result with them gone as well. Do you wish to proceed?</string>
 

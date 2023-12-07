@@ -111,7 +111,7 @@ fun DiceSetEditScreen(
 
     val scope = rememberCoroutineScope()
     val snackBarHostState = remember { SnackbarHostState() }
-    val snackBarMessage = stringResource(id = R.string.no_dice_snackbar_message)
+    val snackBarMessage = stringResource(id = R.string.no_dice_snack_bar_message)
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackBarHostState) },

@@ -15,7 +15,7 @@ android {
     defaultConfig {
         applicationId = "com.krystianrymonlipinski.dicepouch"
         minSdk = 26
-        targetSdk = 33 //TODO: bump up to API 34
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -50,7 +50,7 @@ android {
         buildConfig = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.3"
+        kotlinCompilerExtensionVersion = "1.5.3"
     }
     packaging {
         resources {
@@ -62,26 +62,24 @@ android {
 dependencies {
     val composeBom = platform("androidx.compose:compose-bom:2023.06.01")
     val hiltVersion = rootProject.extraProperties.properties["hiltVersion"] as String
-    val composeNavigationVersion = "2.5.3"
-    val roomVersion = "2.5.2"
+    val composeNavigationVersion = "2.7.5"
+    val roomVersion = "2.6.1"
 
-    implementation("androidx.core:core-ktx:1.9.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
-    implementation("androidx.activity:activity-compose:1.7.2")
-    //noinspection GradleDependency; 2.7.2 needs API 34
+    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
+    implementation("androidx.activity:activity-compose:1.8.1")
     implementation("androidx.navigation:navigation-compose:$composeNavigationVersion")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.5.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
     implementation(composeBom)
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
-    //noinspection GradleDependency; 1.5.0 needs API 34
-    implementation("androidx.compose.material:material-icons-extended:1.4.0")
+    implementation("androidx.compose.material:material-icons-extended:1.5.4")
 
     implementation("com.jakewharton.timber:timber:5.0.1")
-    implementation("com.google.android.material:material:1.9.0")
+    implementation("com.google.android.material:material:1.10.0")
 
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
@@ -99,7 +97,7 @@ dependencies {
 
     implementation("com.google.dagger:hilt-android:$hiltVersion")
     kapt("com.google.dagger:hilt-android-compiler:$hiltVersion")
-    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
     androidTestImplementation("com.google.dagger:hilt-android-testing:$hiltVersion")
     kaptAndroidTest("com.google.dagger:hilt-android-compiler:$hiltVersion")
 

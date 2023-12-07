@@ -12,5 +12,4 @@ data class DieWithShortcuts(
         entityColumn = SHORTCUTS_TABLE_COLUMN_DIE_ID
     )
     val shortcuts: List<ShortcutEntity>,
-) {
-}
+)

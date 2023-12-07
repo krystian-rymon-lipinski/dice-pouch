@@ -13,7 +13,7 @@ import androidx.compose.ui.text.style.TextOverflow
 @Composable
 fun DicePouchTopBar(
     title: String,
-    actions: @Composable() (RowScope.() -> Unit) = { },
+    actions: @Composable (RowScope.() -> Unit) = { },
     navigationIcon: @Composable () -> Unit = { },
 ) {
     TopAppBar(

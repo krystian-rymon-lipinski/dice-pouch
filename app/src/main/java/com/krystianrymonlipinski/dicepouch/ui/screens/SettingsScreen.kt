@@ -80,7 +80,7 @@ fun SettingsScreen(
                 onThrowTimeChangeFinished = { onSettingsChanged(currentSettings) },
                 onThrowDelayTimeChange = { newValue -> currentSettings = currentSettings.setDelayBetweenThrowTimeMillis(newValue) },
                 onThrowDelayTimeChangeFinished = { onSettingsChanged(currentSettings) },
-                onAutocloseSettingChanged = { isOn ->
+                onAutodismissSettingChanged = { isOn ->
                     currentSettings = currentSettings.setIsRollPopupAutodismissOn(isOn)
                     onSettingsChanged(currentSettings)
                 },
@@ -99,7 +99,7 @@ fun SettingsElementsLayout(
     onThrowTimeChangeFinished: () -> Unit,
     onThrowDelayTimeChange: (Int) -> Unit,
     onThrowDelayTimeChangeFinished: () -> Unit,
-    onAutocloseSettingChanged: (Boolean) -> Unit,
+    onAutodismissSettingChanged: (Boolean) -> Unit,
     onPopupDismissTimeChange: (Int) -> Unit,
     onPopupDismissTimeChangeFinished: () -> Unit
 ) {
@@ -127,8 +127,8 @@ fun SettingsElementsLayout(
         )
         Spacer(modifier = Modifier.height(16.dp))
         RollPopupClosingSettingRow(
-            isPopupAutocloseOn = savedSettings.isRollPopupAutodismissOn,
-            onAutocloseSettingChanged = onAutocloseSettingChanged,
+            isPopupAutodismissOn = savedSettings.isRollPopupAutodismissOn,
+            onAutodismissSettingChanged = onAutodismissSettingChanged,
             popupDismissTimeMillis = savedSettings.rollPopupAutodismissTimeMillis,
             onPopupDismissTimeChange = onPopupDismissTimeChange,
             onPopupDismissTimeChangeFinished = onPopupDismissTimeChangeFinished
@@ -201,8 +201,8 @@ fun ThrowDelaySettingRow(
 
 @Composable
 fun RollPopupClosingSettingRow(
-    isPopupAutocloseOn: Boolean,
-    onAutocloseSettingChanged: (Boolean) -> Unit,
+    isPopupAutodismissOn: Boolean,
+    onAutodismissSettingChanged: (Boolean) -> Unit,
     popupDismissTimeMillis: Int,
     onPopupDismissTimeChange: (Int) -> Unit,
     onPopupDismissTimeChangeFinished: () -> Unit
@@ -217,13 +217,13 @@ fun RollPopupClosingSettingRow(
            )
            Switch(
                modifier = Modifier.semantics { contentDescription = "popup_autodismiss_switch" },
-               checked = isPopupAutocloseOn,
-               onCheckedChange = onAutocloseSettingChanged
+               checked = isPopupAutodismissOn,
+               onCheckedChange = onAutodismissSettingChanged
            )
         }
         Spacer(modifier = Modifier.height(2.dp))
 
-        AnimatedVisibility(visible = isPopupAutocloseOn) {
+        AnimatedVisibility(visible = isPopupAutodismissOn) {
             Column {
                 Text(
                     text = stringResource(id = R.string.setting_roll_popup_dismiss_time, popupDismissTimeMillis),
