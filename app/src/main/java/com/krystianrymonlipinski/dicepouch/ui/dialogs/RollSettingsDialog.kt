@@ -1,6 +1,5 @@
 package com.krystianrymonlipinski.dicepouch.ui.dialogs
 
-import RollDescription
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,6 +26,7 @@ import com.krystianrymonlipinski.dicepouch.model.Die
 import com.krystianrymonlipinski.dicepouch.model.RollSetting
 import com.krystianrymonlipinski.dicepouch.ui.components.CenteredDialogConfirmButton
 import com.krystianrymonlipinski.dicepouch.ui.components.MechanicSegmentedButton
+import com.krystianrymonlipinski.dicepouch.ui.components.RollDescription
 import com.krystianrymonlipinski.dicepouch.ui.components.RollSettingRow
 import com.krystianrymonlipinski.dicepouch.ui.theme.DicePouchTheme
 

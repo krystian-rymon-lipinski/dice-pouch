@@ -1,3 +1,5 @@
+package com.krystianrymonlipinski.dicepouch.ui.components
+
 import androidx.compose.animation.animateContentSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable

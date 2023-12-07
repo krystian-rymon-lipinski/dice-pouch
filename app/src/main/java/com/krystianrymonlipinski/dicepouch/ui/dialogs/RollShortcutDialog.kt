@@ -1,6 +1,5 @@
 package com.krystianrymonlipinski.dicepouch.ui.dialogs
 
-import RollDescription
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -28,6 +27,7 @@ import com.krystianrymonlipinski.dicepouch.model.RollShortcut
 import com.krystianrymonlipinski.dicepouch.ui.components.CenteredDialogConfirmButton
 import com.krystianrymonlipinski.dicepouch.ui.components.DieImage
 import com.krystianrymonlipinski.dicepouch.ui.components.MechanicSegmentedButton
+import com.krystianrymonlipinski.dicepouch.ui.components.RollDescription
 import com.krystianrymonlipinski.dicepouch.ui.components.RollSettingRow
 import com.krystianrymonlipinski.dicepouch.ui.components.icons.LeftArrow
 import com.krystianrymonlipinski.dicepouch.ui.components.icons.RightArrow
