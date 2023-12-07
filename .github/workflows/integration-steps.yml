@@ -2,6 +2,10 @@ name: Integration Steps
 
 on:
   workflow_call:
+    inputs:
+      is-debug-branch:
+        required: true
+        type: boolean
 
 jobs:
   integrate:
@@ -22,11 +26,19 @@ jobs:
 
       - name: Assemble
         id: 'assemble'
-        run: ./gradlew assembleDebug
+        run: |
+          if: ${{ inputs.is-debug-branch }}
+            ./gradlew assembleDebug  
+          else
+            ./gradlew assembleRelease
 
       - name: Unit Tests
         id: unit_tests
-        run: ./gradlew testDebugUnitTest
+        run: |
+          if: ${{ inputs.is-debug-branch }}
+            ./gradlew testDebugUnitTest  
+          else
+            ./gradlew testReleaseUnitTest
         continue-on-error: true
 
       - name: Instrumented Tests
@@ -34,7 +46,11 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 26
-          script: ./gradlew connectedDebugAndroidTest
+          script: |
+            if: ${{ inputs.is-debug-branch }}
+              ./gradlew connectedDebugAndroidTest
+            else
+            ./gradlew connectedReleaseAndroidTest
         continue-on-error: true
 
       - name: Test Results Upload

@@ -2,7 +2,7 @@ name: Integration Pipeline
 
 on:
   push:
-    branches: ['**']
+    branches-ignore: ['release/**']
   pull_request:
     branches: ['master']
 
@@ -14,3 +14,5 @@ jobs:
       checks: write
       pull-requests: write
     uses: ./.github/workflows/integration-steps.yml
+    with:
+      is-debug-branch: true
