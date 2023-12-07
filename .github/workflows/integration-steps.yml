@@ -1,4 +1,4 @@
-name: Integration Pipeline
+name: Integration Steps
 
 on:
   workflow_call:
