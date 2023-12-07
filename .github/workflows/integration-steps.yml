@@ -23,7 +23,7 @@ jobs:
       - name: Assemble
         id: 'assemble'
         run: |
-          if [ ${{ github.ref_name != "release/*" }} ]; then
+          if [ ${{ github.ref_name }} != "release/*" ]; then
             ./gradlew assembleDebug  
           else
             ./gradlew assembleRelease
@@ -32,7 +32,7 @@ jobs:
       - name: Unit Tests
         id: unit_tests
         run: |
-          if [ ${{ github.ref_name != "release/*" }} ]; then
+          if [ ${{ github.ref_name }} != "release/*" ]; then
             ./gradlew testDebugUnitTest  
           else
             ./gradlew testReleaseUnitTest
@@ -45,7 +45,7 @@ jobs:
         with:
           api-level: 26
           script: |
-            if [ ${{ github.ref_name != "release/*" }} ]; then
+            if [ ${{ github.ref_name }} != "release/*" ]; then
               ./gradlew connectedDebugAndroidTest
             else
               ./gradlew connectedReleaseAndroidTest
