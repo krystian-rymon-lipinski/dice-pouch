@@ -9,7 +9,7 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -31,7 +31,7 @@ fun NewDieDialog(
     onDialogDismissed: () -> Unit,
     onNewDieAdded: (numberOfSides: Int) -> Unit
 ) {
-    var currentSidesNumber by rememberSaveable { mutableStateOf(20) }
+    var currentSidesNumber by rememberSaveable { mutableIntStateOf(20) }
 
     AlertDialog(
         properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true),
