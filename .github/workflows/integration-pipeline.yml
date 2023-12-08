@@ -7,12 +7,7 @@ on:
     branches: ['master']
 
 jobs:
-
-  setup_environment:
-    uses: ./.github/workflows/setup-steps.yml
-
   integrate:
-    needs: setup_environment
     permissions:
       contents: read
       issues: read

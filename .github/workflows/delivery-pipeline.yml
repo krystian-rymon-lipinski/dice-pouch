@@ -5,24 +5,31 @@ on:
     branches: ['release/**']
 
 jobs:
-
-  setup_environment:
-    uses: ./.github/workflows/setup-steps.yml
-
-  #  integrate:
-  #    needs: setup_environment
-  #    permissions:
-  #      contents: read
-  #      issues: read
-  #      checks: write
-  #      pull-requests: write
-  #    uses: ./.github/workflows/integration-steps.yml
+#  integrate:
+#    permissions:
+#      contents: read
+#      issues: read
+#      checks: write
+#      pull-requests: write
+#    uses: ./.github/workflows/integration-steps.yml
 
   deliver:
     runs-on: macos-latest
-    needs: setup_environment #needs: integrate
+    #needs: integrate
 
     steps:
+      - name: Checkout project sources
+        uses: actions/checkout@v3
+
+      - name: Setup Java distribution
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Add permissions for Gradle
+        run: chmod +x gradlew
+
       - name: Create bundle
         run: ./gradlew bundleRelease
 
