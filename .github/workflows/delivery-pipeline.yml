@@ -9,14 +9,14 @@ jobs:
   setup_environment:
     uses: ./.github/workflows/setup-steps.yml
 
-#  integrate:
-#    needs: setup_environment
-#    permissions:
-#      contents: read
-#      issues: read
-#      checks: write
-#      pull-requests: write
-#    uses: ./.github/workflows/integration-steps.yml
+  #  integrate:
+  #    needs: setup_environment
+  #    permissions:
+  #      contents: read
+  #      issues: read
+  #      checks: write
+  #      pull-requests: write
+  #    uses: ./.github/workflows/integration-steps.yml
 
   deliver:
     runs-on: macos-latest
@@ -30,7 +30,8 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: release-bundle
-          path: app/build/**/.aab
+          path: app/build/**/*.aab
+          if-no-files-found: error
 
       - name: Extract version info
         id: extract_version_info
@@ -44,7 +45,7 @@ jobs:
           VERSION_NAME: ${{ steps.extract_version_info.outputs.VERSION_NAME }}
         uses: r0adkll/upload-google-play@v1
         with:
-          releaseFiles: release-bundle
+          releaseFiles: app/build/**/*.aab
           serviceAccountJsonPlainText: ${{ secrets.DELIVERY_PIPELINE_KEY }}
           packageName: com.krystianrymonlipinski.dicepouch
           track: internal
