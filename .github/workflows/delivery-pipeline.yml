@@ -1,0 +1,51 @@
+name: Delivery Pipeline
+
+on:
+  push:
+    branches: ['release/**']
+
+jobs:
+  integrate:
+    permissions:
+      contents: read
+      issues: read
+      checks: write
+      pull-requests: write
+    uses: ./.github/workflows/integration-steps.yml
+
+  deliver:
+    runs-on: macos-latest
+    needs: integrate
+
+    steps:
+      - name: Create bundle
+        run: ./gradlew bundleRelease
+        with:
+          path: app/build/**/.aab
+
+      - name: Upload bundle as an artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-bundle
+          files: app/build/**/.aab
+
+      - name: Extract version info
+        id: extract_version_info
+        run: |
+          echo "VERSION_CODE=$(grep "versionCode" app/build.gradle | awk '{print $2}' | tr -d '"')" >> "$GITHUB_OUTPUT"
+          echo "VERSION_NAME=$(grep "versionName" app/build.gradle | awk '{print $2}' | tr -d '"')" >> "$GITHUB_OUTPUT"
+
+      - name: Upload AAP artifact to Google Play Store
+        env:
+          VERSION_CODE: ${{ steps.extract_version_info.outputs.VERSION_CODE }}
+          VERSION_NAME: ${{ steps.extract_version_info.outputs.VERSION_NAME }}
+        uses: r0adkll/upload-google-play@v1
+        with:
+          releaseFiles: release-bundle
+          serviceAccountJsonPlainText: ${{ secrets.DELIVERY_PIPELINE_KEY }}
+          packageName: com.krystianrymonlipinski.dicepouch
+          track: internal
+          releaseName: "$VERSION_CODE ($VERSION_NAME)"
+          whatsNewDirectory: ./release-notes
+
+
