@@ -37,7 +37,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: release-bundle
-          files: app/build/**/.aab
+          path: app/build/**/.aab
 
       - name: Extract version info
         id: extract_version_info
