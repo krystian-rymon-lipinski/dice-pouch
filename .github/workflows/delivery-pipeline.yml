@@ -15,7 +15,7 @@ jobs:
 
   deliver:
     runs-on: macos-latest
-    needs: integrate
+    #needs: integrate
 
     steps:
       - name: Create bundle
