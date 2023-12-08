@@ -20,30 +20,31 @@ jobs:
       - name: Add permissions for Gradle
         run: chmod +x gradlew
 
-#      - name: Assemble
-#        id: 'assemble'
-#        run: |
-#          if [ ${{ github.ref_name }} != "release/*" ]; then
-#            ./gradlew assembleDebug
-#          else
-#            ./gradlew assembleRelease
-#          fi
+      - name: Assemble
+        id: 'assemble'
+        run: |
+          if [ ${{ github.ref_name }} != "release/*" ]; then
+            ./gradlew assembleDebug
+          else
+            ./gradlew assembleRelease
+          fi
 
-#      - name: Unit Tests
-#        id: unit_tests
-#        run: |
-#          if [ ${{ github.ref_name }} != "release/*" ]; then
-#            ./gradlew testDebugUnitTest
-#          else
-#            ./gradlew testReleaseUnitTest
-#          fi
-#        continue-on-error: true
+      - name: Unit Tests
+        id: unit_tests
+        run: |
+          if [ ${{ github.ref_name }} != "release/*" ]; then
+            ./gradlew testDebugUnitTest
+          else
+            ./gradlew testReleaseUnitTest
+          fi
+        continue-on-error: true
 
       - name: Instrumented Tests
         id: instrumented_tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 26
+          # doesn't work in multiline due to parsing issues
           script: if [[ ${{ github.ref_name }} != "release/*" ]]; then ./gradlew connectedDebugAndroidTest; else ./gradlew connectedReleaseAndroidTest; fi
         continue-on-error: true
 
