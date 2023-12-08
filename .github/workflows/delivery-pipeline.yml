@@ -43,8 +43,8 @@ jobs:
       - name: Extract version info
         id: extract_version_info
         run: |
-          echo "VERSION_CODE=$(grep "versionCode" app/build.gradle | awk '{print $2}' | tr -d '"')" >> "$GITHUB_OUTPUT"
-          echo "VERSION_NAME=$(grep "versionName" app/build.gradle | awk '{print $2}' | tr -d '"')" >> "$GITHUB_OUTPUT"
+          echo "VERSION_CODE=$(grep "versionCode" ./app/build.gradle | awk '{print $2}' | tr -d '"')" >> "$GITHUB_OUTPUT"
+          echo "VERSION_NAME=$(grep "versionName" ./app/build.gradle | awk '{print $2}' | tr -d '"')" >> "$GITHUB_OUTPUT"
 
       - name: Upload AAP artifact to Google Play Store
         env:
