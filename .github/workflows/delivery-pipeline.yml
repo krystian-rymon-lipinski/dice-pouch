@@ -5,13 +5,13 @@ on:
     branches: ['release/**']
 
 jobs:
-  integrate:
-    permissions:
-      contents: read
-      issues: read
-      checks: write
-      pull-requests: write
-    uses: ./.github/workflows/integration-steps.yml
+#  integrate:
+#    permissions:
+#      contents: read
+#      issues: read
+#      checks: write
+#      pull-requests: write
+#    uses: ./.github/workflows/integration-steps.yml
 
   deliver:
     runs-on: macos-latest
