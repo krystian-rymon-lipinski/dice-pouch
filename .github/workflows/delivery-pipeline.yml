@@ -43,6 +43,7 @@ jobs:
       - name: Extract version info
         id: extract_version_info
         run: |
+          chmod +r ./app/build.gradle
           echo "VERSION_CODE=$(grep "versionCode" ./app/build.gradle | awk '{print $2}' | tr -d '"')" >> "$GITHUB_OUTPUT"
           echo "VERSION_NAME=$(grep "versionName" ./app/build.gradle | awk '{print $2}' | tr -d '"')" >> "$GITHUB_OUTPUT"
 
@@ -57,6 +58,6 @@ jobs:
           packageName: com.krystianrymonlipinski.dicepouch
           track: internal
           releaseName: "$VERSION_CODE ($VERSION_NAME)"
-          whatsNewDirectory: ./release-notes
+          whatsNewDirectory: ./release-notes/whatsnew
 
 
