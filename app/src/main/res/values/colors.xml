@@ -2,4 +2,12 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="app_icon_background">#572F13</color>
+    <color name="app_icon_dice1">#5488cb</color>
+    <color name="app_icon_dice2">#BF302D</color>
+    <color name="app_icon_dice3">#ad9933</color>
+    <color name="app_icon_dice4">#498B4A</color>
+
+
 </resources>
