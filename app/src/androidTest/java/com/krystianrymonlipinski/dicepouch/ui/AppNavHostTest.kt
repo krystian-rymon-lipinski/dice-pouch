@@ -13,8 +13,6 @@ import androidx.compose.ui.test.performTouchInput
 import com.krystianrymonlipinski.dicepouch.BaseIntegrationTest
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
 
@@ -59,9 +57,8 @@ class AppNavHostTest : BaseIntegrationTest() {
         }
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun appNavigation_navigateToEditSetScreen_andBack_byOnBackPressed() = runTest {
+    fun appNavigation_navigateToEditSetScreen_andBack_byOnBackPressed() {
         composeActivityTestRule.apply {
             onNodeWithText("Pouch").performClick()
             onNodeWithContentDescription("edit_set").assertDoesNotExist()
