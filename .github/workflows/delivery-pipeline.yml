@@ -51,13 +51,6 @@ jobs:
           echo "keyAlias=$KEY_ALIAS" >> ./keystore.properties
           echo "keyPassword=$KEY_PASSWORD" >> ./keystore.properties
 
-#      - name: Upload .properties as artifact to debug it #remove it later
-#        uses: actions/upload-artifact@v3
-#        with:
-#          name: properties
-#          path: ./keystore.properties
-#          if-no-files-found: error
-
       - name: Create bundle
         run: ./gradlew bundleRelease
 
