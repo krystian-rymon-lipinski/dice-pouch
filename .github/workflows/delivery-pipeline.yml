@@ -36,7 +36,7 @@ jobs:
       - name: Retrieve keystore properties
         #keystoreFile path relative to build.gradle.kts file
         run: |
-          echo "keystoreFile=.\\..\\.github\\workflows\\release-keystore.jks" > ./keystore.properties 
+          echo "keystoreFile=./../.github/workflows/release-keystore.jks" > ./keystore.properties 
           echo "keystorePassword=${{ secrets.KEYSTORE_PASSWORD }}" >> ./keystore.properties
           echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> ./keystore.properties
           echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> ./keystore.properties
