@@ -36,9 +36,9 @@ jobs:
       - name: Retrieve keystore properties
         run: |
           echo "keystoreFile=.\\..\\.github\\workflows\\release-keystore.jks" > ./../../keystore.properties
-          echo "keystorePassword=${{ secrets.KEYSTORE_PASSWORD }}" > ./../../keystore.properties
-          echo "keyAlias=${{ secrets.KEY_ALIAS }}" > ./../../keystore.properties
-          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" > ./../../keystore.properties
+          echo "keystorePassword=${{ secrets.KEYSTORE_PASSWORD }}" >> ./../../keystore.properties
+          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> ./../../keystore.properties
+          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> ./../../keystore.properties
 
       - name: Create bundle
         run: ./gradlew bundleRelease
