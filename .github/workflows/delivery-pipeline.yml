@@ -76,7 +76,7 @@ jobs:
         with:
           releaseFiles: app/build/**/*.aab
           serviceAccountJsonPlainText: ${{ secrets.DELIVERY_PIPELINE_KEY }}
-          packageName: com.krystianrymonlipinski.dicepouch
+          packageName: com.krystianrymonlipinski.dicepouch.release
           track: internal
           releaseName: "$VERSION_CODE ($VERSION_NAME)"
           whatsNewDirectory: ./release-notes/whatsnew
