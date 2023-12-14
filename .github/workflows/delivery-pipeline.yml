@@ -80,5 +80,6 @@ jobs:
           track: internal
           releaseName: "$VERSION_CODE ($VERSION_NAME)"
           whatsNewDirectory: ./release-notes/whatsnew
+          status: draft
 
 
