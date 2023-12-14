@@ -65,8 +65,8 @@ jobs:
         id: extract_version_info
         run: |
           chmod +r ./app/build.gradle.kts
-          echo "VERSION_CODE=$(grep -oP 'versionCode\s+\Kd+' ./app/build.gradle.kts)" >> "$GITHUB_OUTPUT"
-          echo "VERSION_NAME=$(grep -oP 'versionName\s+"\K[^"]+' ./app/build.gradle.kts >> "$GITHUB_OUTPUT"
+          echo "VERSION_CODE=$(grep "versionCode" ./app/build.gradle.kts | awk '{print $3}')" >> "$GITHUB_OUTPUT"
+          echo "VERSION_NAME=$(grep "versionName" ./app/build.gradle.kts | awk '{gsub("\"", "", $3); print $3}')" >> "$GITHUB_OUTPUT"
 
       - name: Upload AAP artifact to Google Play Store
         env:
