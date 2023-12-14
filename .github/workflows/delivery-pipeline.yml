@@ -78,7 +78,7 @@ jobs:
           serviceAccountJsonPlainText: ${{ secrets.DELIVERY_PIPELINE_KEY }}
           packageName: com.krystianrymonlipinski.dicepouch.release
           track: internal
-          releaseName: $VERSION_CODE ($VERSION_NAME)
+          releaseName: ${{ env.VERSION_CODE }} (${{ env.VERSION_NAME }})
           whatsNewDirectory: ./release-notes/whatsnew
           status: draft
 
