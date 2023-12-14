@@ -1,4 +1,6 @@
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
+import java.io.FileInputStream
+import java.util.Properties
 
 plugins {
     id("com.android.application")
@@ -9,6 +11,18 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        create("release") {
+            val keystorePropertiesFile: File = rootProject.file("keystore.properties")
+            val keystoreProperties = Properties()
+            keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+
+            storeFile = file(keystoreProperties["keystoreFile"].toString())
+            keyAlias = keystoreProperties["keyAlias"].toString()
+            storePassword = keystoreProperties["keystorePassword"].toString()
+            keyPassword = keystoreProperties["keyPassword"].toString()
+        }
+    }
     namespace = "com.krystianrymonlipinski.dicepouch"
     compileSdk = 34
 
@@ -16,8 +30,8 @@ android {
         applicationId = "com.krystianrymonlipinski.dicepouch"
         minSdk = 26
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "com.krystianrymonlipinski.dicepouch.CustomTestRunner"
         vectorDrawables {
@@ -36,6 +50,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {
