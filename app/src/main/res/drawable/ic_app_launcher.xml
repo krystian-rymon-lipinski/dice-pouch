@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:width="90dp"
+    android:height="90dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+
+    <group
+        android:scaleX="0.45"
+        android:scaleY="0.45"
+        android:translateX="27.5"
+        android:translateY="5">
+        <path
+            android:pathData="M50,5 l38.97,22.5 v45 l-38.97,22.5 l-38.97,-22.5, v-45Z"
+            android:strokeWidth="2.2"
+            android:strokeColor="@color/black"
+            android:fillColor="@color/app_icon_dice4"/>
+
+        <path
+            android:pathData="M50,5 v7.5 M88.97,72.5 l-6.5,-3.75 M11.03,72.5 l6.5,-3.75"
+            android:strokeWidth="1.2"
+            android:strokeColor="@color/black"/>
+
+        <path
+            android:pathData="M50,12.5 L88.87,27.5 L82.47,68.75 L50,95 L17.63,68.75 L11.03,27.5Z L82.47,68.75 L17.63,68.75Z"
+            android:strokeWidth="1.2"
+            android:strokeColor="@color/black"/>
+
+    </group>
+
+    <group
+        android:scaleX="0.45"
+        android:scaleY="0.45"
+        android:translateX="2.5"
+        android:translateY="7.5">
+        <path
+            android:pathData="M50,5 l38.97,22.5 v45 l-38.97,22.5 l-38.97,-22.5, v-45Z"
+            android:strokeWidth="2.2"
+            android:strokeColor="@color/black"
+            android:fillColor="@color/app_icon_dice1"/>
+
+        <path
+            android:pathData="M50,5 v7.5 M88.97,72.5 l-6.5,-3.75 M11.03,72.5 l6.5,-3.75"
+            android:strokeWidth="1.2"
+            android:strokeColor="@color/black"/>
+
+        <path
+            android:pathData="M50,12.5 L88.87,27.5 L82.47,68.75 L50,95 L17.63,68.75 L11.03,27.5Z L82.47,68.75 L17.63,68.75Z"
+            android:strokeWidth="1.2"
+            android:strokeColor="@color/black"/>
+
+    </group>
+
+    <group
+        android:scaleX="0.45"
+        android:scaleY="0.45"
+        android:translateX="52.5"
+        android:translateY="7.5">
+        <path
+            android:pathData="M50,5 l38.97,22.5 v45 l-38.97,22.5 l-38.97,-22.5, v-45Z"
+            android:strokeWidth="2.2"
+            android:strokeColor="@color/black"
+            android:fillColor="@color/app_icon_dice2"/>
+
+        <path
+            android:pathData="M50,5 v7.5 M88.97,72.5 l-6.5,-3.75 M11.03,72.5 l6.5,-3.75"
+            android:strokeWidth="1.2"
+            android:strokeColor="@color/black"/>
+
+        <path
+            android:pathData="M50,12.5 L88.87,27.5 L82.47,68.75 L50,95 L17.63,68.75 L11.03,27.5Z L82.47,68.75 L17.63,68.75Z"
+            android:strokeWidth="1.2"
+            android:strokeColor="@color/black"/>
+
+    </group>
+
+    <group
+        android:scaleX="0.75"
+        android:scaleY="0.75"
+        android:translateX="12.5"
+        android:translateY="20">
+        <path
+            android:pathData="M50,5 l38.97,22.5 v45 l-38.97,22.5 l-38.97,-22.5, v-45Z"
+            android:strokeWidth="2.2"
+            android:strokeColor="@color/black"
+            android:fillColor="@color/app_icon_dice3"/>
+
+        <path
+            android:pathData="M50,5 v7.5 M88.97,72.5 l-6.5,-3.75 M11.03,72.5 l6.5,-3.75"
+            android:strokeWidth="1.2"
+            android:strokeColor="@color/black"/>
+
+        <path
+            android:pathData="M50,12.5 L88.87,27.5 L82.47,68.75 L50,95 L17.63,68.75 L11.03,27.5Z L82.47,68.75 L17.63,68.75Z"
+            android:strokeWidth="1.2"
+            android:strokeColor="@color/black"/>
+
+    </group>
+
+</vector>

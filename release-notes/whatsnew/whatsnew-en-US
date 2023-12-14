@@ -1,1 +1,5 @@
-Test release notes
+Features:
+- creating and saving custom dice sets
+- creating RPG dice (3-100 sides range)
+- different rolling mechanics: standard rolls, advantage/disadvantage rolls and modifiers
+- shortcuts: creating and saving most common rolling configurations as shortcuts in chosen sets
