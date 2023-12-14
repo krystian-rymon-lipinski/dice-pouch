@@ -5,34 +5,13 @@ on:
     branches: ['release/**']
 
 jobs:
-  integrate:
-    permissions:
-      contents: read
-      issues: read
-      checks: write
-      pull-requests: write
-    uses: ./.github/workflows/integration-steps.yml
 
-  deliver:
+  decode:
     runs-on: macos-latest
-    needs: integrate
     env:
       KEYSTORE_FILENAME: keystore-release.jks
 
-
     steps:
-      - name: Checkout project sources
-        uses: actions/checkout@v3
-
-      - name: Setup Java distribution
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Add permissions for Gradle
-        run: chmod +x gradlew
-
       - name: Decode keystore
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE }}
@@ -50,6 +29,31 @@ jobs:
           echo "keystorePassword=$KEYSTORE_PASSWORD" >> ./keystore.properties
           echo "keyAlias=$KEY_ALIAS" >> ./keystore.properties
           echo "keyPassword=$KEY_PASSWORD" >> ./keystore.properties
+
+  integrate:
+    permissions:
+      contents: read
+      issues: read
+      checks: write
+      pull-requests: write
+    uses: ./.github/workflows/integration-steps.yml
+
+  deliver:
+    runs-on: macos-latest
+    needs: integrate
+
+    steps:
+      - name: Checkout project sources
+        uses: actions/checkout@v3
+
+      - name: Setup Java distribution
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Add permissions for Gradle
+        run: chmod +x gradlew
 
       - name: Create bundle
         run: ./gradlew bundleRelease
