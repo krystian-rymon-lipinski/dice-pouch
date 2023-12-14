@@ -58,7 +58,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: release-bundle
-          path: app/build/**/*.aab
+          path: app/build/outputs/bundle/release/*.aab
           if-no-files-found: error
 
       - name: Extract version info
@@ -74,7 +74,7 @@ jobs:
           VERSION_NAME: ${{ steps.extract_version_info.outputs.VERSION_NAME }}
         uses: r0adkll/upload-google-play@v1
         with:
-          releaseFiles: app/build/**/*.aab
+          releaseFiles: app/build/outputs/bundle/release/*.aab
           serviceAccountJsonPlainText: ${{ secrets.DELIVERY_PIPELINE_KEY }}
           packageName: com.krystianrymonlipinski.dicepouch.release
           track: internal
