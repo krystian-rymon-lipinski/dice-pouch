@@ -15,7 +15,7 @@ jobs:
     uses: ./.github/workflows/integration-steps.yml
 
   deliver:
-    runs-on: macos-latest
+    runs-on: macos-13
     needs: integrate
     env:
       KEYSTORE_FILENAME: keystore-release.jks
