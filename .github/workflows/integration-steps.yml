@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Checkout project sources
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Java distribution
         uses: actions/setup-java@v3
@@ -38,6 +38,12 @@ jobs:
           echo "keystorePassword=$KEYSTORE_PASSWORD" >> ./keystore.properties
           echo "keyAlias=$KEY_ALIAS" >> ./keystore.properties
           echo "keyPassword=$KEY_PASSWORD" >> ./keystore.properties
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
 
       - name: Assemble
         id: 'assemble'
