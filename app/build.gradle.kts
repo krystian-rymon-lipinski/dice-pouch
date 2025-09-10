@@ -29,7 +29,7 @@ android {
     defaultConfig {
         applicationId = "com.krystianrymonlipinski.dicepouch"
         minSdk = 26
-        targetSdk = 34
+        targetSdk = 36
         versionCode = 4
         versionName = "1.0.1"
 
